@@ -1,7 +1,9 @@
 package com.example.doantotnghiepbe.service.impl;
 
-import com.example.doantotnghiepbe.dto.PostDetailDTO;
+import com.example.doantotnghiepbe.dto.PostDTO;
+import com.example.doantotnghiepbe.entity.Amenities;
 import com.example.doantotnghiepbe.entity.Post;
+import com.example.doantotnghiepbe.entity.VehicleType;
 import com.example.doantotnghiepbe.exception.ResourceNotFoundException;
 import com.example.doantotnghiepbe.repository.PostDetailRepository;
 import com.example.doantotnghiepbe.service.PostDetailService;
@@ -18,12 +20,12 @@ public class PostDetailServiceImpl implements PostDetailService {
     private PostDetailRepository postDetailRepository;
 
     @Override
-    public PostDetailDTO getPostDetails(Long id_post) {
+    public PostDTO getPostDetails(Long id_post) {
         Post post = postDetailRepository.findByIdWithAmenities(id_post)
                 .orElseThrow(() -> new ResourceNotFoundException("Post not found"));
 
         // Chuyển đổi từ Post entity sang PostDetailDTO
-        PostDetailDTO dto = new PostDetailDTO();
+        PostDTO dto = new PostDTO();
         dto.setId_post(post.getId_post());
         dto.setParking_name(post.getParking_name());
         dto.setPrice(post.getPrice());
@@ -41,9 +43,16 @@ public class PostDetailServiceImpl implements PostDetailService {
         // Lấy danh sách tiện ích từ Post
         List<String> amenities = post.getAmenities()
                 .stream()
-                .map(amenity -> amenity.getAmenities_name())
+                .map(Amenities::getAmenities_name)
                 .collect(Collectors.toList());
         dto.setAmenities(amenities);
+
+        // Lấy danh sách loại phương tiện từ Post
+        List<String> vehicleTypes = post.getVehicleTypes()
+                .stream()
+                .map(VehicleType::getVehicleTypeName)
+                .collect(Collectors.toList());
+        dto.setVehicleTypes(vehicleTypes); // Set the vehicle types in the DTO
 
         return dto;
     }

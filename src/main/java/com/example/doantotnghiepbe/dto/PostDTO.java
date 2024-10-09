@@ -3,7 +3,7 @@ package com.example.doantotnghiepbe.dto;
 import java.time.LocalTime;
 import java.util.List;
 
-public class PostDetailDTO {
+public class PostDTO {
     private Long id_post;
     private String parking_name;
     private Double price;
@@ -18,11 +18,20 @@ public class PostDetailDTO {
     private LocalTime opening_hours;
     private String status;
     private List<String> amenities; // Danh sách tên tiện ích
+    private List<String> vehicleTypes;
 
     // Constructor
-    public PostDetailDTO() {}
+    public PostDTO() {}
 
     // Getters and Setters
+    public List<String> getVehicleTypes() {
+        return vehicleTypes;
+    }
+
+    public void setVehicleTypes(List<String> vehicleTypes) {
+        this.vehicleTypes = vehicleTypes;
+    }
+
     public Long getId_post() {
         return id_post;
     }

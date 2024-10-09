@@ -1,7 +1,6 @@
 package com.example.doantotnghiepbe.controller;
 
-import com.example.doantotnghiepbe.dto.PostDetailDTO;
-import com.example.doantotnghiepbe.entity.Post;
+import com.example.doantotnghiepbe.dto.PostDTO;
 import com.example.doantotnghiepbe.service.PostDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,8 +17,8 @@ public class PostDetailController {
     private PostDetailService postDetailService;
 
     @GetMapping("/{id_post}/details")
-    public ResponseEntity<PostDetailDTO> getPostDetails(@PathVariable Long id_post) {
-        PostDetailDTO postDetail = postDetailService.getPostDetails(id_post);
+    public ResponseEntity<PostDTO> getPostDetails(@PathVariable Long id_post) {
+        PostDTO postDetail = postDetailService.getPostDetails(id_post);
         return ResponseEntity.ok(postDetail);
     }
 

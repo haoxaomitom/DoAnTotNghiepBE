@@ -1,7 +1,7 @@
 package com.example.doantotnghiepbe.service;
 
-import com.example.doantotnghiepbe.dto.PostDetailDTO;
+import com.example.doantotnghiepbe.dto.PostDTO;
 
 public interface PostDetailService {
-    PostDetailDTO getPostDetails(Long id_post);
+    PostDTO getPostDetails(Long id_post);
 }
