@@ -1,15 +1,20 @@
 package com.example.doantotnghiepbe.service.impl;
 
+import com.example.doantotnghiepbe.dto.PostDTO;
+import com.example.doantotnghiepbe.entity.Amenities;
 import com.example.doantotnghiepbe.entity.Post;
+import com.example.doantotnghiepbe.entity.VehicleType;
+import com.example.doantotnghiepbe.exception.ResourceNotFoundException;
 import com.example.doantotnghiepbe.repository.PostRepository;
 import com.example.doantotnghiepbe.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class PostServiceImpl implements PostService {
@@ -22,12 +27,14 @@ public class PostServiceImpl implements PostService {
         return postRepository.findAll(pageable); // Gọi repository để lấy danh sách bài đăng với phân trang
     }
 
-    @Override
-    public Optional<Post> getPostById(Long id) {
-        return postRepository.findById(id); // Gọi repository để tìm bài đăng theo ID
-    }
 
     public List<Object[]> countPostsByDistrict() {
         return postRepository.countPostsByDistrict();
+    }
+
+
+    public Page<Post> searchPosts(String searchTerm, int page) {
+        Pageable pageable = PageRequest.of(page, 5); // 5 items per page
+        return postRepository.searchPosts(searchTerm, pageable);
     }
 }

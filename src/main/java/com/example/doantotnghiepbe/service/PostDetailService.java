@@ -1,7 +1,11 @@
 package com.example.doantotnghiepbe.service;
 
-import com.example.doantotnghiepbe.dto.PostDetailDTO;
+import com.example.doantotnghiepbe.dto.PostDTO;
+import com.example.doantotnghiepbe.entity.Post;
+
+import java.util.Optional;
 
 public interface PostDetailService {
-    PostDetailDTO getPostDetails(Long id_post);
+//    PostDTO getPostDetails(Integer id_post);
+    Optional<Post> getPostById(Integer id);
 }

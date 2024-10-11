@@ -14,7 +14,7 @@ public class Post {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id_post;
+    private Integer id_post;
 
     @Column(name = "username")
     private String username;
@@ -57,6 +57,7 @@ public class Post {
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
+
     // Many-to-many relationship with Amenities through PostAmenities
     @ManyToMany
     @JoinTable(
@@ -65,6 +66,14 @@ public class Post {
             inverseJoinColumns = @JoinColumn(name = "id_amenities")  // Foreign key in the join table referencing Amenities
     )
     private Set<Amenities> amenities = new HashSet<>();
+
+    @ManyToMany
+    @JoinTable(
+            name = "vehicle_type_post",
+            joinColumns = @JoinColumn(name = "parking_lot_id"),
+            inverseJoinColumns = @JoinColumn(name = "vehicle_type_id")
+    )
+    private Set<VehicleType> vehicleTypes;
 
     // Constructors
     public Post() {}
@@ -86,11 +95,11 @@ public class Post {
     }
 
     // Getters and Setters
-    public Long getId_post() {
+    public Integer getId_post() {
         return id_post;
     }
 
-    public void setId_post(Long id_post) {
+    public void setId_post(Integer id_post) {
         this.id_post = id_post;
     }
 
@@ -212,6 +221,14 @@ public class Post {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public Set<VehicleType> getVehicleTypes() {
+        return vehicleTypes;
+    }
+
+    public void setVehicleTypes(Set<VehicleType> vehicleTypes) {
+        this.vehicleTypes = vehicleTypes;
     }
 
     // Method to add an amenity to the post

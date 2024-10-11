@@ -7,7 +7,6 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 
-public interface PostDetailRepository extends JpaRepository<Post, Long> {
-    @Query("SELECT p FROM Post p LEFT JOIN FETCH p.amenities WHERE p.id_post = :id")
-    Optional<Post> findByIdWithAmenities(@Param("id") Long id_post);
+public interface PostDetailRepository extends JpaRepository<Post, Integer> {
+
 }

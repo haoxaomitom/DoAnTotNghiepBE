@@ -8,20 +8,20 @@ public class Amenities {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id_amenities;
+    private Integer id_amenities;
 
     @Column(name = "amenities_name")
     private String amenities_name;
 
-    // Constructor, nếu cần
+    // Constructor
     public Amenities() {}
 
     // Getter và Setter
-    public Long getId_amenities() {
+    public Integer getId_amenities() {
         return id_amenities;
     }
 
-    public void setId_amenities(Long id_amenities) {
+    public void setId_amenities(Integer id_amenities) {
         this.id_amenities = id_amenities;
     }
 
