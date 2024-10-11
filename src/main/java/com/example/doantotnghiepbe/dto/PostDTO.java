@@ -4,7 +4,7 @@ import java.time.LocalTime;
 import java.util.List;
 
 public class PostDTO {
-    private Long id_post;
+    private Integer id_post;
     private String parking_name;
     private Double price;
     private String price_per;
@@ -32,11 +32,11 @@ public class PostDTO {
         this.vehicleTypes = vehicleTypes;
     }
 
-    public Long getId_post() {
+    public Integer getId_post() {
         return id_post;
     }
 
-    public void setId_post(Long id_post) {
+    public void setId_post(Integer id_post) {
         this.id_post = id_post;
     }
 

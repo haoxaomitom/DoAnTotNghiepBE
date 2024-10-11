@@ -14,7 +14,7 @@ public class Post {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id_post;
+    private Integer id_post;
 
     @Column(name = "username")
     private String username;
@@ -95,11 +95,11 @@ public class Post {
     }
 
     // Getters and Setters
-    public Long getId_post() {
+    public Integer getId_post() {
         return id_post;
     }
 
-    public void setId_post(Long id_post) {
+    public void setId_post(Integer id_post) {
         this.id_post = id_post;
     }
 
