@@ -1,15 +1,14 @@
 package com.example.doantotnghiepbe.entity;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
-@Table(name = "Posts")
+@Table(name = "posts")
 public class Post {
 
     @Id
@@ -58,27 +57,23 @@ public class Post {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    // Many-to-many relationship with Amenities through PostAmenities
-    @ManyToMany
-    @JoinTable(
-            name = "post_amenities",  // The name of the join table
-            joinColumns = @JoinColumn(name = "id_post"),  // Foreign key in the join table referencing Post
-            inverseJoinColumns = @JoinColumn(name = "id_amenities")  // Foreign key in the join table referencing Amenities
-    )
-    private Set<Amenities> amenities = new HashSet<>();
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference  // Manages the child references
+    private List<Image> images = new ArrayList<>();
 
-    @ManyToMany
-    @JoinTable(
-            name = "vehicle_type_post",
-            joinColumns = @JoinColumn(name = "parking_lot_id"),
-            inverseJoinColumns = @JoinColumn(name = "vehicle_type_id")
-    )
-    private Set<VehicleType> vehicleTypes;
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference  // Manages the child references
+    private List<Amenities> amenities = new ArrayList<>();
 
-    // Constructors
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<VehicleType> vehicleTypes = new ArrayList<>();
+
+// Constructors
     public Post() {}
 
-    public Post(String username, String parking_name, Double price, String price_per, Integer capacity, String ward_name, String district_name, String province_name, Double latitude, Double longitude, String image, LocalTime opening_hours, String status) {
+    public Post(Integer id_post, String username, String parking_name, Double price, String price_per, Integer capacity, String ward_name, String district_name, String province_name, Double latitude, Double longitude, String image, LocalTime opening_hours, String status, LocalDateTime createdAt, List<Amenities> amenities, List<VehicleType> vehicleTypes, List<Image> images) {
+        this.id_post = id_post;
         this.username = username;
         this.parking_name = parking_name;
         this.price = price;
@@ -92,9 +87,20 @@ public class Post {
         this.image = image;
         this.opening_hours = opening_hours;
         this.status = status;
+        this.createdAt = createdAt;
+        this.amenities = amenities;
+        this.vehicleTypes = vehicleTypes;
+        this.images = images;
     }
 
-    // Getters and Setters
+    public List<Image> getImages() {
+        return images;
+    }
+
+    public void setImages(List<Image> images) {
+        this.images = images;
+    }
+
     public Integer getId_post() {
         return id_post;
     }
@@ -207,14 +213,6 @@ public class Post {
         this.status = status;
     }
 
-    public Set<Amenities> getAmenities() {
-        return amenities;
-    }
-
-    public void setAmenities(Set<Amenities> amenities) {
-        this.amenities = amenities;
-    }
-
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
@@ -223,21 +221,21 @@ public class Post {
         this.createdAt = createdAt;
     }
 
-    public Set<VehicleType> getVehicleTypes() {
+
+    public List<Amenities> getAmenities() {
+        return amenities;
+    }
+
+    public void setAmenities(List<Amenities> amenities) {
+        this.amenities = amenities;
+    }
+
+    public List<VehicleType> getVehicleTypes() {
         return vehicleTypes;
     }
 
-    public void setVehicleTypes(Set<VehicleType> vehicleTypes) {
+    public void setVehicleTypes(List<VehicleType> vehicleTypes) {
         this.vehicleTypes = vehicleTypes;
     }
-
-    // Method to add an amenity to the post
-    public void addAmenity(Amenities amenity) {
-        this.amenities.add(amenity);
-    }
-
-    // Method to remove an amenity from the post
-    public void removeAmenity(Amenities amenity) {
-        this.amenities.remove(amenity);
-    }
 }
+
