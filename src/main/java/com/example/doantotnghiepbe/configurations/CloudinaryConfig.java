@@ -1,4 +1,4 @@
-package com.example.doantotnghiepbe.config;
+package com.example.doantotnghiepbe.configurations;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;

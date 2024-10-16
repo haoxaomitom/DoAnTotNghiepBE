@@ -13,14 +13,14 @@ import java.util.Optional;
 
 @Repository
 public interface PostRepository extends JpaRepository<Post, Integer> {
-    @Query("SELECT p.district_name, COUNT(p) FROM Post p GROUP BY p.district_name")
+    @Query("SELECT p.districtName, COUNT(p) FROM Post p GROUP BY p.districtName")
     List<Object[]> countPostsByDistrict();
 
     @Query("SELECT p FROM Post p WHERE " +
-            "LOWER(p.parking_name) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
-            "LOWER(p.ward_name) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
-            "LOWER(p.district_name) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
-            "LOWER(p.province_name) LIKE LOWER(CONCAT('%', :searchTerm, '%'))")
+            "LOWER(p.parkingName) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+            "LOWER(p.wardName) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+            "LOWER(p.districtName) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+            "LOWER(p.provinceName) LIKE LOWER(CONCAT('%', :searchTerm, '%'))")
     Page<Post> searchPosts(@Param("searchTerm") String searchTerm, Pageable pageable);
 }
 
