@@ -10,6 +10,7 @@ import java.util.Map;
 @Configuration
 public class CloudinaryConfig {
 
+    //Please add this file to .gitignore
     @Bean
     public Cloudinary cloudinary() {
         Map<String, String> config = ObjectUtils.asMap(
