@@ -11,8 +11,10 @@ public interface PostService {
 
     List<Object[]> countPostsByDistrict();
 
-    Page<Post> searchPosts(String searchTerm, int page);
+    Page<PostDTO> searchPosts(String searchTerm, int page);
 
     Page<PostDTO> getAllPosts(Pageable pageable);
+
+    Page<PostDTO> searchPostsByVehicleType(String vehicleType, int page);
 
 }
