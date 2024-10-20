@@ -26,6 +26,9 @@ public class Post {
     @Column(name = "price")
     private Double price;
 
+    @Column(name = "username", insertable=false, updatable=false)
+    private String userName;
+
     @Column(name = "price_per")
     private String pricePer;
 
@@ -46,9 +49,6 @@ public class Post {
 
     @Column(name = "longitude")
     private Double longitude;
-
-    @Column(name = "image")
-    private String image;
 
     @Column(name = "opening_hours")
     private LocalTime openingHours;

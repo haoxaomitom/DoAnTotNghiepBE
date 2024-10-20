@@ -2,7 +2,7 @@ package com.example.doantotnghiepbe.configurations;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
-import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Bean; 
 import org.springframework.context.annotation.Configuration;
 
 import java.util.Map;

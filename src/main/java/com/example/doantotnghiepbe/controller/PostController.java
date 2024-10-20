@@ -45,9 +45,16 @@ public class PostController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<Page<Post>> searchPosts(@RequestParam String searchTerm,
+    public ResponseEntity<Page<PostDTO>> searchPosts(@RequestParam String searchTerm,
                                                    @RequestParam(defaultValue = "0") int page) {
-        Page<Post> posts = postService.searchPosts(searchTerm, page);
+        Page<PostDTO> posts = postService.searchPosts(searchTerm, page);
+        return new ResponseEntity<>(posts, HttpStatus.OK);
+    }
+
+    @GetMapping("/searchVehicleType")
+    public ResponseEntity<Page<PostDTO>> searchPostsByVehicleType(@RequestParam String vehicleType,
+                                                                  @RequestParam(defaultValue = "0") int page){
+        Page<PostDTO> posts = postService.searchPostsByVehicleType(vehicleType, page);
         return new ResponseEntity<>(posts, HttpStatus.OK);
     }
 }

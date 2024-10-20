@@ -1,5 +1,6 @@
 package com.example.doantotnghiepbe.repository;
 
+import com.example.doantotnghiepbe.dto.PostDTO;
 import com.example.doantotnghiepbe.entity.Post;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,5 +23,10 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
             "LOWER(p.districtName) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
             "LOWER(p.provinceName) LIKE LOWER(CONCAT('%', :searchTerm, '%'))")
     Page<Post> searchPosts(@Param("searchTerm") String searchTerm, Pageable pageable);
+
+    @Query("SELECT p FROM Post p JOIN p.vehicleTypes vt WHERE " +
+            "LOWER(vt.vehicleTypeName) = LOWER(:vehicleType)")
+    Page<Post> searchPostsByVehicleType(@Param("vehicleType") String vehicleType, Pageable pageable);
+
 }
 
