@@ -10,23 +10,21 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface PostRepository extends JpaRepository<Post, Integer> {
-    @Query("SELECT p.districtName, COUNT(p) FROM Post p GROUP BY p.districtName")
+    @Query("SELECT p.districtName, COUNT(p), SUM(p.commentCount) FROM Post p GROUP BY p.districtName")
     List<Object[]> countPostsByDistrict();
 
     @Query("SELECT p FROM Post p WHERE " +
-            "LOWER(p.parkingName) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
-            "LOWER(p.wardName) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
-            "LOWER(p.districtName) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
-            "LOWER(p.provinceName) LIKE LOWER(CONCAT('%', :searchTerm, '%'))")
+            "LOWER(CONCAT(p.parkingName, ' ', p.wardName, ' ', p.districtName, ' ', p.provinceName)) LIKE LOWER(CONCAT('%', :searchTerm, '%'))")
     Page<Post> searchPosts(@Param("searchTerm") String searchTerm, Pageable pageable);
 
-    @Query("SELECT p FROM Post p JOIN p.vehicleTypes vt WHERE " +
-            "LOWER(vt.vehicleTypeName) = LOWER(:vehicleType)")
+    @Query("SELECT p FROM Post p JOIN p.vehicleTypes vt WHERE LOWER(vt.vehicleTypeName) = LOWER(:vehicleType)")
     Page<Post> searchPostsByVehicleType(@Param("vehicleType") String vehicleType, Pageable pageable);
 
+    Page<Post> findAllByOrderByPriceAsc(Pageable pageable);
+    Page<Post> findAllByOrderByPriceDesc(Pageable pageable);
 }
+
 

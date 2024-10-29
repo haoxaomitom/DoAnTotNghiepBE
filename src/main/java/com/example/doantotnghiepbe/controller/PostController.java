@@ -5,7 +5,6 @@ import com.example.doantotnghiepbe.entity.Post;
 import com.example.doantotnghiepbe.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,9 +23,7 @@ public class PostController {
     private PostService postService;
 
     @GetMapping
-    public ResponseEntity<Page<PostDTO>> getAllPosts(@RequestParam(defaultValue = "0") int page,
-                                                     @RequestParam(defaultValue = "5") int size) {
-        Pageable pageable = PageRequest.of(page, size);
+    public ResponseEntity<Page<PostDTO>> getAllPosts(Pageable pageable) {
         Page<PostDTO> posts = postService.getAllPosts(pageable);
         return ResponseEntity.ok(posts);
     }
@@ -46,15 +43,24 @@ public class PostController {
 
     @GetMapping("/search")
     public ResponseEntity<Page<PostDTO>> searchPosts(@RequestParam String searchTerm,
-                                                   @RequestParam(defaultValue = "0") int page) {
+                                                     @RequestParam(defaultValue = "0") int page) {
         Page<PostDTO> posts = postService.searchPosts(searchTerm, page);
         return new ResponseEntity<>(posts, HttpStatus.OK);
     }
 
     @GetMapping("/searchVehicleType")
     public ResponseEntity<Page<PostDTO>> searchPostsByVehicleType(@RequestParam String vehicleType,
-                                                                  @RequestParam(defaultValue = "0") int page){
+                                                                  @RequestParam(defaultValue = "0") int page) {
         Page<PostDTO> posts = postService.searchPostsByVehicleType(vehicleType, page);
+        return new ResponseEntity<>(posts, HttpStatus.OK);
+    }
+
+    // New method for sorting posts by price
+    @GetMapping("/sort")
+    public ResponseEntity<Page<PostDTO>> sortPostsByPrice(
+            @RequestParam(defaultValue = "asc") String sort,
+            Pageable pageable) {
+        Page<PostDTO> posts = postService.sortPostsByPrice(sort, pageable);
         return new ResponseEntity<>(posts, HttpStatus.OK);
     }
 }

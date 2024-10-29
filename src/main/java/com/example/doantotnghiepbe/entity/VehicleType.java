@@ -1,28 +1,25 @@
 package com.example.doantotnghiepbe.entity;
 
 import jakarta.persistence.*;
-import java.util.Set;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "vehicle_type")
+@Table(name = "vehicle_types")
 public class VehicleType {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Integer vehicleTypeId;
 
-    @ManyToOne
-    @JoinColumn(name = "id_post")
-    @JsonIgnore  // Prevent circular reference
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id", nullable = false)
+    @JsonBackReference
     private Post post;
 
     @Column(name = "vehicle_type_name")
     private String vehicleTypeName;
-
-
 }

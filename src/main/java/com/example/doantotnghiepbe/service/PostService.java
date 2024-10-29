@@ -17,4 +17,5 @@ public interface PostService {
 
     Page<PostDTO> searchPostsByVehicleType(String vehicleType, int page);
 
+    Page<PostDTO> sortPostsByPrice(String sort, Pageable pageable);
 }

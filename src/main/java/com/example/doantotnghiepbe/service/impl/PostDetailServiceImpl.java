@@ -2,18 +2,24 @@ package com.example.doantotnghiepbe.service.impl;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import com.example.doantotnghiepbe.dto.PostDTO;
 import com.example.doantotnghiepbe.dto.PostDetailDTO;
+import com.example.doantotnghiepbe.dto.PostUserDTO;
 import com.example.doantotnghiepbe.entity.Post;
 import com.example.doantotnghiepbe.repository.PostDetailRepository;
 import com.example.doantotnghiepbe.service.PostDetailService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class PostDetailServiceImpl implements PostDetailService {
@@ -58,7 +64,27 @@ public class PostDetailServiceImpl implements PostDetailService {
     }
 
     @Override
-    public List<Post> getRelatedPostsByDistrict(String districtName) {
-        return postDetailRepository.findByDistrictName(districtName);
+    public Page<PostDTO> getRelatedPostsByDistrict(String districtName, Pageable pageable) {
+        Page<Post> postPage = postDetailRepository.findByDistrictName(districtName, pageable);
+        List<PostDTO> postDTOs = postPage.stream()
+                .map(post -> {
+                    PostDTO postDTO = modelMapper.map(post, PostDTO.class);
+                    postDTO.setCommentCount(post.getCommentCount());
+
+                    if (post.getUser() != null) {
+                        PostUserDTO userDTO = new PostUserDTO(post.getUser().getUsername());
+                        postDTO.setUser(List.of(userDTO));
+                    }
+
+                    return postDTO;
+                })
+                .collect(Collectors.toList());
+        return new PageImpl<>(postDTOs, pageable, postPage.getTotalElements());
     }
+
+
+//    @Override
+//    public List<Post> getRelatedPostsByDistrict(String districtName) {
+//        return postDetailRepository.findByDistrictName(districtName);
+//    }
 }

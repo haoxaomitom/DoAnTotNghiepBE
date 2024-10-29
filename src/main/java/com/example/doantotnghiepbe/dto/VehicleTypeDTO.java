@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class VehicleTypeDTO {
-    private Integer id;                    // ID of the vehicle type
-    private String vehicleTypeName;        // Name of the vehicle type
+    private Integer vehicleTypeId;
+    private String vehicleTypeName;
 }

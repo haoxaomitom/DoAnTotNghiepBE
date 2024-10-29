@@ -11,7 +11,7 @@ public class PostDetailDTO {
     private Integer idPost;
     private String parkingName;
     private Double price;
-    private String pricePer;
+    private String priceUnit;
     private Integer capacity;
     private String wardName;
     private String districtName;
@@ -27,4 +27,5 @@ public class PostDetailDTO {
     private List<AmenitiesDTO> amenities;
     private List<VehicleTypeDTO> vehicleTypes;
     private PostUserDetailDTO user;
+    private List<CommentDTO> comments; // Added field for comments
 }

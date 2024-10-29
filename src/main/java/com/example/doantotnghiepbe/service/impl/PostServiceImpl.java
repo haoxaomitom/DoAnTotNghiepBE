@@ -16,7 +16,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,38 +35,15 @@ public class PostServiceImpl implements PostService {
     public Page<PostDTO> getAllPosts(Pageable pageable) {
         Page<Post> postPage = postRepository.findAll(pageable);
         List<PostDTO> postDTOs = postPage.stream()
-                .map(post -> modelMapper.map(post, PostDTO.class))  // Convert each Post entity to PostDTO
+                .map(post -> {
+                    PostDTO postDTO = modelMapper.map(post, PostDTO.class);
+                    postDTO.setCommentCount(post.getCommentCount());
+                    return postDTO;
+                })
                 .collect(Collectors.toList());
         return new PageImpl<>(postDTOs, pageable, postPage.getTotalElements());
     }
 
-//    @Override
-//    public PostDTO getPostById(Integer id) {
-//        Post post = postRepository.findById(id)
-//                .orElseThrow(() -> new RuntimeException("Post not found"));
-//        return modelMapper.map(post, PostDTO.class);  // Map the entity to DTO
-//    }
-
-//    @Override
-//    public PostDTO createPost(PostDTO postDTO) {
-//        Post post = modelMapper.map(postDTO, Post.class);  // Convert DTO to entity
-//        Post savedPost = postRepository.save(post);        // Save the entity
-//        return modelMapper.map(savedPost, PostDTO.class);  // Convert entity back to DTO
-//    }
-//
-//    @Override
-//    public PostDTO updatePost(Integer id, PostDTO postDTO) {
-//        Post existingPost = postRepository.findById(id)
-//                .orElseThrow(() -> new RuntimeException("Post not found"));
-//        modelMapper.map(postDTO, existingPost);  // Map DTO fields to the existing entity
-//        Post updatedPost = postRepository.save(existingPost);
-//        return modelMapper.map(updatedPost, PostDTO.class);  // Return the updated DTO
-//    }
-//
-//    @Override
-//    public void deletePost(Integer id) {
-//        postRepository.deleteById(id);
-//    }
 
     @Override
     public List<Object[]> countPostsByDistrict() {
@@ -86,6 +62,22 @@ public class PostServiceImpl implements PostService {
         Pageable pageable = PageRequest.of(page, 5);
         return postRepository.searchPostsByVehicleType(vehicleType, pageable)
                 .map(post -> modelMapper.map(post, PostDTO.class));  // Map entities to DTOs
+    }
+
+    @Override
+    public Page<PostDTO> sortPostsByPrice(String sort, Pageable pageable) {
+        if ("desc".equalsIgnoreCase(sort)) {
+            return postRepository.findAllByOrderByPriceDesc(pageable)
+                    .map(this::convertToDTO);
+        } else { // Default to ascending
+            return postRepository.findAllByOrderByPriceAsc(pageable)
+                    .map(this::convertToDTO);
+        }
+    }
+
+
+    private PostDTO convertToDTO(Post post) {
+        return modelMapper.map(post, PostDTO.class);
     }
 }
 

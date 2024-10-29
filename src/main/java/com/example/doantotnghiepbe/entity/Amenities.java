@@ -8,19 +8,18 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "Amenities")
+@Table(name = "amenities")
 public class Amenities {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer idAmenities;
+    private Integer amenitiesId;
 
-    @ManyToOne
-    @JoinColumn(name = "id_post")
-    @JsonBackReference  // Prevents cyclic references during serialization
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id", nullable = false)
+    @JsonBackReference
     private Post post;
 
     @Column(name = "amenities_name")
     private String amenitiesName;
-
 }

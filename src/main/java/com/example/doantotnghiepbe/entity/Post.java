@@ -18,22 +18,17 @@ public class Post {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer idPost;
+    private Integer postId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @Column(name = "parking_name")
     private String parkingName;
 
-    @Column(name = "price")
-    private Double price;
-
-    @Column(name = "username", insertable=false, updatable=false)
-    private String userName;
-
-    @Column(name = "price_per")
-    private String pricePer;
-
-    @Column(name = "capacity")
-    private Integer capacity;
+    @Column(name = "street")
+    private String street;
 
     @Column(name = "ward_name")
     private String wardName;
@@ -44,37 +39,44 @@ public class Post {
     @Column(name = "province_name")
     private String provinceName;
 
+    @Column(name = "price")
+    private Float price;
+
+    @Column(name = "price_unit")
+    private String priceUnit;
+
+    @Column(name = "capacity")
+    private Integer capacity;
+
     @Column(name = "latitude")
     private Double latitude;
 
     @Column(name = "longitude")
     private Double longitude;
 
-    @Column(name = "opening_hours")
-    private LocalTime openingHours;
+    @Column(name = "description")
+    private String description;
 
     @Column(name = "status")
     private String status;
 
+    @Column(name = "comment_count")
+    private Integer commentCount;
+
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    @Column(name ="description")
-    private String description;
-
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference  // Manages the child references
+    @JsonManagedReference
     private List<Image> images = new ArrayList<>();
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference  // Manages the child references
+    @JsonManagedReference
     private List<Amenities> amenities = new ArrayList<>();
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<VehicleType> vehicleTypes = new ArrayList<>();
 
-    @ManyToOne
-    @JoinColumn(name = "username", referencedColumnName = "username", nullable = false)
-    private User user;  // Reference to the User entity
+
 }
