@@ -23,12 +23,13 @@ public class PostDTO {
     private String districtName;
     private String provinceName;
     private String status;
+    private Integer commentCount;
     private LocalDateTime createdAt;
     private List<Image> images;
     private List<Amenities> amenities;
     private List<VehicleType> vehicleTypes;
     private List<PostUserDTO> user;
-    private Integer commentCount;
+
 }
 
 

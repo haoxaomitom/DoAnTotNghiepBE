@@ -1,7 +1,6 @@
 package com.example.doantotnghiepbe.service;
 
 import com.example.doantotnghiepbe.dto.PostDTO;
-import com.example.doantotnghiepbe.entity.Post;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -11,11 +10,11 @@ public interface PostService {
 
     List<Object[]> countPostsByDistrict();
 
-    Page<PostDTO> searchPosts(String searchTerm, int page);
+    Page<PostDTO> searchPosts(String searchTerm, Pageable pageable);
 
-    Page<PostDTO> getAllPosts(Pageable pageable);
+    Page<PostDTO> findAllByOrderByCreatedAtDesc(Pageable pageable);
 
-    Page<PostDTO> searchPostsByVehicleType(String vehicleType, int page);
+    Page<PostDTO> searchPostsByVehicleType(String vehicleType, Pageable pageable);
 
     Page<PostDTO> sortPostsByPrice(String sort, Pageable pageable);
 }

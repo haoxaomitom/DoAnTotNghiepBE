@@ -18,8 +18,6 @@ public class PostDetailDTO {
     private String provinceName;
     private Double latitude;
     private Double longitude;
-    private String image;
-    private LocalTime openingHours;
     private String status;
     private LocalDateTime createdAt;
     private String description;
