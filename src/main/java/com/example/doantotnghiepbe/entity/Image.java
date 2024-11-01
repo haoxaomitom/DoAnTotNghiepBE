@@ -1,7 +1,7 @@
 package com.example.doantotnghiepbe.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
 
 @Data
@@ -13,13 +13,13 @@ public class Image {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer idImage;
+    private Integer imageId;
 
-    @Column(name = "image_url")
+    @Column(name = "image_url", nullable = false)
     private String imageUrl;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnore
-    @JoinColumn(name = "id_post")
+    @JoinColumn(name = "post_id", nullable = false)
+    @JsonBackReference
     private Post post;
 }

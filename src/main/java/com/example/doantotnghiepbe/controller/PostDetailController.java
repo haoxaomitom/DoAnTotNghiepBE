@@ -1,9 +1,12 @@
 package com.example.doantotnghiepbe.controller;
 
+import com.example.doantotnghiepbe.dto.PostDTO;
 import com.example.doantotnghiepbe.dto.PostDetailDTO;
 import com.example.doantotnghiepbe.entity.Post;
 import com.example.doantotnghiepbe.service.PostDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,8 +30,8 @@ public class PostDetailController {
 
     // API để lấy các bài đăng liên quan theo quận
     @GetMapping("/related")
-    public ResponseEntity<List<Post>> getRelatedPosts(@RequestParam String districtName) {
-        List<Post> relatedPosts = postDetailService.getRelatedPostsByDistrict(districtName);
+    public ResponseEntity<Page<PostDTO>> getRelatedPostsByDistrict(@RequestParam String districtName, Pageable pageable) {
+        Page<PostDTO> relatedPosts = postDetailService.getRelatedPostsByDistrict(districtName, pageable);
         return ResponseEntity.ok(relatedPosts);
     }
 }
