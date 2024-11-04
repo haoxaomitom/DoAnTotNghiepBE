@@ -7,7 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PostUserDTO {
-    private String firstName;
-    private String lastName;
+public class ApiResponse<T> {
+    private String status;
+    private String message;
+    private T data;
 }

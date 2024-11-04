@@ -19,7 +19,7 @@ public class Price {
     private Integer duration;
 
     @Column(nullable = false)
-    private Long amount;
+    private Integer amount;
 
     @Column(length = 3, columnDefinition = "VARCHAR(3) DEFAULT 'VND'")
     private String currency;
@@ -27,6 +27,10 @@ public class Price {
     @Column(name = "discount_percentage")
     private Integer discountPercentage;
 
+    @Column(name = "final_amount")
+    private Integer finalAmount;
+
+    @Column(name = "description")
     private String description;
 
 }

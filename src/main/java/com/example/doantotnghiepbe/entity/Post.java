@@ -40,7 +40,7 @@ public class Post {
     private String provinceName;
 
     @Column(name = "price")
-    private Float price;
+    private Double price;
 
     @Column(name = "price_unit")
     private String priceUnit;
