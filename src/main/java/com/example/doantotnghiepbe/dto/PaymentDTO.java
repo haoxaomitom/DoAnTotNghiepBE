@@ -13,7 +13,7 @@ public class PaymentDTO {
     private Long paymentId;          // ID của giao dịch trong CSDL
     private Integer postId;             // ID bài đăng
     private Integer priceId;            // ID giá
-    private Long paymentAmount;     // Số tiền thanh toán
+    private Integer paymentAmount;     // Số tiền thanh toán
     private String paymentInfo;
     private String currency;          // Loại tiền tệ
     private String paymentStatus;     // Trạng thái thanh toán

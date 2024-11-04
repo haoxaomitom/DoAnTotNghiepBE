@@ -7,7 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PostUserDTO {
-    private String firstName;
-    private String lastName;
+public class FavoriteDTO {
+    private Integer favoriteId;
+    private Integer post;
+    private Integer user;
 }
