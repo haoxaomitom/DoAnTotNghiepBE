@@ -1,5 +1,6 @@
 package com.example.doantotnghiepbe.controller;
 
+import com.example.doantotnghiepbe.dto.UserInfoDTO;
 import com.example.doantotnghiepbe.dto.UsersDTO;
 import com.example.doantotnghiepbe.dto.UsersLoginDTO;
 import com.example.doantotnghiepbe.dto.response.LoginRespone;
@@ -58,20 +59,20 @@ public class UsersController {
         }
         return ResponseEntity.ok(result);
     }
-    @PostMapping("/update")
-    public ResponseEntity<?> update(@Valid @RequestBody UsersDTO usersDTO){
+    @PutMapping("/update")
+    public ResponseEntity<?> update(@Valid @RequestBody UserInfoDTO userInfoDTO){
     Map<String,Object> result = new HashMap<>();
     try{
         result.put("status",true);
         result.put("message", "Update thành công!");
-        result.put("data",usersService.updateUsers(usersDTO));
+        result.put("data",usersService.updateUserInfo(userInfoDTO));
     }catch (ExistingException e){
         result.put("status",false);
         result.put("message", "Email đã tồn tại!");
         result.put("data",null);
     }catch ( DataNotFoundException e){
         result.put("status",false);
-        result.put("message", "không tìm thấy username");
+        result.put("message", "không tìm thấy người dùng");
         result.put("data",null);
     }
         return ResponseEntity.ok(result);

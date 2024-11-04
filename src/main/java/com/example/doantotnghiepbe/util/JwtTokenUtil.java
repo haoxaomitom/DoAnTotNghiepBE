@@ -25,7 +25,7 @@ public class JwtTokenUtil {
     public String generateToken(Users user) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("userId", user.getUsername());
-        claims.put("roleId", user.getIdRole().getIdRole());
+        claims.put("roleId", user.getRoles().getRoleId());
         try {
             String token = Jwts.builder()
                     .claims(claims)
@@ -66,13 +66,5 @@ public class JwtTokenUtil {
         return (username.equals(userDetails.getUsername()))
                 && !isTokenExpired(token);
     }
-//        private static String generatrSecretKey() {
-//        SecureRandom random = new SecureRandom();
-//        byte[] bytes = new byte[32];
-//        random.nextBytes(bytes);
-//        String sceretKey = Encoders.BASE64.encode(bytes);
-//        return sceretKey;
-//        }
-
 
 }

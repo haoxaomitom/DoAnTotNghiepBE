@@ -11,6 +11,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UsersDTO {
+
     String username;
 
     String password;
@@ -19,25 +20,9 @@ public class UsersDTO {
 
     String lastName;
 
-    String street;
-
-    String wardName;
-
-    String districtName;
-
-    String provinceName;
+    Roles roles;
 
     String email;
-
-    String phoneNumber;
-
-    Date dateOfBirth;
-
-    String gender;
-
-    String avatar;
-
-    Roles idRole;
 
     Boolean verified;
 

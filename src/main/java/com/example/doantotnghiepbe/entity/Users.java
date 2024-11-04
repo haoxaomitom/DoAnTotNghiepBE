@@ -1,11 +1,9 @@
 package com.example.doantotnghiepbe.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,71 +21,74 @@ import java.util.List;
 @Entity
 @Table(name = "Users")
 public class Users implements UserDetails {
+
     @Id
-    String username;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long userId;
 
-    String password;
+    @Column(nullable = false, unique = true, length = 255)
+    private String username;
 
-    String firstName;
+    @Column(nullable = false, length = 255)
+    private String password;
 
-    String lastName;
+    @Column(length = 50)
+    private String firstName;
 
-    String street;
+    @Column(length = 50)
+    private String lastName;
 
-    String wardName;
+    @Column(length = 255)
+    private String street;
 
-    String districtName;
+    @Column(length = 100)
+    private String wardName;
 
-    String provinceName;
+    @Column(length = 100)
+    private String districtName;
 
-    String email;
+    @Column(length = 100)
+    private String provinceName;
 
-    String phoneNumber;
+    @Column(unique = true, length = 100)
+    private String email;
 
-    Date dateOfBirth;
+    @Column(length = 15)
+    private String phoneNumber;
 
-    String gender;
+    @Temporal(TemporalType.DATE)
+    private Date dateOfBirth;
 
-    String avatar;
+    @Column(length = 10)
+    private String gender;
+
+    @Column(length = 255)
+    private String avatar;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "created_at")
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    @Column(nullable = false)
+    private Boolean verified = false;
+
+    @Column(nullable = false)
+    private Boolean isActive = true;
 
     @ManyToOne
-    @JoinColumn(name = "idRole", referencedColumnName = "idRole")
-    Roles idRole;
-
-    Boolean verified;
-
-    Boolean isActive;
-
-    LocalDateTime createdAt = LocalDateTime.now();
+    @JoinColumn(name = "role_id", nullable = false)
+    @JsonBackReference
+    private Roles roles;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        List<SimpleGrantedAuthority> authorityList = new ArrayList<>();
-        authorityList.add(new SimpleGrantedAuthority("ROLE_"+getIdRole().getRoleName().toUpperCase()));
-        return authorityList;
-    }
-    @Override
-    public String getUsername() {
-        return username;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
+        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority("ROLE_"+roles.getRoleName().toUpperCase()));
+        return authorities;
     }
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return this.isActive;
     }
 }

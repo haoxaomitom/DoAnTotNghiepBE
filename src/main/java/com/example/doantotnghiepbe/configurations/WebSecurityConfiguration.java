@@ -32,7 +32,7 @@ public class WebSecurityConfiguration {
                     requests.requestMatchers(
                             "/api/**"
                     ).permitAll()
-                    .requestMatchers("/api/users/getUserByUsername").hasAnyRole(Roles.USER,Roles.ADMIN)
+                    .requestMatchers("/api/users/getUserByUsername").hasAnyRole("USER","ADMIN","MODERATOR")
 
                             .anyRequest().authenticated();
                 }))

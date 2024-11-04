@@ -1,9 +1,8 @@
 package com.example.doantotnghiepbe.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
-import lombok.experimental.FieldDefaults;
 
 import java.util.List;
 
@@ -13,17 +12,21 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Table(name = "Roles")
-@FieldDefaults(level = AccessLevel.PRIVATE)
 public class Roles {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Integer idRole;
+    private Long roleId;
 
-    String roleName;
-    @OneToMany(mappedBy = "idRole")
-    @JsonBackReference
-    List<Users> usersList;
+    @Column(length = 50, nullable = false)
+    private String roleName;
 
-    public static String ADMIN = "ADMIN";
-    public static String USER = "USER";
+    @OneToMany(mappedBy = "roles")
+    @JsonManagedReference
+    private List<Users> users;
+
+    @OneToMany(mappedBy = "roles")
+    @JsonManagedReference
+    private List<Authorities> authorities;
+
 }

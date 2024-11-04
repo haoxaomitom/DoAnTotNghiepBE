@@ -15,5 +15,4 @@ public interface UsersService {
     Users register (UsersDTO user) throws DataNotFoundException;
     Users updateUserInfo (UserInfoDTO user) throws DataNotFoundException;
     String[]  login(String username, String password) throws DataNotFoundException;
-
 }

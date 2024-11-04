@@ -11,6 +11,8 @@ import java.util.Date;
 @NoArgsConstructor
 public class UserInfoDTO {
 
+    String username;
+
     String firstName;
 
     String lastName;

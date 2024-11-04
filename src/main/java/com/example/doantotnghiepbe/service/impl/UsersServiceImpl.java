@@ -1,5 +1,7 @@
 package com.example.doantotnghiepbe.service.impl;
 
+import com.cloudinary.utils.ObjectUtils;
+import com.example.doantotnghiepbe.configurations.CloudinaryConfig;
 import com.example.doantotnghiepbe.dto.UserInfoDTO;
 import com.example.doantotnghiepbe.dto.UsersDTO;
 import com.example.doantotnghiepbe.entity.Users;
@@ -17,7 +19,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class UsersServiceImpl implements UsersService {
@@ -33,6 +37,8 @@ public class UsersServiceImpl implements UsersService {
     private ModelMapper modelMapper;
     @Autowired
     private RolesRepository rolesRepository;
+    @Autowired
+    private CloudinaryConfig cloudinaryConfig;
 
     @Override
     public List<Users> getAll()  {
@@ -41,42 +47,51 @@ public class UsersServiceImpl implements UsersService {
 
     @Override
     public Users getUsersByUsername(String username) throws DataNotFoundException {
-        Users user = usersRepository.findById(username).orElseThrow(()->new DataNotFoundException("Không tìm thấy tài khoản "+ username));
+        Users user = usersRepository.findUsersByUsername(username).orElseThrow(()->new DataNotFoundException("Không tìm thấy tài khoản "+ username));
         return user;
     }
 
     @Override
     public Users register(UsersDTO usersDTO) throws DataNotFoundException{
-        if(usersRepository.existsById(usersDTO.getUsername())){
+        if(usersRepository.existsByUsername(usersDTO.getUsername())){
             throw new ExistingException("Tên đăng nhập đã tồn tại");
         }
         if(usersRepository.existsByEmail(usersDTO.getEmail())){
             throw new ExistingException("Email đã tồn tại");
         }
         Users users = modelMapper.map(usersDTO,Users.class);
-        users.setIdRole(rolesRepository.findById(2).orElseThrow(()-> new DataNotFoundException("Could not find role with id: 1")));
+        users.setRoles(rolesRepository.findById(2).orElseThrow(()-> new DataNotFoundException("Could not find role with id: 1")));
         users.setPassword(passwordEncoder.encode(users.getPassword()));
         users.setIsActive(true);
         return usersRepository.save(users);
     }
 
     @Override
-    public Users updateUserInfo(UserInfoDTO userDTO) throws DataNotFoundException {
-        Users user = usersRepository.findById(userDTO.getUsername()).orElseThrow(()->new DataNotFoundException("Không tìm thấy tài khoản "+ userDTO.getUsername()));
-        if(!user.getEmail().equals(userDTO.getEmail())){
-            if(usersRepository.existsByEmail(userDTO.getEmail())){
+    public Users updateUserInfo(UserInfoDTO userInfoDTO) throws DataNotFoundException {
+        Users user = usersRepository.findUsersByUsername(userInfoDTO.getUsername()).orElseThrow(()->new DataNotFoundException("Không tìm thấy tài khoản "+ userInfoDTO.getUsername()));
+        if(!user.getEmail().equals(userInfoDTO.getEmail())){
+            if(usersRepository.existsByEmail(userInfoDTO.getEmail())){
                 throw new ExistingException("Email đã tồn tại");
             }
         }
-        user = modelMapper.map(userDTO,Users.class);
-        user.setIdRole(rolesRepository.findById(2).orElseThrow(()-> new DataNotFoundException("Could not find role with id: 1")));
+        modelMapper.map(userInfoDTO,user);
+        user.setRoles(rolesRepository.findById(2).orElseThrow(()-> new DataNotFoundException("Could not find role with id: 1")));
         user.setIsActive(true);
+        if (userInfoDTO.getAvatar() != null) {
+            try {
+                Map uploadResult = cloudinaryConfig.cloudinary().uploader().upload(userInfoDTO.getAvatar().getBytes(), ObjectUtils.emptyMap());
+                String imageUrl = uploadResult.get("url").toString();
+                user.setAvatar(imageUrl);
+            } catch (IOException e) {
+                throw new RuntimeException("Tải ảnh lên thất bại", e);
+            }
+        }
         return usersRepository.save(user);
     }
 
     @Override
     public String[] login(String username, String password) throws DataNotFoundException {
-        Users user = usersRepository.findById(username)
+        Users user = usersRepository.findUsersByUsername(username)
                 .orElseThrow(() -> new DataNotFoundException("Invalid email or password"));
         if(!passwordEncoder.matches(password,user.getPassword())) {
             throw new BadCredentialsException("Invalid email or password");
