@@ -4,42 +4,41 @@ import com.example.doantotnghiepbe.entity.Post;
 import com.example.doantotnghiepbe.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/posts")
-@CrossOrigin(origins = "http://127.0.0.1:5500")
 public class PostController {
 
     @Autowired
     private PostService postService;
 
-    // Lấy tất cả thông tin các post với phân trang
     @GetMapping
-
-    public ResponseEntity<Page<Post>> getAllPosts(@RequestParam(defaultValue = "0") int page,
-                                  @RequestParam(defaultValue = "5") int size) {
-        Page<Post> postPage = postService.getAllPosts(PageRequest.of(page, size));
-        return ResponseEntity.ok(postPage); // Lấy danh sách từ Page
+    public ResponseEntity<Page<Post>> getAllPosts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size) {
+        Page<Post> posts = postService.getAllPosts(page, size);
+        return ResponseEntity.ok(posts);
     }
 
-    @GetMapping("/countByDistrict")
-    public ResponseEntity<Map<String, Integer>> countPostsByDistrict() {
-        List<Object[]> results = postService.countPostsByDistrict();
-        Map<String, Integer> districtCounts = new HashMap<>();
+    @GetMapping("/{id}")
+    public ResponseEntity<Post> getPostById(@PathVariable Long id) {
+        Optional<Post> post = postService.getPostById(id);
+        return post.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+    }
 
-        for (Object[] result : results) {
-            String districtName = (String) result[0];
-            Long count = (Long) result[1];
-            districtCounts.put(districtName, count.intValue());
-        }
+    @PostMapping
+    public ResponseEntity<Post> createPost(@RequestBody Post post) {
+        Post createdPost = postService.createPost(post);
+        return ResponseEntity.status(201).body(createdPost);
+    }
 
-        return ResponseEntity.ok(districtCounts);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletePost(@PathVariable Long id) {
+        postService.deletePost(id);
+        return ResponseEntity.noContent().build();
     }
 }

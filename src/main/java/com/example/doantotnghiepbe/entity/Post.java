@@ -1,88 +1,89 @@
 package com.example.doantotnghiepbe.entity;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
-@Table(name = "Posts")
+@Table(name = "posts")
 public class Post {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id_post;
 
-    @Column(name = "username")
+    @Column(name = "username", nullable = false)
     private String username;
 
-    @Column(name = "parking_name")
+    @Column(name = "parking_name", nullable = false)
     private String parking_name;
 
-    @Column(name = "price")
-    private Double price;
+    @Column(name = "street", nullable = false)
+    private String street;
 
-    @Column(name = "price_per")
-    private String price_per;
-
-    @Column(name = "capacity")
-    private Integer capacity;
-
-    @Column(name = "ward_name")
+    @Column(name = "ward_name", nullable = false)
     private String ward_name;
 
-    @Column(name = "district_name")
+    @Column(name = "district_name", nullable = false)
     private String district_name;
 
-    @Column(name = "province_name")
+    @Column(name = "province_name", nullable = false)
     private String province_name;
 
-    @Column(name = "latitude")
-    private Double latitude;
+    @Column(name = "price", nullable = false)
+    private Integer price;
 
-    @Column(name = "longitude")
-    private Double longitude;
+    @Column(name = "price_per", nullable = false)
+    private String price_per;
 
-    @Column(name = "image")
-    private String image;
+    @Column(name = "capacity", nullable = false)
+    private Integer capacity;
 
-    @Column(name = "opening_hours")
+    @Column(name = "latitude", nullable = false)
+    private String latitude;
+
+    @Column(name = "longitude", nullable = false)
+    private String longitude;
+
+    @Column(name = "describe", length = 500)
+    private String describe;
+
+    @Column(name = "opening_hours", nullable = false)
     private LocalTime opening_hours;
 
-    @Column(name = "status")
+    @Column(name = "status", nullable = false)
     private String status;
 
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
-    // Many-to-many relationship with Amenities through PostAmenities
-    @ManyToMany
-    @JoinTable(
-            name = "post_amenities",  // The name of the join table
-            joinColumns = @JoinColumn(name = "id_post"),  // Foreign key in the join table referencing Post
-            inverseJoinColumns = @JoinColumn(name = "id_amenities")  // Foreign key in the join table referencing Amenities
-    )
-    private Set<Amenities> amenities = new HashSet<>();
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime created_at;
+
+    @ManyToOne
+    @JoinColumn(name = "username", referencedColumnName = "username", insertable = false, updatable = false)
+    private User user;
 
     // Constructors
-    public Post() {}
+    public Post() {
+        // Default constructor
+    }
 
-    public Post(String username, String parking_name, Double price, String price_per, Integer capacity, String ward_name, String district_name, String province_name, Double latitude, Double longitude, String image, LocalTime opening_hours, String status) {
+    public Post(String username, String parking_name, String street, String ward_name, String district_name,
+                String province_name, Integer price, String price_per, Integer capacity, String latitude,
+                String longitude, String describe, LocalTime opening_hours, String status) {
         this.username = username;
         this.parking_name = parking_name;
-        this.price = price;
-        this.price_per = price_per;
-        this.capacity = capacity;
+        this.street = street;
         this.ward_name = ward_name;
         this.district_name = district_name;
         this.province_name = province_name;
+        this.price = price;
+        this.price_per = price_per;
+        this.capacity = capacity;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.image = image;
+        this.describe = describe;
         this.opening_hours = opening_hours;
         this.status = status;
+        this.created_at = LocalDateTime.now(); // Set current time on creation
     }
 
     // Getters and Setters
@@ -110,28 +111,12 @@ public class Post {
         this.parking_name = parking_name;
     }
 
-    public Double getPrice() {
-        return price;
+    public String getStreet() {
+        return street;
     }
 
-    public void setPrice(Double price) {
-        this.price = price;
-    }
-
-    public String getPrice_per() {
-        return price_per;
-    }
-
-    public void setPrice_per(String price_per) {
-        this.price_per = price_per;
-    }
-
-    public Integer getCapacity() {
-        return capacity;
-    }
-
-    public void setCapacity(Integer capacity) {
-        this.capacity = capacity;
+    public void setStreet(String street) {
+        this.street = street;
     }
 
     public String getWard_name() {
@@ -158,28 +143,52 @@ public class Post {
         this.province_name = province_name;
     }
 
-    public Double getLatitude() {
+    public Integer getPrice() {
+        return price;
+    }
+
+    public void setPrice(Integer price) {
+        this.price = price;
+    }
+
+    public String getPrice_per() {
+        return price_per;
+    }
+
+    public void setPrice_per(String price_per) {
+        this.price_per = price_per;
+    }
+
+    public Integer getCapacity() {
+        return capacity;
+    }
+
+    public void setCapacity(Integer capacity) {
+        this.capacity = capacity;
+    }
+
+    public String getLatitude() {
         return latitude;
     }
 
-    public void setLatitude(Double latitude) {
+    public void setLatitude(String latitude) {
         this.latitude = latitude;
     }
 
-    public Double getLongitude() {
+    public String getLongitude() {
         return longitude;
     }
 
-    public void setLongitude(Double longitude) {
+    public void setLongitude(String longitude) {
         this.longitude = longitude;
     }
 
-    public String getImage() {
-        return image;
+    public String getDescribe() {
+        return describe;
     }
 
-    public void setImage(String image) {
-        this.image = image;
+    public void setDescribe(String describe) {
+        this.describe = describe;
     }
 
     public LocalTime getOpening_hours() {
@@ -198,29 +207,17 @@ public class Post {
         this.status = status;
     }
 
-    public Set<Amenities> getAmenities() {
-        return amenities;
+    public LocalDateTime getCreated_at() {
+        return created_at;
     }
 
-    public void setAmenities(Set<Amenities> amenities) {
-        this.amenities = amenities;
+    // No setter for created_at, it's set automatically on creation
+
+    public User getUser() {
+        return user;
     }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    // Method to add an amenity to the post
-    public void addAmenity(Amenities amenity) {
-        this.amenities.add(amenity);
-    }
-
-    // Method to remove an amenity from the post
-    public void removeAmenity(Amenities amenity) {
-        this.amenities.remove(amenity);
+    public void setUser(User user) {
+        this.user = user;
     }
 }

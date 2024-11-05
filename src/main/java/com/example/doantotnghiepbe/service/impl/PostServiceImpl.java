@@ -12,22 +12,45 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class PostServiceImpl implements PostService {
+public class PostServiceImpl implements PostService{
 
     @Autowired
     private PostRepository postRepository;
 
     @Override
     public Page<Post> getAllPosts(Pageable pageable) {
-        return postRepository.findAll(pageable); // Gọi repository để lấy danh sách bài đăng với phân trang
+        return postRepository.findAll(pageable);
     }
 
     @Override
     public Optional<Post> getPostById(Long id) {
-        return postRepository.findById(id); // Gọi repository để tìm bài đăng theo ID
+        return postRepository.findById(id);
     }
 
+    @Override
     public List<Object[]> countPostsByDistrict() {
         return postRepository.countPostsByDistrict();
+    }
+
+    @Override
+    public Post createPost(Post post) {
+        return postRepository.save(post);
+    }
+
+    @Override
+    public Post updatePost(Long id, Post post) {
+        if (!postRepository.existsById(id)) {
+            throw new RuntimeException("Post not found");
+        }
+        post.setId_post(id);
+        return postRepository.save(post);
+    }
+
+    @Override
+    public void deletePost(Long id) {
+        if (!postRepository.existsById(id)) {
+            throw new RuntimeException("Post not found");
+        }
+        postRepository.deleteById(id);
     }
 }
