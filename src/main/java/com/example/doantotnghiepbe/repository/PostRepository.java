@@ -39,4 +39,6 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
     Page<Post> searchPostsByVehicleType(@Param("vehicleType") String vehicleType, Pageable pageable);
 
     Post findByPostId(Integer postId);
+
+    List<Post> findByUserUserId(Integer userId);
 }
