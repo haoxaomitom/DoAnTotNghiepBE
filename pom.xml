@@ -92,12 +92,7 @@
 			<artifactId>modelmapper</artifactId>
 			<version>3.2.0</version>
 		</dependency>
-		<!--cloudinary-->
-		<dependency>
-			<groupId>com.cloudinary</groupId>
-			<artifactId>cloudinary-http44</artifactId>
-			<version>1.38.0</version>
-		</dependency>
+
 		<!--security	-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

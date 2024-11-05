@@ -33,5 +33,4 @@ public class UserInfoDTO {
 
     String gender;
 
-    String avatar;
 }

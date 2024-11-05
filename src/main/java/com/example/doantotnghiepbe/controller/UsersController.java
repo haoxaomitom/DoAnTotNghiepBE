@@ -12,7 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -91,4 +93,19 @@ public class UsersController {
         }
         return ResponseEntity.ok(result);
     }
+    @PutMapping("/avatar/{username}")
+    public ResponseEntity<?> uploadAvatar(@PathVariable("username") String username, @ModelAttribute MultipartFile file) throws DataNotFoundException, IOException{
+        Map<String,Object> result = new HashMap<>();
+        try {
+            result.put("status",true);
+            result.put("message", "Tải ảnh thành công!");
+            result.put("data",usersService.uploadAvatar(username ,file));
+        }catch (DataNotFoundException |IOException e){
+            result.put("status",false);
+            result.put("message", e);
+            result.put("data",null);
+        }
+        return ResponseEntity.ok(result);
+    }
+
 }

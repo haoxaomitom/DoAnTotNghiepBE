@@ -18,6 +18,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
@@ -77,15 +78,6 @@ public class UsersServiceImpl implements UsersService {
         modelMapper.map(userInfoDTO,user);
         user.setRoles(rolesRepository.findById(2).orElseThrow(()-> new DataNotFoundException("Could not find role with id: 1")));
         user.setIsActive(true);
-        if (userInfoDTO.getAvatar() != null) {
-            try {
-                Map uploadResult = cloudinaryConfig.cloudinary().uploader().upload(userInfoDTO.getAvatar().getBytes(), ObjectUtils.emptyMap());
-                String imageUrl = uploadResult.get("url").toString();
-                user.setAvatar(imageUrl);
-            } catch (IOException e) {
-                throw new RuntimeException("Tải ảnh lên thất bại", e);
-            }
-        }
         return usersRepository.save(user);
     }
 
@@ -101,5 +93,19 @@ public class UsersServiceImpl implements UsersService {
         String[] result = new String[2];
         result[0] = jwtTokenUtil.generateToken(user);
         return result;
+    }
+
+    @Override
+    public Users uploadAvatar(String username, MultipartFile file) throws DataNotFoundException, IOException {
+        Users user = usersRepository.findUsersByUsername(username).orElseThrow(()-> new DataNotFoundException("Không tìm thấy người dùng với id: "+ username));
+
+        user.setAvatar(cloudinaryConfig.saveToCloudinary(file));
+        System.out.println("avata:" +user.getAvatar());
+        return usersRepository.save(user);
+    }
+
+    @Override
+    public Long countUsers() {
+        return usersRepository.count();
     }
 }
