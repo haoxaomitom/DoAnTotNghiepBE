@@ -17,6 +17,7 @@ public class PriceController {
 
     @GetMapping
     public List<PriceDTO> getAllPrices() {
+
         return priceService.getAllPrices();
     }
 }

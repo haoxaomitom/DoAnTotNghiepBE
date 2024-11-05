@@ -3,6 +3,8 @@ package com.example.doantotnghiepbe.controller;
 import com.example.doantotnghiepbe.configurations.VNPayConfig;
 import com.example.doantotnghiepbe.dto.PaymentDTO;
 import com.example.doantotnghiepbe.dto.PaymentResDTO;
+import com.example.doantotnghiepbe.dto.PaymentSuccessDTO;
+import com.example.doantotnghiepbe.dto.PaymentUserDTO;
 import com.example.doantotnghiepbe.entity.Payment;
 import com.example.doantotnghiepbe.entity.Post;
 import com.example.doantotnghiepbe.entity.Price;
@@ -13,11 +15,13 @@ import com.example.doantotnghiepbe.service.PaymentService;
 import com.example.doantotnghiepbe.service.PriceService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -33,26 +37,34 @@ public class PaymentController {
     @Autowired
     private PriceRepository priceRepository;
 
-//    @Autowired
-//    private PaymentService paymentService;
+    @Autowired
+    private PaymentService paymentService;
 
     @Autowired
     private PaymentRepository paymentRepository;
 
     @Autowired
     private PostRepository postRepository;
+    @Autowired
+    private ModelMapper modelMapper;
 
     @GetMapping("/payment/{priceId}")
     public ResponseEntity<?> createPayment(HttpServletRequest req,
                                            @PathVariable Integer priceId) throws UnsupportedEncodingException {
 
+        // Lấy thông tin giá từ priceId
         Price selectedPrice = priceRepository.findByPriceId(priceId);
         if (selectedPrice == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Price not found");
         }
-        long amount = selectedPrice.getAmount() * 100;  // Nhân với 100 nếu VNPay yêu cầu VND nhỏ nhấ
 
-//        long amount = 1000000 * 100 ;
+        // Tính toán amount sau khi giảm giá
+        Integer amount = selectedPrice.getAmount(); // Sử dụng amount từ Price entity
+        Integer discountPercentage = selectedPrice.getDiscountPercentage() != null ? selectedPrice.getDiscountPercentage() : 0; // Handle possible null
+
+        // Calculate discounted amount
+        Integer discountAmount = (amount * discountPercentage) / 100;
+        int finalAmount = amount - discountAmount; // Calculate final price after discount
 
         String vnp_TxnRef = VNPayConfig.getRandomNumber(8);
         String vnp_IpAddr = VNPayConfig.getIpAddress(req);
@@ -62,7 +74,7 @@ public class PaymentController {
         vnp_Params.put("vnp_Version", VNPayConfig.vnp_Version);
         vnp_Params.put("vnp_Command", VNPayConfig.vnp_Command);
         vnp_Params.put("vnp_TmnCode", vnp_TmnCode);
-        vnp_Params.put("vnp_Amount", String.valueOf(amount));
+        vnp_Params.put("vnp_Amount", String.valueOf(finalAmount * 100)); // Convert to the smallest unit for VNPay
         vnp_Params.put("vnp_CurrCode", "VND");
         vnp_Params.put("vnp_BankCode", "NCB");
         vnp_Params.put("vnp_TxnRef", vnp_TxnRef);
@@ -81,20 +93,20 @@ public class PaymentController {
         String vnp_ExpireDate = formatter.format(cld.getTime());
         vnp_Params.put("vnp_ExpireDate", vnp_ExpireDate);
 
-        List fieldNames = new ArrayList(vnp_Params.keySet());
+        List<String> fieldNames = new ArrayList<>(vnp_Params.keySet());
         Collections.sort(fieldNames);
         StringBuilder hashData = new StringBuilder();
         StringBuilder query = new StringBuilder();
-        Iterator itr = fieldNames.iterator();
+        Iterator<String> itr = fieldNames.iterator();
         while (itr.hasNext()) {
-            String fieldName = (String) itr.next();
-            String fieldValue = (String) vnp_Params.get(fieldName);
+            String fieldName = itr.next();
+            String fieldValue = vnp_Params.get(fieldName);
             if ((fieldValue != null) && (fieldValue.length() > 0)) {
-                //Build hash data
+                // Build hash data
                 hashData.append(fieldName);
                 hashData.append('=');
                 hashData.append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII.toString()));
-                //Build query
+                // Build query
                 query.append(URLEncoder.encode(fieldName, StandardCharsets.US_ASCII.toString()));
                 query.append('=');
                 query.append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII.toString()));
@@ -105,16 +117,10 @@ public class PaymentController {
             }
         }
 
-
         String queryUrl = query.toString();
         String vnp_SecureHash = VNPayConfig.hmacSHA512(VNPayConfig.secretKey, hashData.toString());
         queryUrl += "&vnp_SecureHash=" + vnp_SecureHash;
         String paymentUrl = VNPayConfig.vnp_PayUrl + "?" + queryUrl;
-
-        Price price = priceRepository.findByPriceId(priceId);
-        if (price == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Price not found");
-        }
 
         Post post = postRepository.findByPostId(1); // Lấy post có ID = 1
         if (post == null) {
@@ -122,9 +128,9 @@ public class PaymentController {
         }
         Payment payment = new Payment();
         payment.setPostId(post);
-        payment.setPriceId(price);
+        payment.setPriceId(selectedPrice); // Set giá trị Price
         payment.setVnpTxnRef(vnp_TxnRef);
-        payment.setPaymentAmount(amount);
+        payment.setPaymentAmount(finalAmount); // Use the finalAmount calculated
         payment.setBankCode("NCB");
         payment.setPaymentStatus("Pending");
         payment.setPaymentInfo("Thanh toan don hang: " + vnp_TxnRef);
@@ -139,10 +145,11 @@ public class PaymentController {
     }
 
     @GetMapping("/return")
-    public ResponseEntity<?> handleVNPayReturn(@RequestParam Map<String, String> allParams) {
+    public void handleVNPayReturn(@RequestParam Map<String, String> allParams, HttpServletResponse response) throws IOException {
         String txnRef = allParams.get("vnp_TxnRef");
         Payment payment = paymentRepository.findByVnpTxnRef(txnRef);
 
+        // Kiểm tra nếu payment không tồn tại
         if (payment != null) {
             // Tạo lại hashData cho các tham số nhận được từ VNPay
             Map<String, String> vnp_Params = new HashMap<>(allParams);
@@ -160,28 +167,81 @@ public class PaymentController {
                 }
             }
             if (hashData.length() > 0) {
-                hashData.setLength(hashData.length() - 1); // Xóa ký tự '&' cuối cùng
+                hashData.setLength(hashData.length() - 1); // Remove the last '&'
             }
 
             // Kiểm tra SecureHash
             if (VNPayConfig.hmacSHA512(VNPayConfig.secretKey, hashData.toString()).equals(allParams.get("vnp_SecureHash"))) {
-                payment.setPaymentStatus("Success");
-                payment.setVnpTransactionId(allParams.get("vnp_TransactionNo"));
-                payment.setPaymentDate(LocalDateTime.now());
+                // Chỉ lưu vào cơ sở dữ liệu nếu thanh toán thành công
+                String paymentStatus = allParams.get("vnp_ResponseCode"); // Tham số phản hồi từ VNPay
+                if ("00".equals(paymentStatus)) { // 00 là mã thành công
+                    payment.setPaymentStatus("Success");
+                    payment.setVnpTransactionId(allParams.get("vnp_TransactionNo"));
+                    LocalDateTime paymentDate = LocalDateTime.now();
+                    payment.setPaymentDate(paymentDate);
 
-                // Lấy thông tin duration từ bảng Price
-                Price price = priceRepository.findByPriceId(payment.getPriceId().getPriceId());
-                if (price != null) {
-                    int duration = price.getDuration(); // Giả sử duration là kiểu int
-                    LocalDateTime topPostEnd = LocalDateTime.now().plusDays(duration);
-                    payment.setTopPostEnd(topPostEnd); // Set ngày hết hạn
+                    Price price = priceRepository.findByPriceId(payment.getPriceId().getPriceId());
+                    if (price != null) {
+                        int duration = price.getDuration();
+
+                        // Retrieve the associated post and check if topPostEnd already exists
+                        Post post = payment.getPostId();
+                        LocalDateTime topPostEnd;
+
+                        if (post.getTopPostEnd() != null) {
+                            // If topPostEnd exists, extend it by adding the duration
+                            topPostEnd = post.getTopPostEnd().plusDays(duration);
+                        } else {
+                            // If topPostEnd is null, set it by adding duration to the current payment date
+                            topPostEnd = paymentDate.plusDays(duration);
+                        }
+                        post.setTopPostEnd(topPostEnd);
+                        postRepository.save(post);
+                    }
+
+
+                    paymentRepository.save(payment); // Save the updated payment entity
+
+                    // Redirect to the success page
+                    response.sendRedirect("http://127.0.0.1:5500/app/components/payment/PaymentSuccess.html?txnRef=" + txnRef);
+                    return;
+                } else {
+                    // Nếu không thành công, cập nhật trạng thái thanh toán
+//                    payment.setPaymentAmount(0);
+                    payment.setPaymentStatus("Failed"); // Cập nhật trạng thái thành công
+                    paymentRepository.save(payment); // Lưu vào DB nếu cần
+
+                    // Redirect to the failure page
+                    response.sendRedirect("http://127.0.0.1:5500/app/components/payment/PaymentSuccess.html?txnRef=" + txnRef);
+                    return;
                 }
-
-                paymentRepository.save(payment);
-                return ResponseEntity.ok("Payment successful");
             }
         }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid payment data");
+        // Nếu payment không tồn tại hoặc mã xác thực không hợp lệ
+        response.sendRedirect("http://127.0.0.1:5500/app/components/payment/PaymentSuccess.html?status=failure");
     }
 
+
+    @GetMapping("/payment/details/{txnRef}")
+    public ResponseEntity<?> getPaymentDetails(@PathVariable String txnRef) {
+        Payment payment = paymentRepository.findByVnpTxnRef(txnRef);
+
+        if (payment == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Payment not found");
+        }
+
+        // Use ModelMapper to map the Payment entity to PaymentSuccessDTO
+        PaymentSuccessDTO paymentSuccessDTO = modelMapper.map(payment, PaymentSuccessDTO.class);
+
+        return ResponseEntity.ok(paymentSuccessDTO);
+    }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<PaymentUserDTO>> getPaymentsByUserId(@PathVariable Integer userId) {
+        List<PaymentUserDTO> payments = paymentService.getPaymentsByUserId(userId);
+        return ResponseEntity.ok(payments);
+    }
+
+
 }
+

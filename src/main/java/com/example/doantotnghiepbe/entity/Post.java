@@ -40,7 +40,7 @@ public class Post {
     private String provinceName;
 
     @Column(name = "price")
-    private Float price;
+    private Double price;
 
     @Column(name = "price_unit")
     private String priceUnit;
@@ -65,6 +65,9 @@ public class Post {
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
+
+    @Column(name = "top_post_end")
+    private LocalDateTime topPostEnd;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference

@@ -72,8 +72,8 @@ public class PostDetailServiceImpl implements PostDetailService {
                     postDTO.setCommentCount(post.getCommentCount());
 
                     if (post.getUser() != null) {
-                        PostUserDTO userDTO = new PostUserDTO(post.getUser().getUsername());
-                        postDTO.setUser(List.of(userDTO));
+                        PostUserDTO userDTO = new PostUserDTO(post.getUser().getFirstName(), post.getUser().getLastName());
+                        postDTO.setUser(userDTO);
                     }
 
                     return postDTO;

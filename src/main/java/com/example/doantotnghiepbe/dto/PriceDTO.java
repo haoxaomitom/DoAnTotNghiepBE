@@ -12,9 +12,9 @@ import lombok.Setter;
 public class PriceDTO {
     private Integer priceId;
     private Integer duration;
-    private Long amount;
+    private Integer amount;
     private String currency;
     private String description;
     private Integer discountPercentage;
-
+    private Integer finalAmount;
 }
