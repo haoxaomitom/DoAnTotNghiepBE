@@ -66,6 +66,9 @@ public class Post {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
+    @Column(name = "top_post_end")
+    private LocalDateTime topPostEnd;
+
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<Image> images = new ArrayList<>();

@@ -4,6 +4,7 @@ import com.example.doantotnghiepbe.configurations.VNPayConfig;
 import com.example.doantotnghiepbe.dto.PaymentDTO;
 import com.example.doantotnghiepbe.dto.PaymentResDTO;
 import com.example.doantotnghiepbe.dto.PaymentSuccessDTO;
+import com.example.doantotnghiepbe.dto.PaymentUserDTO;
 import com.example.doantotnghiepbe.entity.Payment;
 import com.example.doantotnghiepbe.entity.Post;
 import com.example.doantotnghiepbe.entity.Price;
@@ -36,8 +37,8 @@ public class PaymentController {
     @Autowired
     private PriceRepository priceRepository;
 
-//    @Autowired
-//    private PaymentService paymentService;
+    @Autowired
+    private PaymentService paymentService;
 
     @Autowired
     private PaymentRepository paymentRepository;
@@ -179,13 +180,25 @@ public class PaymentController {
                     LocalDateTime paymentDate = LocalDateTime.now();
                     payment.setPaymentDate(paymentDate);
 
-                    // Lấy thông tin duration từ bảng Price
                     Price price = priceRepository.findByPriceId(payment.getPriceId().getPriceId());
                     if (price != null) {
-                        int duration = price.getDuration(); // Giả sử duration là kiểu int
-                        LocalDateTime topPostEnd = paymentDate.plusDays(duration); // Calculate topPostEnd
-                        payment.setTopPostEnd(topPostEnd); // Set the calculated topPostEnd
+                        int duration = price.getDuration();
+
+                        // Retrieve the associated post and check if topPostEnd already exists
+                        Post post = payment.getPostId();
+                        LocalDateTime topPostEnd;
+
+                        if (post.getTopPostEnd() != null) {
+                            // If topPostEnd exists, extend it by adding the duration
+                            topPostEnd = post.getTopPostEnd().plusDays(duration);
+                        } else {
+                            // If topPostEnd is null, set it by adding duration to the current payment date
+                            topPostEnd = paymentDate.plusDays(duration);
+                        }
+                        post.setTopPostEnd(topPostEnd);
+                        postRepository.save(post);
                     }
+
 
                     paymentRepository.save(payment); // Save the updated payment entity
 
@@ -222,4 +235,13 @@ public class PaymentController {
 
         return ResponseEntity.ok(paymentSuccessDTO);
     }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<PaymentUserDTO>> getPaymentsByUserId(@PathVariable Integer userId) {
+        List<PaymentUserDTO> payments = paymentService.getPaymentsByUserId(userId);
+        return ResponseEntity.ok(payments);
+    }
+
+
 }
+
