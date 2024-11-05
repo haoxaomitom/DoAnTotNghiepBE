@@ -18,7 +18,8 @@ public class VNPayConfig {
 
     public static String vnp_TmnCode = "59JZU5UO";
     public static String secretKey = "UWRN36TUKCOZQW9LHM31KPPCIJM902U7";
-    public static String vnp_ReturnUrl = "http://127.0.0.1:5500/app/components/payment/PaymentSuccess.html";
+    //    public static String vnp_ReturnUrl = "http://127.0.0.1:5500/app/components/payment/PaymentSuccess.html";
+    public static String vnp_ReturnUrl = "http://localhost:8080/api/vnpay/return";
     public static String vnp_PayUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
     public static String vnp_ApiUrl = "https://sandbox.vnpayment.vn/merchant_webapi/api/transaction";
     public static String vnp_Version = "2.1.0";
@@ -61,8 +62,9 @@ public class VNPayConfig {
                 sb.append("&");
             }
         }
-        return hmacSHA512(secretKey,sb.toString());
+        return hmacSHA512(secretKey, sb.toString());
     }
+
     public static String hmacSHA512(final String key, final String data) {
         try {
 
