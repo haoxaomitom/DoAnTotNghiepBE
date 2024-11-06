@@ -24,6 +24,7 @@ public class PostDTO {
     private String provinceName;
     private String status;
     private Integer commentCount;
+    private LocalDateTime topPostEnd;
     private LocalDateTime createdAt;
     private List<Image> images;
     private List<Amenities> amenities;

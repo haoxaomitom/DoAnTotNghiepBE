@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,6 +61,9 @@ public class Post {
 
     @Column(name = "comment_count")
     private Integer commentCount;
+
+    @Column(name = "top_post_end")
+    private LocalDateTime topPostEnd;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;

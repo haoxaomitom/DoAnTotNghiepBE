@@ -1,8 +1,5 @@
 package com.example.doantotnghiepbe.dto;
 
-import com.example.doantotnghiepbe.entity.Post;
-import com.example.doantotnghiepbe.entity.User;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

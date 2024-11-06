@@ -1,7 +1,6 @@
 package com.example.doantotnghiepbe.controller;
 
 import com.example.doantotnghiepbe.dto.PostDTO;
-import com.example.doantotnghiepbe.entity.Post;
 import com.example.doantotnghiepbe.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -86,5 +85,9 @@ public class PostController {
         return ResponseEntity.ok(posts);
     }
 
-
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<PostDTO>> getPostsByUserId(@PathVariable Integer userId) {
+        List<PostDTO> posts = postService.getPostsByUserId(userId);
+        return ResponseEntity.ok(posts);
+    }
 }

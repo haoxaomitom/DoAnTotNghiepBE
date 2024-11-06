@@ -77,4 +77,12 @@ public class PostServiceImpl implements PostService {
         postDTO.setCommentCount(post.getCommentCount());
         return postDTO;
     }
+
+    @Override
+    public List<PostDTO> getPostsByUserId(Integer userId) {
+        List<Post> posts = postRepository.findAllByUserUserId(userId);
+        return posts.stream()
+                .map(post -> modelMapper.map(post, PostDTO.class))
+                .toList();
+    }
 }
