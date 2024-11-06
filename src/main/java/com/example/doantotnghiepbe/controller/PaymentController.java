@@ -4,7 +4,6 @@ import com.example.doantotnghiepbe.configurations.VNPayConfig;
 import com.example.doantotnghiepbe.dto.PaymentDTO;
 import com.example.doantotnghiepbe.dto.PaymentResDTO;
 import com.example.doantotnghiepbe.dto.PaymentSuccessDTO;
-import com.example.doantotnghiepbe.dto.PaymentUserDTO;
 import com.example.doantotnghiepbe.entity.Payment;
 import com.example.doantotnghiepbe.entity.Post;
 import com.example.doantotnghiepbe.entity.Price;
@@ -31,14 +30,14 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/api/vnpay")
-@CrossOrigin(origins = "http://127.0.0.1:5500")
+@CrossOrigin(origins = "http://127.0.0.1:5500", allowCredentials = "true")
 public class PaymentController {
 
     @Autowired
     private PriceRepository priceRepository;
 
-    @Autowired
-    private PaymentService paymentService;
+//    @Autowired
+//    private PaymentService paymentService;
 
     @Autowired
     private PaymentRepository paymentRepository;
@@ -48,14 +47,21 @@ public class PaymentController {
     @Autowired
     private ModelMapper modelMapper;
 
-    @GetMapping("/payment/{priceId}")
+    @GetMapping("/payment/{priceId}/{postId}")
     public ResponseEntity<?> createPayment(HttpServletRequest req,
-                                           @PathVariable Integer priceId) throws UnsupportedEncodingException {
+                                           @PathVariable Integer priceId,
+                                           @PathVariable Integer postId) throws UnsupportedEncodingException {
 
-        // Lấy thông tin giá từ priceId
+        // Fetch the price information by priceId
         Price selectedPrice = priceRepository.findByPriceId(priceId);
         if (selectedPrice == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Price not found");
+        }
+
+        // Fetch the post information by postId
+        Post post = postRepository.findByPostId(postId);
+        if (post == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Post not found");
         }
 
         // Tính toán amount sau khi giảm giá
@@ -122,10 +128,6 @@ public class PaymentController {
         queryUrl += "&vnp_SecureHash=" + vnp_SecureHash;
         String paymentUrl = VNPayConfig.vnp_PayUrl + "?" + queryUrl;
 
-        Post post = postRepository.findByPostId(1); // Lấy post có ID = 1
-        if (post == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Post not found");
-        }
         Payment payment = new Payment();
         payment.setPostId(post);
         payment.setPriceId(selectedPrice); // Set giá trị Price
@@ -149,11 +151,9 @@ public class PaymentController {
         String txnRef = allParams.get("vnp_TxnRef");
         Payment payment = paymentRepository.findByVnpTxnRef(txnRef);
 
-        // Kiểm tra nếu payment không tồn tại
         if (payment != null) {
-            // Tạo lại hashData cho các tham số nhận được từ VNPay
             Map<String, String> vnp_Params = new HashMap<>(allParams);
-            vnp_Params.remove("vnp_SecureHash"); // Loại bỏ tham số vnp_SecureHash
+            vnp_Params.remove("vnp_SecureHash"); // Remove vnp_SecureHash for hash calculation
             List<String> fieldNames = new ArrayList<>(vnp_Params.keySet());
             Collections.sort(fieldNames);
 
@@ -170,56 +170,58 @@ public class PaymentController {
                 hashData.setLength(hashData.length() - 1); // Remove the last '&'
             }
 
-            // Kiểm tra SecureHash
+            // Validate secure hash
             if (VNPayConfig.hmacSHA512(VNPayConfig.secretKey, hashData.toString()).equals(allParams.get("vnp_SecureHash"))) {
-                // Chỉ lưu vào cơ sở dữ liệu nếu thanh toán thành công
-                String paymentStatus = allParams.get("vnp_ResponseCode"); // Tham số phản hồi từ VNPay
-                if ("00".equals(paymentStatus)) { // 00 là mã thành công
+                String paymentStatus = allParams.get("vnp_ResponseCode");
+                if ("00".equals(paymentStatus)) { // "00" is the success code
                     payment.setPaymentStatus("Success");
                     payment.setVnpTransactionId(allParams.get("vnp_TransactionNo"));
                     LocalDateTime paymentDate = LocalDateTime.now();
                     payment.setPaymentDate(paymentDate);
 
+                    // Retrieve the Price and Post entities
                     Price price = priceRepository.findByPriceId(payment.getPriceId().getPriceId());
-                    if (price != null) {
-                        int duration = price.getDuration();
+                    Post post = payment.getPostId(); // Assuming Post is linked to Payment
 
-                        // Retrieve the associated post and check if topPostEnd already exists
-                        Post post = payment.getPostId();
-                        LocalDateTime topPostEnd;
+                    if (price != null && post != null) {
+                        int duration = price.getDuration(); // Duration in days
+                        LocalDateTime currentTopPostEnd = post.getTopPostEnd();
+                        LocalDateTime currentDate = LocalDateTime.now();
 
-                        if (post.getTopPostEnd() != null) {
-                            // If topPostEnd exists, extend it by adding the duration
-                            topPostEnd = post.getTopPostEnd().plusDays(duration);
+                        // Check if top_post_end is expired or null
+                        if (currentTopPostEnd == null || currentTopPostEnd.isBefore(currentDate)) {
+                            // Set new top_post_end based on current date
+                            post.setTopPostEnd(currentDate.plusDays(duration));
+                            payment.setTopPostEnd(currentDate.plusDays(duration));
                         } else {
-                            // If topPostEnd is null, set it by adding duration to the current payment date
-                            topPostEnd = paymentDate.plusDays(duration);
+                            // Extend top_post_end by adding duration days
+                            post.setTopPostEnd(currentTopPostEnd.plusDays(duration));
+                            payment.setTopPostEnd(currentDate.plusDays(duration));
                         }
-                        post.setTopPostEnd(topPostEnd);
+
+                        // Save updated post and payment entities
                         postRepository.save(post);
+                        paymentRepository.save(payment);
+
+                        // Redirect to success page with txnRef as a query parameter
+                        response.sendRedirect("http://127.0.0.1:5500/app/components/payment/PaymentSuccess.html?txnRef=" + txnRef);
+                        return;
                     }
-
-
-                    paymentRepository.save(payment); // Save the updated payment entity
-
-                    // Redirect to the success page
-                    response.sendRedirect("http://127.0.0.1:5500/app/components/payment/PaymentSuccess.html?txnRef=" + txnRef);
-                    return;
                 } else {
-                    // Nếu không thành công, cập nhật trạng thái thanh toán
-//                    payment.setPaymentAmount(0);
-                    payment.setPaymentStatus("Failed"); // Cập nhật trạng thái thành công
-                    paymentRepository.save(payment); // Lưu vào DB nếu cần
+                    // Update status as Failed if payment was not successful
+                    payment.setPaymentStatus("Failed");
+                    paymentRepository.save(payment);
 
-                    // Redirect to the failure page
+                    // Redirect to failure page
                     response.sendRedirect("http://127.0.0.1:5500/app/components/payment/PaymentSuccess.html?txnRef=" + txnRef);
                     return;
                 }
             }
         }
-        // Nếu payment không tồn tại hoặc mã xác thực không hợp lệ
+        // Redirect to failure page if payment is null or secure hash is invalid
         response.sendRedirect("http://127.0.0.1:5500/app/components/payment/PaymentSuccess.html?status=failure");
     }
+
 
 
     @GetMapping("/payment/details/{txnRef}")
@@ -235,13 +237,4 @@ public class PaymentController {
 
         return ResponseEntity.ok(paymentSuccessDTO);
     }
-
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<List<PaymentUserDTO>> getPaymentsByUserId(@PathVariable Integer userId) {
-        List<PaymentUserDTO> payments = paymentService.getPaymentsByUserId(userId);
-        return ResponseEntity.ok(payments);
-    }
-
-
 }
-

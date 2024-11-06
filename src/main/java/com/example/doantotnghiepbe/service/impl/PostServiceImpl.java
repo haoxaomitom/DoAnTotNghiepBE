@@ -80,12 +80,9 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<PostDTO> getPostsByUserId(Integer userId) {
-        // Retrieve posts by user ID
-        List<Post> posts = postRepository.findByUserUserId(userId);
-
-        // Map each Post entity to PostDTO
+        List<Post> posts = postRepository.findAllByUserUserId(userId);
         return posts.stream()
                 .map(post -> modelMapper.map(post, PostDTO.class))
-                .collect(Collectors.toList());
+                .toList();
     }
 }
