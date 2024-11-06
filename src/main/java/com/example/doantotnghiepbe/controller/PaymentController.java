@@ -1,6 +1,7 @@
 package com.example.doantotnghiepbe.controller;
 
 import com.example.doantotnghiepbe.configurations.VNPayConfig;
+import com.example.doantotnghiepbe.dto.PaymentDTO;
 import com.example.doantotnghiepbe.dto.PaymentResDTO;
 import com.example.doantotnghiepbe.dto.PaymentSuccessDTO;
 import com.example.doantotnghiepbe.entity.Payment;
@@ -9,6 +10,8 @@ import com.example.doantotnghiepbe.entity.Price;
 import com.example.doantotnghiepbe.repository.PaymentRepository;
 import com.example.doantotnghiepbe.repository.PostRepository;
 import com.example.doantotnghiepbe.repository.PriceRepository;
+import com.example.doantotnghiepbe.service.PaymentService;
+import com.example.doantotnghiepbe.service.PriceService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.modelmapper.ModelMapper;
