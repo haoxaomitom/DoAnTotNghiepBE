@@ -31,7 +31,7 @@ public class UsersController {
         try {
             Map results = usersService.login(userLoginDTO.getUsername(), userLoginDTO.getPassword());
             String token = (String) results.get("token");
-            Integer userId = (Integer) results.get("userId");
+            Long userId = (Long) results.get("userId");
             result.put("status",true);
             result.put("message", "Đăng nhập thành công");
             result.put("data",LoginRespone.builder()
