@@ -29,12 +29,14 @@ public class UsersController {
     public ResponseEntity<?> login(@Valid @RequestBody UsersLoginDTO userLoginDTO) {
         Map<String,Object> result = new HashMap<>();
         try {
-            String[] results = usersService.login(userLoginDTO.getUsername(), userLoginDTO.getPassword());
-            String token = results[0];
+            Map results = usersService.login(userLoginDTO.getUsername(), userLoginDTO.getPassword());
+            String token = (String) results.get("token");
+            Integer userId = (Integer) results.get("userId");
             result.put("status",true);
             result.put("message", "Đăng nhập thành công");
             result.put("data",LoginRespone.builder()
                     .token(token)
+                    .userId(userId)
                     .build());
         }catch (DataNotFoundException | BadCredentialsException e){
             result.put("status", false);

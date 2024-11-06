@@ -11,4 +11,5 @@ import lombok.*;
 public class LoginRespone {
     @JsonProperty("token")
     private String token;
+    private Integer userId;
 }

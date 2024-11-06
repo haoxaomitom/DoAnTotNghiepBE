@@ -1,6 +1,5 @@
 package com.example.doantotnghiepbe.service.impl;
 
-import com.cloudinary.utils.ObjectUtils;
 import com.example.doantotnghiepbe.configurations.CloudinaryConfig;
 import com.example.doantotnghiepbe.dto.UserInfoDTO;
 import com.example.doantotnghiepbe.dto.UsersDTO;
@@ -21,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -82,7 +82,7 @@ public class UsersServiceImpl implements UsersService {
     }
 
     @Override
-    public String[] login(String username, String password) throws DataNotFoundException {
+    public Map login(String username, String password) throws DataNotFoundException {
         Users user = usersRepository.findUsersByUsername(username)
                 .orElseThrow(() -> new DataNotFoundException("Invalid email or password"));
         if(!passwordEncoder.matches(password,user.getPassword())) {
@@ -90,8 +90,9 @@ public class UsersServiceImpl implements UsersService {
         }
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username,password,user.getAuthorities());
         authenticationManager.authenticate(authenticationToken);
-        String[] result = new String[2];
-        result[0] = jwtTokenUtil.generateToken(user);
+        Map result =new HashMap();
+        result.put("token",jwtTokenUtil.generateToken(user));
+        result.put("userId", user.getUserId());
         return result;
     }
 

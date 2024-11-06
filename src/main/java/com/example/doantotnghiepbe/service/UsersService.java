@@ -9,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public interface UsersService {
@@ -16,7 +17,7 @@ public interface UsersService {
     Users getUsersByUsername(String username) throws DataNotFoundException;
     Users register (UsersDTO user) throws DataNotFoundException;
     Users updateUserInfo (UserInfoDTO user) throws DataNotFoundException;
-    String[]  login(String username, String password) throws DataNotFoundException;
+    Map login(String username, String password) throws DataNotFoundException;
     Users uploadAvatar(String username, MultipartFile file) throws DataNotFoundException, IOException;
     Long countUsers();
 }
