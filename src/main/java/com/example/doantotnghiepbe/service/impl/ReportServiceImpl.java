@@ -3,10 +3,12 @@ package com.example.doantotnghiepbe.service.impl;
 import com.example.doantotnghiepbe.dto.ReportDTO;
 import com.example.doantotnghiepbe.entity.Post;
 import com.example.doantotnghiepbe.entity.Report;
-import com.example.doantotnghiepbe.entity.User;
+import com.example.doantotnghiepbe.entity.Users;
+import com.example.doantotnghiepbe.entity.Users;
 import com.example.doantotnghiepbe.repository.PostRepository;
 import com.example.doantotnghiepbe.repository.ReportRepository;
-import com.example.doantotnghiepbe.repository.UserRepository;
+import com.example.doantotnghiepbe.repository.UsersRepository;
+import com.example.doantotnghiepbe.repository.UsersRepository;
 import com.example.doantotnghiepbe.service.ReportService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -22,7 +24,7 @@ public class ReportServiceImpl implements ReportService {
 
 
     private final ReportRepository reportRepository;
-    private final UserRepository userRepository;
+    private final UsersRepository userRepository;
     private final PostRepository postRepository;
     private final ModelMapper modelMapper;
 
@@ -33,7 +35,7 @@ public class ReportServiceImpl implements ReportService {
         report.setCreatedAt(LocalDateTime.now()); // Set created at server-side
 
         // Fetch and set the user based on userId
-        User user = userRepository.findById(reportDTO.getUser())
+        Users user = userRepository.findById(reportDTO.getUser())
                 .orElseThrow(() -> new RuntimeException("User not found"));
         report.setUser(user);
 

@@ -22,21 +22,21 @@ public class FavoriteController {
     private FavoriteService favoriteService;
 
     @PostMapping("/like")
-    public ResponseEntity<ApiResponse<String>> likePost(@RequestParam Integer userId, @RequestParam Integer postId) {
+    public ResponseEntity<ApiResponse<String>> likePost(@RequestParam Long userId, @RequestParam Integer postId) {
         Favorite favorite = favoriteService.likePost(userId, postId);
         ApiResponse<String> response = new ApiResponse<>("success", "Like successfully", null);
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<ApiResponse<List<FavoritePostDTO>>> getFavoritesByUser(@PathVariable Integer userId) {
+    public ResponseEntity<ApiResponse<List<FavoritePostDTO>>> getFavoritesByUser(@PathVariable Long userId) {
         List<FavoritePostDTO> favorites = favoriteService.getFavoritesByUserUserId(userId);
         ApiResponse<List<FavoritePostDTO>> response = new ApiResponse<>("success", "Favorites retrieved successfully", favorites);
         return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/unlike")
-    public ResponseEntity<ApiResponse<String>> unlikePost(@RequestParam Integer userId, @RequestParam Integer postId) {
+    public ResponseEntity<ApiResponse<String>> unlikePost(@RequestParam Long userId, @RequestParam Integer postId) {
         favoriteService.unlikePost(userId, postId);
         ApiResponse<String> response = new ApiResponse<>("success", "Unliked successfully", null);
         return ResponseEntity.ok(response);
@@ -44,7 +44,7 @@ public class FavoriteController {
 
     @PostMapping("/toggle")
     public ResponseEntity<Map<String, Object>> toggleFavorite(
-            @RequestParam Integer userId,
+            @RequestParam Long userId,
             @RequestParam Integer postId) {
 
         boolean isFavorited = favoriteService.toggleFavorite(userId, postId);
@@ -55,7 +55,7 @@ public class FavoriteController {
     }
 
     @GetMapping("/check")
-    public ResponseEntity<Boolean> checkFavorite(@RequestParam Integer userId, @RequestParam Integer postId) {
+    public ResponseEntity<Boolean> checkFavorite(@RequestParam Long userId, @RequestParam Integer postId) {
         boolean isFavorite = favoriteService.isFavorite(userId, postId);
         return ResponseEntity.ok(isFavorite);
     }

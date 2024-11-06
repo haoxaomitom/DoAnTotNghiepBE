@@ -10,5 +10,5 @@ import lombok.NoArgsConstructor;
 public class FavoriteDTO {
     private Integer favoriteId;
     private Integer post;
-    private Integer user;
+    private Long user;
 }

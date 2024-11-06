@@ -15,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 public class FavoritePostDTO {
     private Integer favoriteId; // ID of the favorite entry
-    private Integer user; // ID of the user who favorited
+    private Long user; // ID of the user who favorited
     private Integer post; // ID of the post that is favorited
 
     // Post details

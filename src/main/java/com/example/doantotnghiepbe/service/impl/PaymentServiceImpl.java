@@ -19,7 +19,7 @@ public class PaymentServiceImpl implements PaymentService {
     @Autowired
     private ModelMapper modelMapper;
 
-    public List<PaymentUserDTO> getPaymentsByUserId(Integer userId) {
+    public List<PaymentUserDTO> getPaymentsByUserId(Long userId) {
         List<Payment> payments = paymentRepository.findPaymentsByUserId(userId);
         return payments.stream()
                 .map(this::convertToDTO)

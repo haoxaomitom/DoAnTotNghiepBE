@@ -12,6 +12,6 @@ import java.util.List;
 
 public interface PaymentService {
 
-    List<PaymentUserDTO> getPaymentsByUserId(Integer userId);
+    List<PaymentUserDTO> getPaymentsByUserId(Long userId);
 
 }
