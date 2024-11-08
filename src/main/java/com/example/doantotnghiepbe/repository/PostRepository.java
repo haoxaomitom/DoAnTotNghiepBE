@@ -40,5 +40,14 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
 
     Post findByPostId(Integer postId);
 
-    List<Post> findByUserUserId(Integer userId);
+    List<Post> findAllByUserUserId(Long userId);
+
+    @Query("SELECT p FROM Post p " +
+            "LEFT JOIN Payment pay ON p = pay.postId " +
+            "WHERE (pay.topPostEnd > CURRENT_DATE OR p.topPostEnd > CURRENT_DATE) " +
+            "GROUP BY p.postId " +
+            "ORDER BY MAX(CASE WHEN pay.topPostEnd > CURRENT_DATE THEN pay.paymentAmount ELSE 0 END) DESC, " +
+            "MAX(pay.topPostEnd) DESC, p.createdAt DESC")
+    List<Post> findAllTopPostsOrderByPaymentAndDate();
+
 }

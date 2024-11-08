@@ -1,8 +1,5 @@
 package com.example.doantotnghiepbe.dto;
 
-import com.example.doantotnghiepbe.entity.Post;
-import com.example.doantotnghiepbe.entity.User;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,7 +11,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class ReportDTO {
     private Integer reportId;
-    private Integer user;
+    private Long user;
     private Integer post;
     private String reportType;
     private String reportContent;

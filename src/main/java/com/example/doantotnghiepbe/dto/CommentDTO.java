@@ -14,7 +14,7 @@ import java.util.List;
 public class CommentDTO {
     private Integer commentId;
     private Integer post;
-    private Integer user;
+    private Long user;
     private List<CommentUserDTO> cud;
     private String commentContent;
     private LocalDateTime createdAt;

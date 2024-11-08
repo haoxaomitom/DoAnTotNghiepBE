@@ -18,5 +18,8 @@ public interface PostService {
 
     Page<PostDTO> sortPostsByPrice(String sort, Pageable pageable);
 
-    List<PostDTO> getPostsByUserId(Integer userId);
+    List<PostDTO> getPostsByUserId(Long userId);
+
+
+    List<PostDTO> getTopPosts();
 }

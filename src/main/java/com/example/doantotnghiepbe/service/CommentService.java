@@ -11,5 +11,5 @@ public interface CommentService {
 
     Page<CommentDTO> getCommentsByPostId(Integer postId, Pageable pageable);
 
-    void deleteComment(Integer commentId, Integer userId);  // New method
+    void deleteComment(Integer commentId, Long userId);  // New method
 }
