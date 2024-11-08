@@ -1,15 +1,16 @@
 package com.example.doantotnghiepbe.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.io.Serializable;
 
-
-@Getter
-@Setter
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class PaymentResDTO implements Serializable {
     private String status;
     private String message;
     private String url;
+
+
 }

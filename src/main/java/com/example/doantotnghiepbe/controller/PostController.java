@@ -91,4 +91,9 @@ public class PostController {
         List<PostDTO> posts = postService.getPostsByUserId(userId);
         return ResponseEntity.ok(posts);
     }
+
+    @GetMapping("/top")
+    public List<PostDTO> getTopPosts() {
+        return postService.getTopPosts();
+    }
 }
