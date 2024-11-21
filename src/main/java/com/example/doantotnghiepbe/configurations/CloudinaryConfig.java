@@ -16,23 +16,20 @@ public class CloudinaryConfig {
 
     @Bean
     public Cloudinary cloudinary() {
-        Map<String, String> config = ObjectUtils.asMap(
+        this.cloudinary = new Cloudinary(ObjectUtils.asMap(
                 "cloud_name", "dqzfuomvj",
                 "api_key", "141698136898829",
                 "api_secret", "95bIAsYzltuLNsF4b0sfYUFrh6Y",
                 "secure", true
-        );
-        return new Cloudinary(config);
+        ));
+        return this.cloudinary;
     }
 
     public String saveToCloudinary(MultipartFile file) throws IOException {
         if (file.getOriginalFilename() == null) {
             throw new IOException("Invalid file format");
         }
-
-
         String contentType = file.getContentType();
-        System.out.println("Content Type: " + contentType);
         if (contentType == null) {
             throw new IOException("Unknown file type");
         }

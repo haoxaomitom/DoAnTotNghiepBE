@@ -2,7 +2,7 @@ package com.example.doantotnghiepbe.service.impl;
 
 import com.example.doantotnghiepbe.configurations.CloudinaryConfig;
 import com.example.doantotnghiepbe.dto.UserInfoDTO;
-import com.example.doantotnghiepbe.dto.UsersDTO;
+import com.example.doantotnghiepbe.dto.UserRegisterDTO;
 import com.example.doantotnghiepbe.entity.Users;
 import com.example.doantotnghiepbe.exception.DataNotFoundException;
 
@@ -64,17 +64,18 @@ public class UsersServiceImpl implements UsersService {
     }
 
     @Override
-    public Users register(UsersDTO usersDTO) throws DataNotFoundException{
-        if(usersRepository.existsByUsername(usersDTO.getUsername())){
+    public Users register(UserRegisterDTO userRegisterDTO) throws DataNotFoundException{
+        if(usersRepository.existsByUsername(userRegisterDTO.getUsername())){
             throw new ExistingException("Tên đăng nhập đã tồn tại");
         }
-        if(usersRepository.existsByEmail(usersDTO.getEmail())){
+        if(usersRepository.existsByEmail(userRegisterDTO.getEmail())){
             throw new ExistingException("Email đã tồn tại");
         }
-        Users users = modelMapper.map(usersDTO,Users.class);
-        users.setRoles(rolesRepository.findById(2).orElseThrow(()-> new DataNotFoundException("Could not find role with id: 1")));
+        Users users = modelMapper.map(userRegisterDTO,Users.class);
+        users.setRoles(rolesRepository.findById(2).orElseThrow(()-> new DataNotFoundException("Could not find role with id: 2")));
         users.setPassword(passwordEncoder.encode(users.getPassword()));
         users.setIsActive(true);
+        users.setVerified(false);
         return usersRepository.save(users);
     }
 
@@ -109,11 +110,17 @@ public class UsersServiceImpl implements UsersService {
 
     @Override
     public Users uploadAvatar(String username, MultipartFile file) throws DataNotFoundException, IOException {
-        Users user = usersRepository.findUsersByUsername(username).orElseThrow(()-> new DataNotFoundException("Không tìm thấy người dùng với id: "+ username));
-
+        Users user = usersRepository.findUsersByUsername(username).orElseThrow(()-> new DataNotFoundException("Không tìm thấy người dùng với tên đăng nhập: "+ username));
         user.setAvatar(cloudinaryConfig.saveToCloudinary(file));
         System.out.println("avata:" +user.getAvatar());
         return usersRepository.save(user);
+    }
+
+    @Override
+    public Users active(Long userId, boolean active) throws DataNotFoundException {
+        Users user = usersRepository.findById(userId).orElseThrow(()-> new DataNotFoundException("Không tìm thấy người dùng với id: "+ userId));
+        user.setIsActive(active);
+        return user;
     }
 
     @Override
