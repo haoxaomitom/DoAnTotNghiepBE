@@ -1,11 +1,11 @@
 package com.example.doantotnghiepbe.controller;
 
 import com.example.doantotnghiepbe.dto.ContactInformationDTO;
+import com.example.doantotnghiepbe.exceptions.DataNotFoundException;
 import com.example.doantotnghiepbe.service.ContactInformationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.example.doantotnghiepbe.exception.DataNotFoundException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -51,7 +51,7 @@ public class ContactInformationController {
             result.put("status", true);
             result.put("message","Thành công");
             result.put("data",contactInformationService.create(contactInformationDTO));
-        }catch (DataNotFoundException e){
+        }catch (DataNotFoundException   e){
             result.put("status", false);
             result.put("message",e);
             result.put("data",null);

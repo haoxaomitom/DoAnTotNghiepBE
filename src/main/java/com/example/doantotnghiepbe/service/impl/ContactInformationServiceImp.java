@@ -4,7 +4,7 @@ import com.example.doantotnghiepbe.dto.ContactInformationDTO;
 import com.example.doantotnghiepbe.entity.ContactInformations;
 import com.example.doantotnghiepbe.entity.Post;
 import com.example.doantotnghiepbe.entity.Users;
-import com.example.doantotnghiepbe.exception.DataNotFoundException;
+import com.example.doantotnghiepbe.exceptions.DataNotFoundException;
 import com.example.doantotnghiepbe.repository.ContactInformationRepo;
 import com.example.doantotnghiepbe.repository.PostRepository;
 import com.example.doantotnghiepbe.repository.UsersRepository;

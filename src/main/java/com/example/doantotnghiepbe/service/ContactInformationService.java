@@ -2,7 +2,7 @@ package com.example.doantotnghiepbe.service;
 
 import com.example.doantotnghiepbe.dto.ContactInformationDTO;
 import com.example.doantotnghiepbe.entity.ContactInformations;
-import com.example.doantotnghiepbe.exception.DataNotFoundException;
+import com.example.doantotnghiepbe.exceptions.DataNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
