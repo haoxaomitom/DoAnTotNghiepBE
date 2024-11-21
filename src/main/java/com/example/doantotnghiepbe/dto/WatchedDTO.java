@@ -1,2 +1,12 @@
-package com.example.doantotnghiepbe.dto;public class watchedDTO {
+package com.example.doantotnghiepbe.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class WatchedDTO {
+    private boolean watched;
 }

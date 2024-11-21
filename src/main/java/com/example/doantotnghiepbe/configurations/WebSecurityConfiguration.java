@@ -38,7 +38,7 @@ public class WebSecurityConfiguration {
                                     "/api/comments/{commentId}"
                             ).permitAll()
                             .requestMatchers("/api/users/getUserByUsername").hasAnyRole("USER", "ADMIN", "MODERATOR")
-
+                            .requestMatchers("/api/contactInformation/**").hasAnyRole("USER", "ADMIN", "MODERATOR")
                             .anyRequest().authenticated();
                 }))
                 .formLogin(form -> form

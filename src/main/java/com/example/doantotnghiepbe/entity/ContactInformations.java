@@ -1,10 +1,13 @@
 package com.example.doantotnghiepbe.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "contact_information")
@@ -12,7 +15,7 @@ import lombok.NoArgsConstructor;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ContactInformation {
+public class ContactInformations {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,10 +24,12 @@ public class ContactInformation {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonBackReference
     private Users user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", nullable = false)
+    @JsonBackReference
     private Post post;
 
     @Column(name = "type_car", length = 100)
@@ -35,4 +40,10 @@ public class ContactInformation {
 
     @Column(name = "description", length = 255)
     private String description;
+
+    @Column(name = "watched")
+    private boolean watched;
+
+    @Column(name = "create_at")
+    private LocalDateTime createAt = LocalDateTime.now();
 }

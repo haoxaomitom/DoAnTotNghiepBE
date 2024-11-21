@@ -1,7 +1,7 @@
 package com.example.doantotnghiepbe.controller;
 
 import com.example.doantotnghiepbe.dto.UserInfoDTO;
-import com.example.doantotnghiepbe.dto.UsersDTO;
+import com.example.doantotnghiepbe.dto.UserRegisterDTO;
 import com.example.doantotnghiepbe.dto.UsersLoginDTO;
 import com.example.doantotnghiepbe.dto.response.LoginRespone;
 import com.example.doantotnghiepbe.exception.DataNotFoundException;
@@ -25,6 +25,20 @@ public class UsersController {
     @Autowired
     private UsersService usersService;
 
+    @GetMapping
+    public ResponseEntity<?> getAll(){
+        Map<String,Object> result = new HashMap<>();
+        try {
+            result.put("status",true);
+            result.put("message", "Thành công");
+            result.put("data",usersService.getAll());
+        }catch (Exception e){
+            result.put("status", false);
+            result.put("message", e);
+            result.put("data", null);
+        }
+        return ResponseEntity.ok(result);
+    }
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody UsersLoginDTO userLoginDTO) {
         Map<String,Object> result = new HashMap<>();
@@ -46,12 +60,12 @@ public class UsersController {
         return ResponseEntity.ok(result);
     }
     @PostMapping("/register")
-    public ResponseEntity<?> register(@Valid @RequestBody UsersDTO usersDTO) {
+    public ResponseEntity<?> register(@Valid @RequestBody UserRegisterDTO userRegisterDTO) {
         Map<String,Object> result = new HashMap<>();
         try {
             result.put("status",true);
             result.put("message", "Đăng ký thành công");
-            result.put("data",usersService.register(usersDTO));
+            result.put("data",usersService.register(userRegisterDTO));
         }catch (ExistingException e){
             result.put("status", false);
             result.put("message", "Username đã tồn tại");
@@ -96,7 +110,7 @@ public class UsersController {
         return ResponseEntity.ok(result);
     }
     @PutMapping("/avatar/{username}")
-    public ResponseEntity<?> uploadAvatar(@PathVariable("username") String username, @ModelAttribute MultipartFile file) throws DataNotFoundException, IOException{
+    public ResponseEntity<?> uploadAvatar(@PathVariable("username") String username, @RequestParam("file") MultipartFile file) throws DataNotFoundException, IOException{
         Map<String,Object> result = new HashMap<>();
         try {
             result.put("status",true);
@@ -109,5 +123,32 @@ public class UsersController {
         }
         return ResponseEntity.ok(result);
     }
-
+    @PutMapping("/{id}")
+    public ResponseEntity<?> active(@PathVariable Long id,@RequestParam("active") boolean active){
+        Map<String,Object> result = new HashMap<>();
+        try {
+            result.put("status",true);
+            result.put("message", "Thành công!");
+            result.put("data",usersService.active(id,active));
+        }catch (DataNotFoundException e){
+            result.put("status",false);
+            result.put("message", e);
+            result.put("data",null);
+        }
+        return ResponseEntity.ok(result);
+    }
+    @GetMapping("/countUser")
+    public ResponseEntity<?> countUser(){
+        Map<String,Object> result = new HashMap<>();
+        try {
+            result.put("status",true);
+            result.put("message", "Thành công!");
+            result.put("data",usersService.countUsers());
+        }catch (Exception e){
+            result.put("status",false);
+            result.put("message", e);
+            result.put("data",null);
+        }
+        return ResponseEntity.ok(result);
+    }
 }
