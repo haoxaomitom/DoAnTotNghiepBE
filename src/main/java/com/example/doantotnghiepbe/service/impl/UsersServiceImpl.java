@@ -4,9 +4,8 @@ import com.example.doantotnghiepbe.configurations.CloudinaryConfig;
 import com.example.doantotnghiepbe.dto.UserInfoDTO;
 import com.example.doantotnghiepbe.dto.UserRegisterDTO;
 import com.example.doantotnghiepbe.entity.Users;
-import com.example.doantotnghiepbe.exception.DataNotFoundException;
-
-import com.example.doantotnghiepbe.exception.ExistingException;
+import com.example.doantotnghiepbe.exceptions.DataNotFoundException;
+import com.example.doantotnghiepbe.exceptions.ExistingException;
 import com.example.doantotnghiepbe.repository.RolesRepository;
 import com.example.doantotnghiepbe.repository.UsersRepository;
 import com.example.doantotnghiepbe.service.UsersService;
