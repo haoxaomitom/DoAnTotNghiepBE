@@ -2,6 +2,7 @@ package com.example.doantotnghiepbe.configurations;
 
 import com.example.doantotnghiepbe.entity.Roles;
 import com.example.doantotnghiepbe.filter.JwtTokenFilter;
+import org.modelmapper.internal.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,6 +11,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.CorsConfigurer;
+import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -30,9 +32,12 @@ public class WebSecurityConfiguration {
                 .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests((requests -> {
                     requests.requestMatchers(
-                            "/api/**"
-                    ).permitAll()
-                    .requestMatchers("/api/users/getUserByUsername").hasAnyRole("USER","ADMIN","MODERATOR")
+                                    "/api/**",
+                                    "/api/posts/{id}",
+                                    "/api/comments/post/{postId}",
+                                    "/api/comments/{commentId}"
+                            ).permitAll()
+                            .requestMatchers("/api/users/getUserByUsername").hasAnyRole("USER", "ADMIN", "MODERATOR")
 
                             .anyRequest().authenticated();
                 }))
@@ -40,7 +45,7 @@ public class WebSecurityConfiguration {
                         .loginPage("http://127.0.0.1:5500/app/components/Login/LoginAndRegister.html")
                         .permitAll()
                 )
-                .logout(logout -> logout.permitAll())
+                .logout(LogoutConfigurer::permitAll)
                 .csrf(AbstractHttpConfigurer::disable);
 
         http.cors(new Customizer<CorsConfigurer<HttpSecurity>>() {
@@ -58,4 +63,5 @@ public class WebSecurityConfiguration {
         });
         return http.build();
     }
+
 }

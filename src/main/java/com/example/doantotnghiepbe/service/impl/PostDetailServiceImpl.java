@@ -1,50 +1,90 @@
 package com.example.doantotnghiepbe.service.impl;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
+import com.example.doantotnghiepbe.dto.PostDTO;
 import com.example.doantotnghiepbe.dto.PostDetailDTO;
+import com.example.doantotnghiepbe.dto.PostUserDTO;
 import com.example.doantotnghiepbe.entity.Post;
-import com.example.doantotnghiepbe.exception.ResourceNotFoundException;
 import com.example.doantotnghiepbe.repository.PostDetailRepository;
 import com.example.doantotnghiepbe.service.PostDetailService;
-import org.springframework.stereotype.Service;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class PostDetailServiceImpl implements PostDetailService {
 
+    private final Cloudinary cloudinary;
+    private final PostDetailRepository postDetailRepository;
+    private final ModelMapper modelMapper;
+
+
     @Autowired
-    private PostDetailRepository postDetailRepository;
+    public PostDetailServiceImpl(Cloudinary cloudinary, PostDetailRepository postDetailRepository, ModelMapper modelMapper) {
+        this.cloudinary = cloudinary;
+        this.postDetailRepository = postDetailRepository;
+        this.modelMapper = modelMapper;
+    }
 
     @Override
-    public PostDetailDTO getPostDetails(Long id_post) {
-        Post post = postDetailRepository.findByIdWithAmenities(id_post)
-                .orElseThrow(() -> new ResourceNotFoundException("Post not found"));
+    public Optional<PostDetailDTO> getPostById(Integer id) {
+        Optional<Post> postOptional = postDetailRepository.findById(id);
 
-        // Chuyển đổi từ Post entity sang PostDetailDTO
-        PostDetailDTO dto = new PostDetailDTO();
-        dto.setId_post(post.getId_post());
-        dto.setParking_name(post.getParking_name());
-        dto.setPrice(post.getPrice());
-        dto.setPrice_per(post.getPrice_per());
-        dto.setCapacity(post.getCapacity());
-        dto.setWard_name(post.getWard_name());
-        dto.setDistrict_name(post.getDistrict_name());
-        dto.setProvince_name(post.getProvince_name());
-        dto.setLatitude(post.getLatitude());
-        dto.setLongitude(post.getLongitude());
-        dto.setImage(post.getImage());
-        dto.setOpening_hours(post.getOpening_hours());
-        dto.setStatus(post.getStatus());
+        if (postOptional.isPresent()) {
+            Post post = postOptional.get();
 
-        // Lấy danh sách tiện ích từ Post
-        List<String> amenities = post.getAmenities()
-                .stream()
-                .map(amenity -> amenity.getAmenities_name())
-                .collect(Collectors.toList());
-        dto.setAmenities(amenities);
+            // Convert the Post entity to PostDetailDTO using ModelMapper
+            PostDetailDTO postDetailDTO = modelMapper.map(post, PostDetailDTO.class);
 
-        return dto;
+            // Manually set user details in PostDetailDTO (First name, Last name, Phone, etc.)
+            postDetailDTO.getUser().setFirstName(post.getUser().getFirstName());
+            postDetailDTO.getUser().setLastName(post.getUser().getLastName());
+            postDetailDTO.getUser().setPhoneNumber(post.getUser().getPhoneNumber());
+            postDetailDTO.getUser().setCreatedAt(post.getUser().getCreatedAt());
+            postDetailDTO.getUser().setAvatar(post.getUser().getAvatar());
+            return Optional.of(postDetailDTO);
+        }
+        return Optional.empty();
     }
+
+    @Override
+    public String uploadImage(byte[] imageBytes) throws IOException {
+        Map uploadResult = cloudinary.uploader().upload(imageBytes, ObjectUtils.emptyMap());
+        return uploadResult.get("url").toString();  // Get the URL of the uploaded image
+    }
+
+    @Override
+    public Page<PostDTO> getRelatedPostsByDistrict(String districtName, Pageable pageable) {
+        Page<Post> postPage = postDetailRepository.findByDistrictName(districtName, pageable);
+        List<PostDTO> postDTOs = postPage.stream()
+                .map(post -> {
+                    PostDTO postDTO = modelMapper.map(post, PostDTO.class);
+                    postDTO.setCommentCount(post.getCommentCount());
+
+                    if (post.getUser() != null) {
+                        PostUserDTO userDTO = new PostUserDTO(post.getUser().getFirstName(), post.getUser().getLastName());
+                        postDTO.setUser(userDTO);
+                    }
+
+                    return postDTO;
+                })
+                .collect(Collectors.toList());
+        return new PageImpl<>(postDTOs, pageable, postPage.getTotalElements());
+    }
+
+
+//    @Override
+//    public List<Post> getRelatedPostsByDistrict(String districtName) {
+//        return postDetailRepository.findByDistrictName(districtName);
+//    }
 }

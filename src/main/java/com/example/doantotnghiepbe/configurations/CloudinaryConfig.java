@@ -17,12 +17,13 @@ public class CloudinaryConfig {
     @Bean
     public Cloudinary cloudinary() {
         Map<String, String> config = ObjectUtils.asMap(
-                "cloud_name", "dcsmxzihc",
-                "api_key", "611115153438512",
-                "api_secret", "6TVqVT5KaJShiHBZoUakjLZ9W3E");
+                "cloud_name", "dqzfuomvj",
+                "api_key", "141698136898829",
+                "api_secret", "95bIAsYzltuLNsF4b0sfYUFrh6Y",
+                "secure", true
+        );
         return new Cloudinary(config);
     }
-
 
     public String saveToCloudinary(MultipartFile file) throws IOException {
         if (file.getOriginalFilename() == null) {
