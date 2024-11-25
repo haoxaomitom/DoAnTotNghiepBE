@@ -8,23 +8,20 @@ import com.example.doantotnghiepbe.exceptions.DataNotFoundException;
 import com.example.doantotnghiepbe.exceptions.ExistingException;
 import com.example.doantotnghiepbe.repository.RolesRepository;
 import com.example.doantotnghiepbe.repository.UsersRepository;
+import com.example.doantotnghiepbe.service.EmailService;
 import com.example.doantotnghiepbe.service.UsersService;
 import com.example.doantotnghiepbe.util.JwtTokenUtil;
-
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
-
 import java.io.IOException;
-import java.util.Collections;
+import java.time.DateTimeException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,11 +42,8 @@ public class UsersServiceImpl implements UsersService {
     private RolesRepository rolesRepository;
     @Autowired
     private CloudinaryConfig cloudinaryConfig;
-
-
-//    private static final String FACEBOOK_API_URL = "https://graph.facebook.com/v12.0/me?fields=id,email,first_name,last_name&access_token=";
-
-
+    @Autowired
+    private EmailService emailService;
 
     @Override
     public List<Users> getAll()  {
@@ -123,109 +117,23 @@ public class UsersServiceImpl implements UsersService {
     }
 
     @Override
+    public void verified(Long userId, boolean verified) throws DataNotFoundException {
+        Users user = usersRepository.findById(userId).orElseThrow(()-> new DataNotFoundException("không tìm thấy người dùng với id: "+userId));
+        user.setVerified(verified);
+        usersRepository.save(user);
+    }
+
+    @Override
+    public Users getUserByTokenVerified(String tokenVerified) throws DataNotFoundException {
+        Users user = usersRepository.findUsersByTokenVerified(tokenVerified).orElseThrow(()-> new DateTimeException("Không tìm thấy mã xác nhận "+tokenVerified));
+        if (jwtTokenUtil.isTokenExpired(tokenVerified)) {
+            throw new RuntimeException("Token has expired");
+        }
+        return user;
+    }
+
+    @Override
     public Long countUsers() {
         return usersRepository.count();
     }
-
-//    @Override
-//    public Map<String, Object> loginWithFacebook(String facebookToken) throws DataNotFoundException {
-//        // Call Facebook API to get user information
-//        String facebookUrl = FACEBOOK_API_URL + facebookToken;
-//        RestTemplate restTemplate = new RestTemplate();
-//        Map<String, Object> fbUser = restTemplate.getForObject(facebookUrl, Map.class);
-//
-//        if (fbUser == null || !fbUser.containsKey("id")) {
-//            throw new DataNotFoundException("Facebook user not found");
-//        }
-//
-//        String facebookId = (String) fbUser.get("id");
-//        Users user = usersRepository.findByFacebookId(facebookId).orElseThrow(() -> new DataNotFoundException("Facebook account not linked"));
-//
-//        // Generate JWT token
-//        String token = jwtTokenUtil.generateToken(user);
-//
-//        Map<String, Object> result = new HashMap<>();
-//        result.put("token", token);
-//        result.put("userId", user.getUserId());
-//        return result;
-//    }
-//
-//    @Override
-//    public Map<String, Object> registerWithFacebook(String facebookToken) throws DataNotFoundException {
-//        return Map.of();
-//    }
-//
-//    @Override
-//    public Map<String, Object> loginOrRegisterGoogleUser(String googleIdToken) throws DataNotFoundException {
-//        return Map.of();
-//    }
-
-//    @Override
-//    public Map<String, Object> registerWithFacebook(String facebookToken) throws DataNotFoundException {
-//        // Call Facebook API to get user information
-//        String facebookUrl = FACEBOOK_API_URL + facebookToken;
-//        RestTemplate restTemplate = new RestTemplate();
-//        Map<String, Object> fbUser = restTemplate.getForObject(facebookUrl, Map.class);
-//
-//        if (fbUser == null || !fbUser.containsKey("id")) {
-//            throw new DataNotFoundException("Facebook user not found");
-//        }
-//
-//        String facebookId = (String) fbUser.get("id");
-//        String email = (String) fbUser.get("email");
-//        String firstName = (String) fbUser.get("first_name");
-//        String lastName = (String) fbUser.get("last_name");
-//
-//        // Check if user exists by Facebook ID or email
-//        Users user = usersRepository.findByFacebookId(facebookId).orElse(null);
-//
-//        if (user == null) {
-//            user = usersRepository.findByEmail(email).orElse(null);
-//        }
-//
-//        if (user == null) {
-//            // Create new user
-//            user = new Users();
-//            user.setFacebookId(facebookId);
-//            user.setEmail(email);
-//            user.setFirstName(firstName);
-//            user.setLastName(lastName);
-//            user.setUsername(email != null ? email : "fb_" + facebookId);
-//            user.setIsActive(true);
-//            user.setPassword("");  // No password needed for Facebook login
-//            user.setRoles(rolesRepository.findById(2).orElseThrow(() -> new DataNotFoundException("Role not found")));
-//            usersRepository.save(user);
-//        } else {
-//            // Update user info if necessary
-//            user.setFacebookId(facebookId);
-//            usersRepository.save(user);
-//        }
-//
-//        // Generate JWT token
-//        String token = jwtTokenUtil.generateToken(user);
-//
-//        Map<String, Object> result = new HashMap<>();
-//        result.put("token", token);
-//        result.put("userId", user.getUserId());
-//        return result;
-//    }
-//
-//    public Users getOrCreateUserWithGoogle(String googleId) throws DataNotFoundException {
-//        // Call Google API to fetch user info if needed
-//        Users user = usersRepository.findByGoogleId(googleId)
-//                .orElseThrow(() -> new DataNotFoundException("Google account not found"));
-//
-//        if (user == null) {
-//            // If the user does not exist, create a new user
-//            user = new Users();
-//            user.setGoogleId(googleId);
-//            user.setIsActive(true);
-//            user.setRoles(rolesRepository.findById(2).orElseThrow(() -> new DataNotFoundException("Role not found")));
-//            usersRepository.save(user);
-//        }
-//
-//        return user;
-//    }
-
-
 }

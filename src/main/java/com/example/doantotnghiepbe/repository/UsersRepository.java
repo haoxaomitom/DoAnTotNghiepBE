@@ -11,6 +11,5 @@ public interface UsersRepository extends JpaRepository<Users,Long> {
     boolean existsByEmail(String email);
     boolean existsByUsername(String Username);
     Optional<Users> findUsersByUsername(String username);
-//    Optional<Users> findByFacebookId(String facebookId); // Thêm mới
-    Users findByEmail(String email);
+    Optional<Users> findUsersByTokenVerified(String tokenVerified);
 }

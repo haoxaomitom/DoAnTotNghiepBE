@@ -151,4 +151,24 @@ public class UsersController {
         }
         return ResponseEntity.ok(result);
     }
+    @GetMapping("/verified")
+    public ResponseEntity<?> verified(@RequestParam("token") String token) throws DataNotFoundException {
+        Map<String,Object> result = new HashMap<>();
+
+        try {
+            result.put("status",true);
+            result.put("message", "Thành công!");
+            result.put("data",usersService.getUserByTokenVerified(token));
+        }
+        catch (DataNotFoundException e){
+            result.put("status",false);
+            result.put("message", "Không tìm thấy token");
+            result.put("error",e);
+        }catch (RuntimeException e){
+            result.put("status",false);
+            result.put("message", "Đã quá thời hạn xác nhận!");
+            result.put("error",e);
+        }
+        return ResponseEntity.ok(result);
+    }
 }
