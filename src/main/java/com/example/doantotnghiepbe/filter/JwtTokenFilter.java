@@ -89,7 +89,8 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 Pair.of("/api/posts/countByDistrict", "GET"),
                 Pair.of("/api/posts/{id}", "GET"),
                 Pair.of("/api/comments/post/", "GET"),
-                Pair.of("/api/comments/", "DELETE")
+                Pair.of("/api/comments/", "DELETE"),
+                Pair.of("/api/users/verified","GET")
         );
 
         String requestPath = request.getServletPath();

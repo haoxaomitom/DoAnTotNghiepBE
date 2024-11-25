@@ -80,6 +80,9 @@ public class Users implements UserDetails {
     @JsonBackReference
     private Roles roles;
 
+    @Column(name = "token_verified")
+    private String tokenVerified;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();

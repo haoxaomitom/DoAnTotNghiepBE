@@ -8,6 +8,7 @@ import com.example.doantotnghiepbe.exceptions.DataNotFoundException;
 import com.example.doantotnghiepbe.exceptions.ExistingException;
 import com.example.doantotnghiepbe.repository.RolesRepository;
 import com.example.doantotnghiepbe.repository.UsersRepository;
+import com.example.doantotnghiepbe.service.EmailService;
 import com.example.doantotnghiepbe.service.UsersService;
 import com.example.doantotnghiepbe.util.JwtTokenUtil;
 import org.modelmapper.ModelMapper;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.DateTimeException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +42,8 @@ public class UsersServiceImpl implements UsersService {
     private RolesRepository rolesRepository;
     @Autowired
     private CloudinaryConfig cloudinaryConfig;
+    @Autowired
+    private EmailService emailService;
 
     @Override
     public List<Users> getAll()  {
@@ -109,6 +113,22 @@ public class UsersServiceImpl implements UsersService {
     public Users active(Long userId, boolean active) throws DataNotFoundException {
         Users user = usersRepository.findById(userId).orElseThrow(()-> new DataNotFoundException("Không tìm thấy người dùng với id: "+ userId));
         user.setIsActive(active);
+        return user;
+    }
+
+    @Override
+    public void verified(Long userId, boolean verified) throws DataNotFoundException {
+        Users user = usersRepository.findById(userId).orElseThrow(()-> new DataNotFoundException("không tìm thấy người dùng với id: "+userId));
+        user.setVerified(verified);
+        usersRepository.save(user);
+    }
+
+    @Override
+    public Users getUserByTokenVerified(String tokenVerified) throws DataNotFoundException {
+        Users user = usersRepository.findUsersByTokenVerified(tokenVerified).orElseThrow(()-> new DateTimeException("Không tìm thấy mã xác nhận "+tokenVerified));
+        if (jwtTokenUtil.isTokenExpired(tokenVerified)) {
+            throw new RuntimeException("Token has expired");
+        }
         return user;
     }
 

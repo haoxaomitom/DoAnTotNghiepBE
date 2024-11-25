@@ -20,5 +20,7 @@ public interface UsersService {
     Map login(String username, String password) throws DataNotFoundException;
     Users uploadAvatar(String username, MultipartFile file) throws DataNotFoundException, IOException;
     Users active(Long userId, boolean active) throws DataNotFoundException;
+    void verified( Long userId, boolean verified) throws DataNotFoundException;
+    Users getUserByTokenVerified(String tokenVerified) throws DataNotFoundException;
     Long countUsers();
 }
