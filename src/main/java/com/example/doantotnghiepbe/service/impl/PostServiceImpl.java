@@ -95,23 +95,26 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<PostDTO> getTopPosts() {
-        List<Post> topPosts = postRepository.findAllTopPostsOrderByPaymentAndDate();
-
-        return topPosts.stream()
-                .map(this::convertToPostDTO)
-                .collect(Collectors.toList());
+    public Page<PostDTO> findAllTopPostsOrderByPaymentAndDate(Pageable pageable) {
+        Page<Post> topPosts = postRepository.findAllTopPostsOrderByPaymentAndDate(pageable);
+        return topPosts.map(this::convertToDTO);
     }
 
-    private PostDTO convertToPostDTO(Post post) {
-        PostDTO postDTO = modelMapper.map(post, PostDTO.class);
 
-        // Map user details if present
-        if (post.getUser() != null) {
-            postDTO.setUser(modelMapper.map(post.getUser(), PostUserDTO.class));
-        }
+//    private PostDTO convertToPostDTO(Post post) {
+//        PostDTO postDTO = modelMapper.map(post, PostDTO.class);
+//
+//        // Map user details if present
+//        if (post.getUser() != null) {
+//            postDTO.setUser(modelMapper.map(post.getUser(), PostUserDTO.class));
+//        }
+//
+//        return postDTO;
+//    }
 
-        return postDTO;
+    public void softDeletePost(Integer postId) {
+        postRepository.softDeletePostById(postId);
     }
+
 }
 
