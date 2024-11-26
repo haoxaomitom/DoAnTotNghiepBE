@@ -21,6 +21,7 @@ public class PostDetailDTO {
     private String status;
     private LocalDateTime createdAt;
     private String description;
+    private String topPostEnd;
     private List<ImageDTO> images;
     private List<AmenitiesDTO> amenities;
     private List<VehicleTypeDTO> vehicleTypes;

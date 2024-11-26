@@ -2,7 +2,7 @@ package com.example.doantotnghiepbe.dto;
 
 import com.example.doantotnghiepbe.entity.Amenities;
 import com.example.doantotnghiepbe.entity.Image;
-import com.example.doantotnghiepbe.entity.User;
+import com.example.doantotnghiepbe.entity.Users;
 import com.example.doantotnghiepbe.entity.VehicleType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -30,7 +30,6 @@ public class PostDTO {
     private List<Amenities> amenities;
     private List<VehicleType> vehicleTypes;
     private PostUserDTO user;
-
 }
 
 

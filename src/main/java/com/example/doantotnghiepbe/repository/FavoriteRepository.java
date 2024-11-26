@@ -12,12 +12,12 @@ import java.util.Optional;
 @Repository
 public interface FavoriteRepository extends JpaRepository<Favorite, Integer> {
 
-    boolean existsByUserUserIdAndPostPostId(Integer userId, Integer postId);
+    boolean existsByUserUserIdAndPostPostId(Long userId, Integer postId);
 
     @Query("SELECT f FROM Favorite f JOIN FETCH f.post WHERE f.user.userId = :userId")
-    List<Favorite> getFavoritesByUserUserId(@Param("userId") Integer userId);
+    List<Favorite> getFavoritesByUserUserId(@Param("userId") Long userId);
 
-    Optional<Favorite> findByUserUserIdAndPostPostId(Integer userId, Integer postId);
+    Optional<Favorite> findByUserUserIdAndPostPostId(Long userId, Integer postId);
 
 
 }

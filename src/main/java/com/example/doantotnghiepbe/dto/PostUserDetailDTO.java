@@ -12,4 +12,5 @@ public class PostUserDetailDTO {
     private String phoneNumber;
     private LocalDateTime createdAt;
     private String avatar;
+    private String facebook;
 }

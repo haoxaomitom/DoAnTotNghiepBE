@@ -1,26 +1,31 @@
 package com.example.doantotnghiepbe.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
-@NoArgsConstructor
+@Getter
+@Setter
 @AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "Authorities")
-public class Authority {
+public class Authorities {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @JsonBackReference
+    private Users users;
 
     @ManyToOne
     @JoinColumn(name = "role_id", nullable = false)
-    private Role role;
+    @JsonBackReference
+    private Roles roles;
 }

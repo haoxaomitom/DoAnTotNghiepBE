@@ -18,7 +18,7 @@ public class Notification {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = true)
-    private User user; // Can be null if it's a global notification
+    private Users user; // Can be null if it's a global notification
 
     @Column(name = "notification_content", nullable = false)
     private String content;

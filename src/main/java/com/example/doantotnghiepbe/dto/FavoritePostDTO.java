@@ -14,9 +14,9 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class FavoritePostDTO {
-    private Integer favoriteId; // ID of the favorite entry
-    private Integer user; // ID of the user who favorited
-    private Integer post; // ID of the post that is favorited
+    private Integer favoriteId;
+    private Long user;
+    private Integer post;
 
     // Post details
     private String parkingName;
@@ -32,5 +32,4 @@ public class FavoritePostDTO {
     private List<Amenities> amenities;
     private List<VehicleType> vehicleTypes;
 
-    // Add any other fields from PostDTO that you want to include
 }
