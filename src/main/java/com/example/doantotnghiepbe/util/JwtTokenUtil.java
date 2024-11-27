@@ -25,7 +25,7 @@ public class JwtTokenUtil {
 
     public String generateToken(Users user) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("userId", user.getUsername());
+        claims.put("userId", user.getUserId());
         claims.put("roleId", user.getRoles().getRoleId());
         try {
             String token = Jwts.builder()
@@ -45,7 +45,8 @@ public class JwtTokenUtil {
         claims.put("userId", user.getUserId());
         claims.put("email", user.getEmail());
 
-        long verificationExpiration = 15 * 1000L;
+        long verificationExpiration = 15 * 60 * 1000L;
+        System.out.println(verificationExpiration);
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(user.getEmail())
@@ -76,6 +77,10 @@ public class JwtTokenUtil {
     }
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
+    }
+    public String extractUserId(String token) {
+        Claims claims = extracAllClaims(token);
+        return claims.get("userId", String.class);
     }
     public boolean validateToken(String token, UserDetails userDetails) {
         String username = extractUsername(token);

@@ -1,5 +1,6 @@
 package com.example.doantotnghiepbe.controller;
 
+import com.example.doantotnghiepbe.dto.ChangePasswordDTO;
 import com.example.doantotnghiepbe.dto.UserInfoDTO;
 import com.example.doantotnghiepbe.dto.UserRegisterDTO;
 import com.example.doantotnghiepbe.dto.UsersLoginDTO;
@@ -34,7 +35,7 @@ public class UsersController {
             result.put("data",usersService.getAll());
         }catch (Exception e){
             result.put("status", false);
-            result.put("message", e);
+            result.put("message", e.getLocalizedMessage());
             result.put("data", null);
         }
         return ResponseEntity.ok(result);
@@ -54,7 +55,7 @@ public class UsersController {
                     .build());
         }catch (DataNotFoundException | BadCredentialsException e){
             result.put("status", false);
-            result.put("message","Tên người dùng hoặc mật khẩu không đúng");
+            result.put("message",e.getLocalizedMessage());
             result.put("data", null);
         }
         return ResponseEntity.ok(result);
@@ -66,13 +67,9 @@ public class UsersController {
             result.put("status",true);
             result.put("message", "Đăng ký thành công");
             result.put("data",usersService.register(userRegisterDTO));
-        }catch (ExistingException e){
+        }catch (ExistingException | DataNotFoundException e){
             result.put("status", false);
-            result.put("message", "Username đã tồn tại");
-            result.put("data", null);
-        }catch (DataNotFoundException e){
-            result.put("status", false);
-            result.put("message", e);
+            result.put("message", e.getLocalizedMessage());
             result.put("data", null);
         }
         return ResponseEntity.ok(result);
@@ -104,7 +101,7 @@ public class UsersController {
             result.put("data",usersService.getUsersByUsername(username));
         }catch (DataNotFoundException e){
             result.put("status",false);
-            result.put("message", e);
+            result.put("message", e.getLocalizedMessage());
             result.put("data",null);
         }
         return ResponseEntity.ok(result);
@@ -118,7 +115,7 @@ public class UsersController {
             result.put("data",usersService.uploadAvatar(username ,file));
         }catch (DataNotFoundException |IOException e){
             result.put("status",false);
-            result.put("message", e);
+            result.put("message", e.getLocalizedMessage());
             result.put("data",null);
         }
         return ResponseEntity.ok(result);
@@ -132,7 +129,7 @@ public class UsersController {
             result.put("data",usersService.active(id,active));
         }catch (DataNotFoundException e){
             result.put("status",false);
-            result.put("message", e);
+            result.put("message", e.getLocalizedMessage());
             result.put("data",null);
         }
         return ResponseEntity.ok(result);
@@ -146,13 +143,13 @@ public class UsersController {
             result.put("data",usersService.countUsers());
         }catch (Exception e){
             result.put("status",false);
-            result.put("message", e);
+            result.put("message", e.getLocalizedMessage());
             result.put("data",null);
         }
         return ResponseEntity.ok(result);
     }
     @GetMapping("/verified")
-    public ResponseEntity<?> verified(@RequestParam("token") String token) throws DataNotFoundException {
+    public ResponseEntity<?> verified(@RequestParam("token") String token){
         Map<String,Object> result = new HashMap<>();
 
         try {
@@ -160,14 +157,23 @@ public class UsersController {
             result.put("message", "Thành công!");
             result.put("data",usersService.getUserByTokenVerified(token));
         }
-        catch (DataNotFoundException e){
+        catch (DataNotFoundException | RuntimeException e){
             result.put("status",false);
-            result.put("message", "Không tìm thấy token");
+            result.put("message", e.getLocalizedMessage());
             result.put("error",e);
-        }catch (RuntimeException e){
+        }
+        return ResponseEntity.ok(result);
+    }
+    @PutMapping("/{userId}/changePassword")
+    public ResponseEntity<?> changePassword(@PathVariable("userId") Long userId, @RequestBody ChangePasswordDTO changePasswordDTO){
+        Map<String,Object> result = new HashMap<>();
+        try {
+            usersService.changePassword(userId,changePasswordDTO);
+            result.put("status",true);
+            result.put("message","Đổi mật khẩu thành công");
+        }catch (DataNotFoundException | BadCredentialsException | IllegalArgumentException e){
             result.put("status",false);
-            result.put("message", "Đã quá thời hạn xác nhận!");
-            result.put("error",e);
+            result.put("message", e.getLocalizedMessage());
         }
         return ResponseEntity.ok(result);
     }

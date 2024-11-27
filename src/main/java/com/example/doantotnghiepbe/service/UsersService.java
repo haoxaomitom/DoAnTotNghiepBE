@@ -1,5 +1,6 @@
 package com.example.doantotnghiepbe.service;
 
+import com.example.doantotnghiepbe.dto.ChangePasswordDTO;
 import com.example.doantotnghiepbe.dto.UserInfoDTO;
 import com.example.doantotnghiepbe.dto.UserRegisterDTO;
 import com.example.doantotnghiepbe.entity.Users;
@@ -21,6 +22,7 @@ public interface UsersService {
     Users uploadAvatar(String username, MultipartFile file) throws DataNotFoundException, IOException;
     Users active(Long userId, boolean active) throws DataNotFoundException;
     void verified( Long userId, boolean verified) throws DataNotFoundException;
+    void changePassword(Long userId, ChangePasswordDTO changePasswordDTO) throws  DataNotFoundException;
     Users getUserByTokenVerified(String tokenVerified) throws DataNotFoundException;
     Long countUsers();
 //    Map<String, Object> loginWithFacebook(String facebookToken) throws DataNotFoundException;

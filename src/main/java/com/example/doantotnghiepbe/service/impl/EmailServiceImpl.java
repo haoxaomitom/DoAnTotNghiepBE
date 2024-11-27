@@ -41,7 +41,10 @@ public class EmailServiceImpl implements EmailService {
         String token = jwtTokenUtil.generateVerificationToken(user);
         user.setTokenVerified(token);
         usersRepository.save(user);
-        String url = verificationUrl+token;
+        String tokenVerified = user.getTokenVerified();
+        System.out.println(tokenVerified);
+        String apiUrl = "http://127.0.0.1:5500/app/components/user/VerificatonResult.html?token="+tokenVerified;
+
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
 
@@ -53,7 +56,7 @@ public class EmailServiceImpl implements EmailService {
                 + "<body>"
                 + "<h2>Welcome to Our Service!</h2>"
                 + "<p>Thank you for registering. Please click the button below to verify your account:</p>"
-                + "<a href=\"" + verificationUrl + "\" style=\""
+                + "<a href=\"" + apiUrl + "\" style=\""
                 + "background-color: #4CAF50;"
                 + "color: white;"
                 + "padding: 10px 20px;"
@@ -65,8 +68,8 @@ public class EmailServiceImpl implements EmailService {
                 + "</body>"
                 + "</html>";
 
-        helper.setText(htmlContent, true); // Set true to indicate HTML content
-        helper.setFrom("baonvhps34367@fpt.edu.vn");
+        helper.setText(htmlContent, true);
+        helper.setFrom(user.getEmail());
 
         javaMailSender.send(mimeMessage);
         return token;

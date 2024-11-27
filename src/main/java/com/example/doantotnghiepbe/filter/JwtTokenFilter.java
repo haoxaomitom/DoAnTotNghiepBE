@@ -29,7 +29,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     @Autowired
     private JwtTokenUtil jwtTokenUtils;
 
-    private static final String LOGIN_URL = "http://127.0.0.1:5500/app/components/Login/LoginAndRegister.html";
+    private static final String LOGIN_URL = "/app/components/Login/LoginAndRegister.html";
 
     @Override
     protected void doFilterInternal(@NotNull HttpServletRequest request,
