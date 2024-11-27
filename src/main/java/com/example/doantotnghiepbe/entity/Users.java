@@ -83,6 +83,10 @@ public class Users implements UserDetails {
     @JsonBackReference
     private Roles roles;
 
+
+    @Column(name = "facebook")
+    private String facebook;
+
     @Column(name = "token_verified")
     private String tokenVerified;
 
