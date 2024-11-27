@@ -32,4 +32,5 @@ public class FavoritePostDTO {
     private List<Amenities> amenities;
     private List<VehicleType> vehicleTypes;
 
+    // Add any other fields from PostDTO that you want to include
 }

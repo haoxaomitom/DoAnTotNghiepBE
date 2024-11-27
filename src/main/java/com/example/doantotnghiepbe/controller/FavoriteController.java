@@ -1,6 +1,7 @@
 package com.example.doantotnghiepbe.controller;
 
-import com.example.doantotnghiepbe.dto.ApiResponse;
+import com.example.doantotnghiepbe.dto.ApiResponse; // Import your new ApiResponse class
+import com.example.doantotnghiepbe.dto.FavoriteDTO;
 import com.example.doantotnghiepbe.dto.FavoritePostDTO;
 import com.example.doantotnghiepbe.entity.Favorite;
 import com.example.doantotnghiepbe.service.FavoriteService;
@@ -33,6 +34,12 @@ public class FavoriteController {
         return ResponseEntity.ok(new ApiResponse<>("success", "Favorites retrieved successfully", favorites));
     }
 
+    @DeleteMapping("/unlike")
+    public ResponseEntity<ApiResponse<String>> unlikePost(@RequestParam Long userId, @RequestParam Integer postId) {
+        favoriteService.unlikePost(userId, postId);
+        ApiResponse<String> response = new ApiResponse<>("success", "Unliked successfully", null);
+        return ResponseEntity.ok(response);
+    }
 //    @DeleteMapping("/unlike")
 //    public ResponseEntity<ApiResponse<String>> unlikePost(@RequestParam Long userId, @RequestParam Integer postId) {
 //        favoriteService.unlikePost(userId, postId);

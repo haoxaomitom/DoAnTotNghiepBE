@@ -10,7 +10,6 @@ import com.example.doantotnghiepbe.entity.Price;
 import com.example.doantotnghiepbe.repository.PaymentRepository;
 import com.example.doantotnghiepbe.repository.PostRepository;
 import com.example.doantotnghiepbe.repository.PriceRepository;
-import com.example.doantotnghiepbe.service.PaymentService;
 import com.example.doantotnghiepbe.service.PriceService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -36,8 +35,6 @@ public class PaymentController {
     @Autowired
     private PriceRepository priceRepository;
 
-//    @Autowired
-//    private PaymentService paymentService;
 
     @Autowired
     private PaymentRepository paymentRepository;
