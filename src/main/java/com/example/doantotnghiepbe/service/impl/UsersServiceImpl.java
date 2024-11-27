@@ -1,6 +1,7 @@
 package com.example.doantotnghiepbe.service.impl;
 
 import com.example.doantotnghiepbe.configurations.CloudinaryConfig;
+import com.example.doantotnghiepbe.dto.ChangePasswordDTO;
 import com.example.doantotnghiepbe.dto.UserInfoDTO;
 import com.example.doantotnghiepbe.dto.UserRegisterDTO;
 import com.example.doantotnghiepbe.entity.Users;
@@ -8,7 +9,6 @@ import com.example.doantotnghiepbe.exceptions.DataNotFoundException;
 import com.example.doantotnghiepbe.exceptions.ExistingException;
 import com.example.doantotnghiepbe.repository.RolesRepository;
 import com.example.doantotnghiepbe.repository.UsersRepository;
-import com.example.doantotnghiepbe.service.EmailService;
 import com.example.doantotnghiepbe.service.UsersService;
 import com.example.doantotnghiepbe.util.JwtTokenUtil;
 import org.modelmapper.ModelMapper;
@@ -42,8 +42,6 @@ public class UsersServiceImpl implements UsersService {
     private RolesRepository rolesRepository;
     @Autowired
     private CloudinaryConfig cloudinaryConfig;
-    @Autowired
-    private EmailService emailService;
 
     @Override
     public List<Users> getAll()  {
@@ -59,10 +57,10 @@ public class UsersServiceImpl implements UsersService {
     @Override
     public Users register(UserRegisterDTO userRegisterDTO) throws DataNotFoundException{
         if(usersRepository.existsByUsername(userRegisterDTO.getUsername())){
-            throw new ExistingException("Tên đăng nhập đã tồn tại");
+            throw new ExistingException("Tên đăng nhập đã tồn tại.");
         }
         if(usersRepository.existsByEmail(userRegisterDTO.getEmail())){
-            throw new ExistingException("Email đã tồn tại");
+            throw new ExistingException("Email đã tồn tại.");
         }
         Users users = modelMapper.map(userRegisterDTO,Users.class);
         users.setRoles(rolesRepository.findById(2).orElseThrow(()-> new DataNotFoundException("Could not find role with id: 2")));
@@ -89,9 +87,9 @@ public class UsersServiceImpl implements UsersService {
     @Override
     public Map login(String username, String password) throws DataNotFoundException {
         Users user = usersRepository.findUsersByUsername(username)
-                .orElseThrow(() -> new DataNotFoundException("Invalid email or password"));
+                .orElseThrow(() -> new DataNotFoundException("Tên đăng nhập hoặc mật khẩu không đúng."));
         if(!passwordEncoder.matches(password,user.getPassword())) {
-            throw new BadCredentialsException("Invalid email or password");
+            throw new BadCredentialsException("Tên đăng nhập hoặc mật khẩu không đúng.");
         }
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username,password,user.getAuthorities());
         authenticationManager.authenticate(authenticationToken);
@@ -124,10 +122,23 @@ public class UsersServiceImpl implements UsersService {
     }
 
     @Override
+    public void changePassword(Long userId, ChangePasswordDTO changePasswordDTO) throws DataNotFoundException {
+        Users user = usersRepository.findById(userId).orElseThrow(()-> new DataNotFoundException("không tìm thấy người dùng với id: "+userId));
+        if(!passwordEncoder.matches(changePasswordDTO.getOldPassword(),user.getPassword())){
+            throw new BadCredentialsException("Mật khẩu cũ không đúng");
+        }
+        if (!changePasswordDTO.getNewPassword().equals(changePasswordDTO.getConfirm())){
+            throw new IllegalArgumentException("Xác nhận mật khẩu sai!");
+        }
+        user.setPassword(passwordEncoder.encode(changePasswordDTO.getNewPassword()));
+        usersRepository.save(user);
+    }
+
+    @Override
     public Users getUserByTokenVerified(String tokenVerified) throws DataNotFoundException {
-        Users user = usersRepository.findUsersByTokenVerified(tokenVerified).orElseThrow(()-> new DateTimeException("Không tìm thấy mã xác nhận "+tokenVerified));
+        Users user = usersRepository.findUsersByTokenVerified(tokenVerified).orElseThrow(()-> new DataNotFoundException("Lỗi xác nhận!"));
         if (jwtTokenUtil.isTokenExpired(tokenVerified)) {
-            throw new RuntimeException("Token has expired");
+            throw new RuntimeException("Đã quá thời gian xác nhận");
         }
         return user;
     }
