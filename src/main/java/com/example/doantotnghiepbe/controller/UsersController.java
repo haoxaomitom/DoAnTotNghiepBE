@@ -1,11 +1,12 @@
 package com.example.doantotnghiepbe.controller;
 
+import com.example.doantotnghiepbe.dto.ChangePasswordDTO;
 import com.example.doantotnghiepbe.dto.UserInfoDTO;
-import com.example.doantotnghiepbe.dto.UsersDTO;
+import com.example.doantotnghiepbe.dto.UserRegisterDTO;
 import com.example.doantotnghiepbe.dto.UsersLoginDTO;
 import com.example.doantotnghiepbe.dto.response.LoginRespone;
-import com.example.doantotnghiepbe.exception.DataNotFoundException;
-import com.example.doantotnghiepbe.exception.ExistingException;
+import com.example.doantotnghiepbe.exceptions.DataNotFoundException;
+import com.example.doantotnghiepbe.exceptions.ExistingException;
 import com.example.doantotnghiepbe.service.UsersService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,20 @@ public class UsersController {
     @Autowired
     private UsersService usersService;
 
+    @GetMapping
+    public ResponseEntity<?> getAll(){
+        Map<String,Object> result = new HashMap<>();
+        try {
+            result.put("status",true);
+            result.put("message", "Thành công");
+            result.put("data",usersService.getAll());
+        }catch (Exception e){
+            result.put("status", false);
+            result.put("message", e.getLocalizedMessage());
+            result.put("data", null);
+        }
+        return ResponseEntity.ok(result);
+    }
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody UsersLoginDTO userLoginDTO) {
         Map<String,Object> result = new HashMap<>();
@@ -40,25 +55,21 @@ public class UsersController {
                     .build());
         }catch (DataNotFoundException | BadCredentialsException e){
             result.put("status", false);
-            result.put("message","Tên người dùng hoặc mật khẩu không đúng");
+            result.put("message",e.getLocalizedMessage());
             result.put("data", null);
         }
         return ResponseEntity.ok(result);
     }
     @PostMapping("/register")
-    public ResponseEntity<?> register(@Valid @RequestBody UsersDTO usersDTO) {
+    public ResponseEntity<?> register(@Valid @RequestBody UserRegisterDTO userRegisterDTO) {
         Map<String,Object> result = new HashMap<>();
         try {
             result.put("status",true);
             result.put("message", "Đăng ký thành công");
-            result.put("data",usersService.register(usersDTO));
-        }catch (ExistingException e){
+            result.put("data",usersService.register(userRegisterDTO));
+        }catch (ExistingException | DataNotFoundException e){
             result.put("status", false);
-            result.put("message", "Username đã tồn tại");
-            result.put("data", null);
-        }catch (DataNotFoundException e){
-            result.put("status", false);
-            result.put("message", e);
+            result.put("message", e.getLocalizedMessage());
             result.put("data", null);
         }
         return ResponseEntity.ok(result);
@@ -90,13 +101,13 @@ public class UsersController {
             result.put("data",usersService.getUsersByUsername(username));
         }catch (DataNotFoundException e){
             result.put("status",false);
-            result.put("message", e);
+            result.put("message", e.getLocalizedMessage());
             result.put("data",null);
         }
         return ResponseEntity.ok(result);
     }
     @PutMapping("/avatar/{username}")
-    public ResponseEntity<?> uploadAvatar(@PathVariable("username") String username, @ModelAttribute MultipartFile file) throws DataNotFoundException, IOException{
+    public ResponseEntity<?> uploadAvatar(@PathVariable("username") String username, @RequestParam("file") MultipartFile file) throws DataNotFoundException, IOException{
         Map<String,Object> result = new HashMap<>();
         try {
             result.put("status",true);
@@ -104,10 +115,66 @@ public class UsersController {
             result.put("data",usersService.uploadAvatar(username ,file));
         }catch (DataNotFoundException |IOException e){
             result.put("status",false);
-            result.put("message", e);
+            result.put("message", e.getLocalizedMessage());
             result.put("data",null);
         }
         return ResponseEntity.ok(result);
     }
+    @PutMapping("/{id}")
+    public ResponseEntity<?> active(@PathVariable Long id,@RequestParam("active") boolean active){
+        Map<String,Object> result = new HashMap<>();
+        try {
+            result.put("status",true);
+            result.put("message", "Thành công!");
+            result.put("data",usersService.active(id,active));
+        }catch (DataNotFoundException e){
+            result.put("status",false);
+            result.put("message", e.getLocalizedMessage());
+            result.put("data",null);
+        }
+        return ResponseEntity.ok(result);
+    }
+    @GetMapping("/countUser")
+    public ResponseEntity<?> countUser(){
+        Map<String,Object> result = new HashMap<>();
+        try {
+            result.put("status",true);
+            result.put("message", "Thành công!");
+            result.put("data",usersService.countUsers());
+        }catch (Exception e){
+            result.put("status",false);
+            result.put("message", e.getLocalizedMessage());
+            result.put("data",null);
+        }
+        return ResponseEntity.ok(result);
+    }
+    @GetMapping("/verified")
+    public ResponseEntity<?> verified(@RequestParam("token") String token){
+        Map<String,Object> result = new HashMap<>();
 
+        try {
+            result.put("status",true);
+            result.put("message", "Thành công!");
+            result.put("data",usersService.getUserByTokenVerified(token));
+        }
+        catch (DataNotFoundException | RuntimeException e){
+            result.put("status",false);
+            result.put("message", e.getLocalizedMessage());
+            result.put("error",e);
+        }
+        return ResponseEntity.ok(result);
+    }
+    @PutMapping("/{userId}/changePassword")
+    public ResponseEntity<?> changePassword(@PathVariable("userId") Long userId, @RequestBody ChangePasswordDTO changePasswordDTO){
+        Map<String,Object> result = new HashMap<>();
+        try {
+            usersService.changePassword(userId,changePasswordDTO);
+            result.put("status",true);
+            result.put("message","Đổi mật khẩu thành công");
+        }catch (DataNotFoundException | BadCredentialsException | IllegalArgumentException e){
+            result.put("status",false);
+            result.put("message", e.getLocalizedMessage());
+        }
+        return ResponseEntity.ok(result);
+    }
 }

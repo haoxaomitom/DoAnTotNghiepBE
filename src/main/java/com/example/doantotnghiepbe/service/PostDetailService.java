@@ -14,7 +14,7 @@ import java.util.Optional;
 public interface PostDetailService {
 
     Optional<PostDetailDTO> getPostById(Integer id);
-    String uploadImage(byte[] imageBytes) throws IOException;
+//    String uploadImage(byte[] imageBytes) throws IOException;
 
     Page<PostDTO> getRelatedPostsByDistrict(String districtName, Pageable pageable);
 }

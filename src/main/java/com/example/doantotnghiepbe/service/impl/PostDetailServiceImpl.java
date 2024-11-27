@@ -46,22 +46,23 @@ public class PostDetailServiceImpl implements PostDetailService {
             // Convert the Post entity to PostDetailDTO using ModelMapper
             PostDetailDTO postDetailDTO = modelMapper.map(post, PostDetailDTO.class);
 
-            // Manually set user details in PostDetailDTO (First name, Last name, Phone, etc.)
+            // Manually set user details
             postDetailDTO.getUser().setFirstName(post.getUser().getFirstName());
             postDetailDTO.getUser().setLastName(post.getUser().getLastName());
             postDetailDTO.getUser().setPhoneNumber(post.getUser().getPhoneNumber());
             postDetailDTO.getUser().setCreatedAt(post.getUser().getCreatedAt());
             postDetailDTO.getUser().setAvatar(post.getUser().getAvatar());
+            postDetailDTO.getUser().setFacebook(post.getUser().getFacebook());
             return Optional.of(postDetailDTO);
         }
         return Optional.empty();
     }
 
-    @Override
-    public String uploadImage(byte[] imageBytes) throws IOException {
-        Map uploadResult = cloudinary.uploader().upload(imageBytes, ObjectUtils.emptyMap());
-        return uploadResult.get("url").toString();  // Get the URL of the uploaded image
-    }
+//    @Override
+//    public String uploadImage(byte[] imageBytes) throws IOException {
+//        Map uploadResult = cloudinary.uploader().upload(imageBytes, ObjectUtils.emptyMap());
+//        return uploadResult.get("url").toString();  // Get the URL of the uploaded image
+//    }
 
     @Override
     public Page<PostDTO> getRelatedPostsByDistrict(String districtName, Pageable pageable) {

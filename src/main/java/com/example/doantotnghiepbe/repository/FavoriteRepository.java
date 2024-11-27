@@ -12,11 +12,14 @@ import java.util.Optional;
 @Repository
 public interface FavoriteRepository extends JpaRepository<Favorite, Integer> {
 
+    //like post & isFavorite
     boolean existsByUserUserIdAndPostPostId(Long userId, Integer postId);
 
-    @Query("SELECT f FROM Favorite f JOIN FETCH f.post WHERE f.user.userId = :userId")
+    //getFavoriteByUser
+    @Query("SELECT f FROM Favorite f JOIN FETCH f.post p WHERE f.user.userId = :userId AND p.status = 'ACTIVE'")
     List<Favorite> getFavoritesByUserUserId(@Param("userId") Long userId);
 
+    //Unlike post && toggle favorite
     Optional<Favorite> findByUserUserIdAndPostPostId(Long userId, Integer postId);
 
 

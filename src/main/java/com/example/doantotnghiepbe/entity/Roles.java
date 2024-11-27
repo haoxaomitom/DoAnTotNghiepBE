@@ -25,8 +25,4 @@ public class Roles {
     @JsonManagedReference
     private List<Users> users;
 
-    @OneToMany(mappedBy = "roles")
-    @JsonManagedReference
-    private List<Authorities> authorities;
-
 }

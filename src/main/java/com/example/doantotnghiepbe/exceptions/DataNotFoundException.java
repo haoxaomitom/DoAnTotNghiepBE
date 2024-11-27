@@ -1,4 +1,4 @@
-package com.example.doantotnghiepbe.exception;
+package com.example.doantotnghiepbe.exceptions;
 
 public class DataNotFoundException extends Exception{
     public DataNotFoundException(String message){

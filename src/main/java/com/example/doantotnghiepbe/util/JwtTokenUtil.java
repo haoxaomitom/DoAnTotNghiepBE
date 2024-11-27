@@ -22,9 +22,10 @@ public class JwtTokenUtil {
     private int expiration;
     @Value("${jwt.secretKey}")
     private String secretKey;
+
     public String generateToken(Users user) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("userId", user.getUsername());
+        claims.put("userId", user.getUserId());
         claims.put("roleId", user.getRoles().getRoleId());
         try {
             String token = Jwts.builder()
@@ -39,6 +40,22 @@ public class JwtTokenUtil {
             throw new InvalidParameterException("Cannot create jwt token, error: " + e.getMessage());
         }
     }
+    public String generateVerificationToken(Users user) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("userId", user.getUserId());
+        claims.put("email", user.getEmail());
+
+        long verificationExpiration = 15 * 60 * 1000L;
+        System.out.println(verificationExpiration);
+        return Jwts.builder()
+                .setClaims(claims)
+                .setSubject(user.getEmail())
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + verificationExpiration))
+                .signWith(getSignInKey(), SignatureAlgorithm.HS256)
+                .compact();
+    }
+
     private Key getSignInKey() {
         byte[] bytes = Decoders.BASE64.decode(secretKey);
         return Keys.hmacShaKeyFor(bytes);
@@ -60,6 +77,10 @@ public class JwtTokenUtil {
     }
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
+    }
+    public String extractUserId(String token) {
+        Claims claims = extracAllClaims(token);
+        return claims.get("userId", String.class);
     }
     public boolean validateToken(String token, UserDetails userDetails) {
         String username = extractUsername(token);

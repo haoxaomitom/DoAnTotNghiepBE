@@ -30,7 +30,6 @@ public class PostDTO {
     private List<Amenities> amenities;
     private List<VehicleType> vehicleTypes;
     private PostUserDTO user;
-
 }
 
 

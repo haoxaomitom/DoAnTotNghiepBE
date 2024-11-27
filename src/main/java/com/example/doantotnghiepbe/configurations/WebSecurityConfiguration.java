@@ -33,16 +33,26 @@ public class WebSecurityConfiguration {
                 .authorizeHttpRequests((requests -> {
                     requests.requestMatchers(
                                     "/api/**",
+                                    "/api/users/login",
+                                    "/api/users/register",
                                     "/api/posts/{id}",
                                     "/api/comments/post/{postId}",
-                                    "/api/comments/{commentId}"
+                                    "/api/comments/{commentId}",
+                                    "/api/posts/user/{userId}",
+                                    "/api/vnpay/return",
+                                    "/api/vnpay/payment/details/{txnRef}",
+                                    "/api/reports",
+                                    "/api/users/register",
+                                    "/api/posts/{postId}",
+                                    "/api/users/verified",
+                            "/api/posts/top"
                             ).permitAll()
                             .requestMatchers("/api/users/getUserByUsername").hasAnyRole("USER", "ADMIN", "MODERATOR")
-
+                            .requestMatchers("/api/contactInformation/**").hasAnyRole("USER", "ADMIN", "MODERATOR")
                             .anyRequest().authenticated();
                 }))
                 .formLogin(form -> form
-                        .loginPage("http://127.0.0.1:5500/app/components/Login/LoginAndRegister.html")
+                        .loginPage("/app/components/Login/LoginAndRegister.html")
                         .permitAll()
                 )
                 .logout(LogoutConfigurer::permitAll)
