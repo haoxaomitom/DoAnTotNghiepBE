@@ -140,6 +140,8 @@ public class UsersServiceImpl implements UsersService {
         if (jwtTokenUtil.isTokenExpired(tokenVerified)) {
             throw new RuntimeException("Đã quá thời gian xác nhận");
         }
+        user.setVerified(true);
+        usersRepository.save(user);
         return user;
     }
 
