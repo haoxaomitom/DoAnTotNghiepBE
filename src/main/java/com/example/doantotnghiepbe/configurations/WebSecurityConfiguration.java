@@ -38,14 +38,7 @@ public class WebSecurityConfiguration {
                                     "/api/posts/{id}",
                                     "/api/comments/post/{postId}",
                                     "/api/comments/{commentId}",
-                                    "/api/posts/user/{userId}",
-                                    "/api/vnpay/return",
-                                    "/api/vnpay/payment/details/{txnRef}",
-                                    "/api/reports",
-                                    "/api/users/register",
-                                    "/api/posts/{postId}",
-                                    "/api/users/verified",
-                            "/api/posts/top"
+                                    "/api/users/verified"
                             ).permitAll()
                             .requestMatchers("/api/users/getUserByUsername").hasAnyRole("USER", "ADMIN", "MODERATOR")
                             .requestMatchers("/api/contactInformation/**").hasAnyRole("USER", "ADMIN", "MODERATOR")

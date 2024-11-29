@@ -25,7 +25,7 @@ public class Users implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
-    
+
     @Column(nullable = false, unique = true, length = 255)
     private String username;
 
@@ -75,17 +75,10 @@ public class Users implements UserDetails {
     @Column(nullable = false)
     private Boolean isActive = true;
 
-    @Column(name = "facebook")
-    private String facebook;
-
     @ManyToOne
     @JoinColumn(name = "role_id", nullable = false)
     @JsonBackReference
     private Roles roles;
-
-
-    @Column(name = "facebook")
-    private String facebook;
 
     @Column(name = "token_verified")
     private String tokenVerified;
