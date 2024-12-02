@@ -34,10 +34,16 @@ public class ReportServiceImpl implements ReportService {
         Report report = modelMapper.map(reportDTO, Report.class);
         report.setCreatedAt(LocalDateTime.now()); // Set created at server-side
 
-        // Fetch and set the user based on userId
-        Users user = userRepository.findById(reportDTO.getUser())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        report.setUser(user);
+        // Check if userId is provided
+        if (reportDTO.getUser() != null) {
+            // Fetch and set the user based on userId
+            Users user = userRepository.findById(reportDTO.getUser())
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+            report.setUser(user);
+        } else {
+            // If userId is not provided, set user as null
+            report.setUser(null);
+        }
 
         // Fetch and set the post based on postId
         Post post = postRepository.findById(reportDTO.getPost())
@@ -48,6 +54,7 @@ public class ReportServiceImpl implements ReportService {
         report = reportRepository.save(report);
         return convertReportToDTO(report);
     }
+
 
     @Override
     public List<ReportDTO> getAllReports() {

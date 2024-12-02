@@ -2,9 +2,12 @@ package com.example.doantotnghiepbe.controller;
 
 import com.example.doantotnghiepbe.dto.ApiResponse;
 import com.example.doantotnghiepbe.dto.FavoritePostDTO;
+import com.example.doantotnghiepbe.dto.PostDTO;
 import com.example.doantotnghiepbe.entity.Favorite;
 import com.example.doantotnghiepbe.service.FavoriteService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,10 +31,13 @@ public class FavoriteController {
 //    }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<ApiResponse<List<FavoritePostDTO>>> getFavoritesByUser(@PathVariable Long userId) {
-        List<FavoritePostDTO> favorites = favoriteService.getFavoritesByUserUserId(userId);
-        return ResponseEntity.ok(new ApiResponse<>("success", "Favorites retrieved successfully", favorites));
+    public Page<PostDTO> getFavoritePostsByUserId(
+            @PathVariable Long userId,
+            Pageable pageable
+    ) {
+        return favoriteService.getFavoritePostsByUserId(userId, pageable);
     }
+
 
 //    @DeleteMapping("/unlike")
 //    public ResponseEntity<ApiResponse<String>> unlikePost(@RequestParam Long userId, @RequestParam Integer postId) {

@@ -22,6 +22,4 @@ public class Favorite {
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
-    public Favorite(Integer userId, Integer postId) {
-    }
 }

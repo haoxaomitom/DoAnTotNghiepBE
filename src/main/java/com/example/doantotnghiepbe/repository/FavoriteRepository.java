@@ -1,6 +1,8 @@
 package com.example.doantotnghiepbe.repository;
 
 import com.example.doantotnghiepbe.entity.Favorite;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -15,9 +17,9 @@ public interface FavoriteRepository extends JpaRepository<Favorite, Integer> {
     //like post & isFavorite
     boolean existsByUserUserIdAndPostPostId(Long userId, Integer postId);
 
-    //getFavoriteByUser
+    //getFavoritesByUserId
     @Query("SELECT f FROM Favorite f JOIN FETCH f.post p WHERE f.user.userId = :userId AND p.status = 'ACTIVE'")
-    List<Favorite> getFavoritesByUserUserId(@Param("userId") Long userId);
+    Page<Favorite> getFavoritesByUserUserId(@Param("userId") Long userId, Pageable pageable);
 
     //Unlike post && toggle favorite
     Optional<Favorite> findByUserUserIdAndPostPostId(Long userId, Integer postId);

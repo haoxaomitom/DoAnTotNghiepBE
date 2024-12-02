@@ -18,7 +18,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/posts")
-@CrossOrigin(origins = "http://127.0.0.1:5500")
+@CrossOrigin(origins = "http://127.0.0.1")
 public class PostController {
 
     @Autowired
@@ -87,8 +87,11 @@ public class PostController {
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<PostDTO>> getPostsByUserId(@PathVariable Long userId) {
-        List<PostDTO> posts = postService.getPostsByUserId(userId);
+    public ResponseEntity<Page<PostDTO>> getPostsByUserId(
+            @PathVariable Long userId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size) {
+        Page<PostDTO> posts = postService.getPostsByUserId(userId, page, size);
         return ResponseEntity.ok(posts);
     }
 

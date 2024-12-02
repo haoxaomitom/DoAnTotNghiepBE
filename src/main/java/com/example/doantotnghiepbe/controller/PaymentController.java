@@ -7,9 +7,12 @@ import com.example.doantotnghiepbe.dto.PaymentSuccessDTO;
 import com.example.doantotnghiepbe.entity.Payment;
 import com.example.doantotnghiepbe.entity.Post;
 import com.example.doantotnghiepbe.entity.Price;
+import com.example.doantotnghiepbe.entity.Users;
 import com.example.doantotnghiepbe.repository.PaymentRepository;
 import com.example.doantotnghiepbe.repository.PostRepository;
 import com.example.doantotnghiepbe.repository.PriceRepository;
+import com.example.doantotnghiepbe.repository.UsersRepository;
+import com.example.doantotnghiepbe.service.EmailService;
 import com.example.doantotnghiepbe.service.PriceService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -35,14 +38,18 @@ public class PaymentController {
     @Autowired
     private PriceRepository priceRepository;
 
-
     @Autowired
     private PaymentRepository paymentRepository;
 
     @Autowired
     private PostRepository postRepository;
+
     @Autowired
     private ModelMapper modelMapper;
+
+    @Autowired
+    private EmailService emailService;
+    private UsersRepository usersRepository;
 
     @GetMapping("/payment/{priceId}/{postId}")
     public ResponseEntity<?> createPayment(HttpServletRequest req,
@@ -144,7 +151,7 @@ public class PaymentController {
     }
 
     @GetMapping("/return")
-    public void handleVNPayReturn(@RequestParam Map<String, String> allParams, HttpServletResponse response) throws IOException {
+    public void handleVNPayReturn(@RequestParam Map<String, String> allParams, HttpServletResponse response) throws Exception {
         String txnRef = allParams.get("vnp_TxnRef");
         Payment payment = paymentRepository.findByVnpTxnRef(txnRef);
 
@@ -179,6 +186,7 @@ public class PaymentController {
                     // Retrieve the Price and Post entities
                     Price price = priceRepository.findByPriceId(payment.getPriceId().getPriceId());
                     Post post = payment.getPostId(); // Assuming Post is linked to Payment
+//                    Users users = usersRepository.findByUserId(post.getUser().getUserId());
 
                     if (price != null && post != null) {
                         int duration = price.getDuration(); // Duration in days
@@ -202,8 +210,11 @@ public class PaymentController {
 
                         // Redirect to success page with txnRef as a query parameter
                         response.sendRedirect("http://127.0.0.1:5500/app/components/payment/PaymentSuccess.html?txnRef=" + txnRef);
+                        emailService.sendPaymentResultEmail(txnRef);
                         return;
+
                     }
+
                 } else {
                     // Update status as Failed if payment was not successful
                     payment.setPaymentStatus("Failed");

@@ -97,7 +97,8 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 Pair.of("/api/reports", "POST"),
                 Pair.of("/api/users/register", "POST"),
                 Pair.of("api/posts/{postId}", "DELETE"),
-                Pair.of("/api/posts/top","GET")
+                Pair.of("/api/posts/top","GET"),
+                Pair.of("/api/contactInformation/create", "POST")
         );
 
         String requestPath = request.getServletPath();
