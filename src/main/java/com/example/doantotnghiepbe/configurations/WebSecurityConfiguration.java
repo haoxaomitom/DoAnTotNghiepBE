@@ -44,7 +44,8 @@ public class WebSecurityConfiguration {
                             "/api/vnpay/payment/details/{txnRef}",
                             "/api/reports",
                             "/api/users/register",
-                            "api/posts/{postId}"
+                            "api/posts/{postId}",
+                            "/api/contactInformation/create"
                             ).permitAll()
                             .requestMatchers("/api/users/getUserByUsername").hasAnyRole("USER", "ADMIN", "MODERATOR")
                             .requestMatchers("/api/contactInformation/**").hasAnyRole("USER", "ADMIN", "MODERATOR")

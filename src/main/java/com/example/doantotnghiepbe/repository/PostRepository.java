@@ -55,6 +55,8 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
 
     Post findByPostId(Integer postId);
 
+    Page<Post> findAllByUserUserId(Long userId, Pageable pageable);
+
     List<Post> findAllByUserUserId(Long userId);
 
     @Query("SELECT p FROM Post p " +

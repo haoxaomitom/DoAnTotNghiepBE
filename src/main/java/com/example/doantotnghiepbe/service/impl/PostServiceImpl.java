@@ -11,6 +11,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -87,11 +88,10 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<PostDTO> getPostsByUserId(Long userId) {
-        List<Post> posts = postRepository.findAllByUserUserId(userId);
-        return posts.stream()
-                .map(post -> modelMapper.map(post, PostDTO.class))
-                .toList();
+    public Page<PostDTO> getPostsByUserId(Long userId, int page, int size) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+        Page<Post> posts = postRepository.findAllByUserUserId(userId, pageRequest);
+        return posts.map(post -> modelMapper.map(post, PostDTO.class));
     }
 
     @Override

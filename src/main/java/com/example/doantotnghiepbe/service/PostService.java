@@ -18,12 +18,12 @@ public interface PostService {
     Page<PostDTO> searchPostsByVehicleType(String vehicleType, Pageable pageable);
 
     Page<PostDTO> sortPostsByPrice(String sort, Pageable pageable);
-
-    List<PostDTO> getPostsByUserId(Long userId);
+    
 
 
     Page<PostDTO> findAllTopPostsOrderByPaymentAndDate(Pageable pageable);
 
     void softDeletePost(Integer postId);
 
+    Page<PostDTO> getPostsByUserId(Long userId, int page, int size);
 }
