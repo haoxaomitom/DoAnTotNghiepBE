@@ -32,4 +32,8 @@ public class Report {
 
     @Column(name ="report_type")
     private String reportType;
+
+    @Column(name = "status")
+    private String status;
+
 }
