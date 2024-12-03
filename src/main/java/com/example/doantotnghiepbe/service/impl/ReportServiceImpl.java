@@ -37,7 +37,7 @@ public class ReportServiceImpl implements ReportService {
         // Check if userId is provided
         if (reportDTO.getUser() != null) {
             // Fetch and set the user based on userId
-            Users user = userRepository.findById(reportDTO.getUser())
+            Users user = userRepository.findById(Long.valueOf(reportDTO.getUser()))
                     .orElseThrow(() -> new RuntimeException("User not found"));
             report.setUser(user);
         } else {
@@ -68,6 +68,39 @@ public class ReportServiceImpl implements ReportService {
     public ReportDTO getReportById(int id) {
         Report report = reportRepository.findById(id).orElse(null);
         return convertReportToDTO(report);
+    }
+
+    @Override
+    public ReportDTO updateReportStatus(int reportId, String status) {
+        Report report = reportRepository.findById(reportId)
+                .orElseThrow(() -> new RuntimeException("Report not found"));
+        report.setStatus(status); // Cập nhật trạng thái
+        report = reportRepository.save(report); // Lưu lại thay đổi
+        return convertReportToDTO(report);
+    }
+
+    @Override
+    public List<ReportDTO> getReportsByStatus(String status) {
+        List<Report> reports = reportRepository.findByStatus(status);
+        return reports.stream()
+                .map(this::convertReportToDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ReportDTO> searchReports(String status, String reportType, String reportContent) {
+        List<Report> reports = reportRepository.findReports(status, reportType, reportContent);
+        return reports.stream()
+                .map(this::convertReportToDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ReportDTO> filterReportsByDateRange(LocalDateTime startDate, LocalDateTime endDate) {
+        List<Report> reports = reportRepository.findReportsByDateRange(startDate, endDate);
+        return reports.stream()
+                .map(this::convertReportToDTO)
+                .collect(Collectors.toList());
     }
 
     private ReportDTO convertReportToDTO(Report report) {
