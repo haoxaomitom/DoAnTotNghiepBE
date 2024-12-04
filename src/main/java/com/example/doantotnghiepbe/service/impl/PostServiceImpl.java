@@ -1,6 +1,7 @@
 package com.example.doantotnghiepbe.service.impl;
 
 import com.example.doantotnghiepbe.dto.PostDTO;
+import com.example.doantotnghiepbe.dto.PostDetailDTO;
 import com.example.doantotnghiepbe.dto.PostUserDTO;
 import com.example.doantotnghiepbe.entity.Payment;
 import com.example.doantotnghiepbe.entity.Post;
@@ -93,6 +94,7 @@ public class PostServiceImpl implements PostService {
         Page<Post> posts = postRepository.findAllByUserUserId(userId, pageRequest);
         return posts.map(post -> modelMapper.map(post, PostDTO.class));
     }
+
 
     @Override
     public Page<PostDTO> findAllTopPostsOrderByPaymentAndDate(Pageable pageable) {

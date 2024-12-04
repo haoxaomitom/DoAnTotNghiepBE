@@ -1,6 +1,7 @@
 package com.example.doantotnghiepbe.controller;
 
 import com.example.doantotnghiepbe.dto.PostDTO;
+import com.example.doantotnghiepbe.dto.PostDetailDTO;
 import com.example.doantotnghiepbe.entity.Post;
 import com.example.doantotnghiepbe.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;

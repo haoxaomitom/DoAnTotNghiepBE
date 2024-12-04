@@ -1,6 +1,7 @@
 package com.example.doantotnghiepbe.service;
 
 import com.example.doantotnghiepbe.dto.PostDTO;
+import com.example.doantotnghiepbe.dto.PostDetailDTO;
 import com.example.doantotnghiepbe.entity.Post;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,4 +27,5 @@ public interface PostService {
     void softDeletePost(Integer postId);
 
     Page<PostDTO> getPostsByUserId(Long userId, int page, int size);
+
 }
