@@ -16,4 +16,5 @@ public class ReportDTO {
     private String reportType;
     private String reportContent;
     private LocalDateTime createdAt;
+    private String status;
 }
