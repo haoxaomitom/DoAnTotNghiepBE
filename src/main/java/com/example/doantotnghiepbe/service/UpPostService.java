@@ -3,7 +3,9 @@ package com.example.doantotnghiepbe.service;
 
 import com.example.doantotnghiepbe.dto.PostDetailDTO;
 import com.example.doantotnghiepbe.dto.UpPostDTO;
+import com.example.doantotnghiepbe.entity.Image;
 import com.example.doantotnghiepbe.entity.Post;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -14,5 +16,8 @@ public interface UpPostService {
     UpPostDTO updatePost(Integer id, UpPostDTO upPostDTO);
     void deletePost(Integer id);
 
-    Post createPost(PostDetailDTO postDetailDTO);
+
+    Post createPost(PostDetailDTO postRequest);
+
+    List<Image> uploadImages(Integer postId, List<MultipartFile> imageFiles);
 }

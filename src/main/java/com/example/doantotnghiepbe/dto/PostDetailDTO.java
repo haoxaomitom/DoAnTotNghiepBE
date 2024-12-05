@@ -27,6 +27,7 @@ public class PostDetailDTO {
     private List<AmenitiesDTO> amenities;
     private List<VehicleTypeDTO> vehicleTypes;
     private PostUserDetailDTO user;
+    private Integer userId;
     private List<CommentDTO> comments; // Added field for comments
 
 }

@@ -27,6 +27,9 @@ public class ImageController {
     @PostMapping("/upload")
     public ResponseEntity<ImagesDTO> uploadImage(@RequestParam("file") MultipartFile file,
                                                 @RequestParam("postId") Integer postId) {
+        if (postId == null) {
+            System.out.println("postId is null");
+        }
         ImagesDTO imageDTO = imageService.uploadImage(file, postId);
         return ResponseEntity.ok(imageDTO);
     }

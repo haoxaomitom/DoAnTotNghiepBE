@@ -12,12 +12,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/upPosts")
-@CrossOrigin(origins = "http://127.0.0.1:5500")
+@CrossOrigin(origins = "http://127.0.0.1")
 public class UpPostController {
     @Autowired
     private UpPostService postService;
@@ -78,8 +79,17 @@ public class UpPostController {
     }
 
     @PostMapping
-    public ResponseEntity<Post> createPost(@RequestBody PostDetailDTO postDetailDTO) {
-        Post createdPost = postService.createPost(postDetailDTO);
+    public ResponseEntity<Post> createPost(@RequestBody PostDetailDTO postRequest) {
+        Post createdPost = postService.createPost(postRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdPost);
     }
+
+    @PostMapping("/images/{postId}")
+    public ResponseEntity<List<Image>> uploadImages(
+            @PathVariable Integer postId,
+            @RequestParam("imageFiles") List<MultipartFile> imageFiles) {
+        List<Image> uploadedImages = postService.uploadImages(postId, imageFiles);
+        return ResponseEntity.ok(uploadedImages);
+    }
+
 }
