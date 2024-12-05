@@ -1,20 +1,29 @@
 package com.example.doantotnghiepbe.controller;
 
+import com.example.doantotnghiepbe.dto.PostDTO;
+import com.example.doantotnghiepbe.dto.PostDetailDTO;
 import com.example.doantotnghiepbe.dto.UpPostDTO;
+import com.example.doantotnghiepbe.entity.Amenities;
+import com.example.doantotnghiepbe.entity.Image;
+import com.example.doantotnghiepbe.entity.Post;
+import com.example.doantotnghiepbe.entity.VehicleType;
 import com.example.doantotnghiepbe.service.UpPostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/upPosts")
-@CrossOrigin(origins = "http://127.0.0.1:5500")
+@CrossOrigin(origins = "http://127.0.0.1")
 public class UpPostController {
     @Autowired
     private UpPostService postService;
+
+
 
     // Lấy tất cả các bài đăng
     @GetMapping("all")
@@ -68,4 +77,19 @@ public class UpPostController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
+    @PostMapping
+    public ResponseEntity<Post> createPost(@RequestBody PostDetailDTO postRequest) {
+        Post createdPost = postService.createPost(postRequest);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdPost);
+    }
+
+    @PostMapping("/images/{postId}")
+    public ResponseEntity<List<Image>> uploadImages(
+            @PathVariable Integer postId,
+            @RequestParam("imageFiles") List<MultipartFile> imageFiles) {
+        List<Image> uploadedImages = postService.uploadImages(postId, imageFiles);
+        return ResponseEntity.ok(uploadedImages);
+    }
+
 }

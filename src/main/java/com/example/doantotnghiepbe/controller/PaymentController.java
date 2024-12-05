@@ -1,7 +1,6 @@
 package com.example.doantotnghiepbe.controller;
 
 import com.example.doantotnghiepbe.configurations.VNPayConfig;
-import com.example.doantotnghiepbe.dto.PaymentDTO;
 import com.example.doantotnghiepbe.dto.PaymentResDTO;
 import com.example.doantotnghiepbe.dto.PaymentSuccessDTO;
 import com.example.doantotnghiepbe.entity.Payment;

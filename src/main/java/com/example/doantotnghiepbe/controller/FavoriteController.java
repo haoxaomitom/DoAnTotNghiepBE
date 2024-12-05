@@ -1,7 +1,6 @@
 package com.example.doantotnghiepbe.controller;
 
 import com.example.doantotnghiepbe.dto.ApiResponse;
-import com.example.doantotnghiepbe.dto.FavoritePostDTO;
 import com.example.doantotnghiepbe.dto.PostDTO;
 import com.example.doantotnghiepbe.entity.Favorite;
 import com.example.doantotnghiepbe.service.FavoriteService;

@@ -38,14 +38,16 @@ public class WebSecurityConfiguration {
                                     "/api/posts/{id}",
                                     "/api/comments/post/{postId}",
                                     "/api/comments/{commentId}",
-                                    "/api/users/verified",
-                            "/api/posts/user/{userId}",
-                            "/api/vnpay/return",
-                            "/api/vnpay/payment/details/{txnRef}",
-                            "/api/reports",
-                            "/api/users/register",
-                            "api/posts/{postId}",
-                            "/api/contactInformation/create"
+                                    "/api/vnpay/return",
+                                    "/api/vnpay/payment/details/{txnRef}",
+                                    "/api/reports",
+                                    "api/posts/{postId}",
+                                    "/api/contactInformation/create",
+                                    "/api/upPosts/create",
+                                    "/api/amenities/",
+                                    "/api/images/upload",
+                                    "/api/upPosts/images/",
+                                    "/api/upPosts"
                             ).permitAll()
                             .requestMatchers("/api/users/getUserByUsername").hasAnyRole("USER", "ADMIN", "MODERATOR")
                             .requestMatchers("/api/contactInformation/**").hasAnyRole("USER", "ADMIN", "MODERATOR")

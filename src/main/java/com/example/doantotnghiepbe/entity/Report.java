@@ -35,5 +35,4 @@ public class Report {
 
     @Column(name = "status")
     private String status;
-
 }

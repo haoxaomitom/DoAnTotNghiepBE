@@ -1,17 +1,27 @@
 package com.example.doantotnghiepbe.service.impl;
 
-import com.example.doantotnghiepbe.dto.UpPostDTO;
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
+import com.example.doantotnghiepbe.dto.*;
+import com.example.doantotnghiepbe.entity.Amenities;
+import com.example.doantotnghiepbe.entity.Image;
 import com.example.doantotnghiepbe.entity.Post;
+import com.example.doantotnghiepbe.entity.VehicleType;
 import com.example.doantotnghiepbe.repository.AmenitiesRepository;
 import com.example.doantotnghiepbe.repository.ImageRepository;
 import com.example.doantotnghiepbe.repository.PostRepository;
 import com.example.doantotnghiepbe.repository.UsersRepository;
 import com.example.doantotnghiepbe.service.FileUploadService;
 import com.example.doantotnghiepbe.service.UpPostService;
+import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,17 +34,19 @@ public class UpPostServiceImpl implements UpPostService {
     private final ImageRepository imageRepository;
     private final FileUploadService fileUploadService;
     private final ModelMapper modelMapper;
+    private final Cloudinary cloudinary;
 
     @Autowired
     public UpPostServiceImpl(PostRepository postRepository, UsersRepository userRepository,
                              AmenitiesRepository amenitiesRepository, ImageRepository imageRepository,
-                             FileUploadService fileUploadService, ModelMapper modelMapper) {
+                             FileUploadService fileUploadService, ModelMapper modelMapper, Cloudinary cloudinary) {
         this.postRepository = postRepository;
         this.userRepository = userRepository;
         this.amenitiesRepository = amenitiesRepository;
         this.imageRepository = imageRepository;
         this.fileUploadService = fileUploadService;
         this.modelMapper = modelMapper;
+        this.cloudinary = cloudinary;
     }
 
 
@@ -76,6 +88,92 @@ public class UpPostServiceImpl implements UpPostService {
         }
         postRepository.deleteById(id);
     }
+
+    @Transactional
+    public Post createPost(PostDetailDTO postRequest) {
+        // Step 1: Map PostDetailDTO to Post entity
+        Post post = modelMapper.map(postRequest, Post.class);
+
+        // Set User
+        post.setUser(userRepository.findById(postRequest.getUserId().longValue())
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + postRequest.getUserId())));
+
+        if (post.getStatus() == null) {
+            post.setStatus("WAITING"); // Giá trị mặc định cho status
+        }
+
+        if (post.getCommentCount() == null) {
+            post.setCommentCount(0); // Giá trị mặc định cho commentCount
+        }
+
+        if (post.getCreatedAt() == null) {
+            post.setCreatedAt(LocalDateTime.now()); // Giá trị mặc định cho createdAt
+        }
+
+        // Save the post to get postId
+        post = postRepository.save(post);
+
+        // Step 2: Add VehicleTypes to post
+        if (postRequest.getVehicleTypes() != null) {
+            Post finalPost1 = post;
+            postRequest.getVehicleTypes().forEach(vehicleTypeName -> {
+                VehicleType vehicleType = new VehicleType();
+                vehicleType.setVehicleTypeName(String.valueOf(vehicleTypeName)); // Assuming it's just the name
+                vehicleType.setPost(finalPost1);
+                finalPost1.getVehicleTypes().add(vehicleType);
+            });
+        }
+
+        // Step 3: Add Amenities to post
+        if (postRequest.getAmenities() != null) {
+            Post finalPost = post;
+            postRequest.getAmenities().forEach(amenitiesName -> {
+                Amenities amenities = new Amenities();
+                amenities.setAmenitiesName(String.valueOf(amenitiesName)); // Assuming it's just the name
+                amenities.setPost(finalPost);
+                finalPost.getAmenities().add(amenities);
+            });
+        }
+
+        // Save the post with associated data
+        return postRepository.save(post);
+    }
+
+    @Transactional
+    public List<Image> uploadImages(Integer postId, List<MultipartFile> imageFiles) {
+        // Find the post
+        Post post = postRepository.findByPostId(postId);
+
+
+        List<Image> uploadedImages = new ArrayList<>();
+
+        // Upload images and link to the post
+        if (imageFiles != null && !imageFiles.isEmpty()) {
+            imageFiles.forEach(file -> {
+                try {
+                    // Upload image to Cloudinary
+                    var uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
+                    String imageUrl = (String) uploadResult.get("url");
+
+                    // Create Image entity and associate with post
+                    Image image = new Image();
+                    image.setImageUrl(imageUrl);
+                    image.setPost(post);
+                    post.getImages().add(image);
+                    uploadedImages.add(image);
+                } catch (IOException e) {
+                    throw new RuntimeException("Failed to upload image", e);
+                }
+            });
+        }
+
+        // Save the post with updated images
+        postRepository.save(post);
+
+        return uploadedImages;
+    }
+
+
 
     private UpPostDTO convertToDTO(Post post) {
         UpPostDTO dto = new UpPostDTO();
@@ -121,6 +219,8 @@ public class UpPostServiceImpl implements UpPostService {
         post.setCreatedAt(dto.getCreatedAt());
         return post;
     }
+
+
 }
 //    @Override
 //    @Transactional
@@ -193,13 +293,13 @@ public class UpPostServiceImpl implements UpPostService {
 //        }
 //    }
 
-    // Giả sử bạn lưu ảnh và trả về URL của ảnh
+// Giả sử bạn lưu ảnh và trả về URL của ảnh
 //    private String saveImage(MultipartFile image) throws IOException {
 //        // Xử lý lưu trữ ảnh (ví dụ: lưu vào thư mục hoặc dịch vụ lưu trữ)
 //        return "url_to_saved_image";  // Trả về URL hoặc đường dẫn lưu ảnh
 //    }
 
-    // Save new post
+// Save new post
 //    @Override
 //    public PostDTO savePost(PostDTO postDTO) {
 //        User user = userRepository.findById(postDTO.getUserId())

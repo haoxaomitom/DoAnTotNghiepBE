@@ -1,6 +1,5 @@
 package com.example.doantotnghiepbe.service.impl;
 
-import com.example.doantotnghiepbe.dto.FavoritePostDTO;
 import com.example.doantotnghiepbe.dto.PostDTO;
 import com.example.doantotnghiepbe.entity.Favorite;
 import com.example.doantotnghiepbe.entity.Post;
