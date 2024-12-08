@@ -88,13 +88,12 @@ public class PostController {
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<Page<PostDTO>> getPostsByUserId(
-            @PathVariable Long userId,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "5") int size) {
-        Page<PostDTO> posts = postService.getPostsByUserId(userId, page, size);
+    public ResponseEntity<List<PostDTO>> getPostsByUserId(@PathVariable Long userId) {
+        List<PostDTO> posts = postService.getPostsByUserId(userId);
         return ResponseEntity.ok(posts);
     }
+
+
 
     @GetMapping("/top")
     public ResponseEntity<Page<PostDTO>> findAllTopPostsOrderByPaymentAndDate(
@@ -110,4 +109,14 @@ public class PostController {
         return ResponseEntity.ok("Post successfully soft deleted.");
     }
 
+    @GetMapping("/user")
+    public ResponseEntity<Page<Post>> getPostsByUserIdAndStatus(
+            @RequestParam Long userId,
+            @RequestParam(defaultValue = "ACTIVE") String status,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size
+    ) {
+        Page<Post> posts = postService.getPostsByUserIdAndStatus(userId, status, page, size);
+        return ResponseEntity.ok(posts);
+    }
 }

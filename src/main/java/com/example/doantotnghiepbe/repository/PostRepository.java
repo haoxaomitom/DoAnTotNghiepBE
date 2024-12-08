@@ -49,13 +49,18 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
     // Search by vehicle type
     @Query("SELECT p FROM Post p JOIN p.vehicleTypes vt WHERE " +
             "p.status = 'ACTIVE' AND " + // Thêm điều kiện trạng thái
-            "LOWER(vt.vehicleTypeName) = LOWER(:vehicleType)")
+            "LOWER(vt.vehicleTypesName) = LOWER(:vehicleType)")
     Page<Post> searchPostsByVehicleType(@Param("vehicleType") String vehicleType, Pageable pageable);
 
 
     Post findByPostId(Integer postId);
 
-    Page<Post> findAllByUserUserId(Long userId, Pageable pageable);
+//    Page<Post> findAllByUserUserId(Long userId, Pageable pageable);
+
+
+    Page<Post> findAllByUserUserIdAndStatus(Long userId, String status, Pageable pageable);
+
+
 
     List<Post> findAllByUserUserId(Long userId);
 

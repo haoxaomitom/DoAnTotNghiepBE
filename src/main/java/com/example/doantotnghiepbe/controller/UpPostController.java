@@ -1,5 +1,6 @@
 package com.example.doantotnghiepbe.controller;
 
+import com.example.doantotnghiepbe.dto.AmenitiesDTO;
 import com.example.doantotnghiepbe.dto.PostDTO;
 import com.example.doantotnghiepbe.dto.PostDetailDTO;
 import com.example.doantotnghiepbe.dto.UpPostDTO;
@@ -91,5 +92,4 @@ public class UpPostController {
         List<Image> uploadedImages = postService.uploadImages(postId, imageFiles);
         return ResponseEntity.ok(uploadedImages);
     }
-
 }

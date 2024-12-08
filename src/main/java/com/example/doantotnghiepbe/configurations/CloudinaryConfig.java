@@ -57,4 +57,24 @@ public class CloudinaryConfig {
         String[] parts = filename.split("\\.");
         return parts.length > 1 ? parts[parts.length - 1] : "";
     }
+
+    public String requestDelete(String publicId) throws IOException {
+        if (publicId == null || publicId.isEmpty()) {
+            throw new IOException("Invalid public ID");
+        }
+
+        // Call the destroy method to delete the image/video
+        Map<String, Object> params = ObjectUtils.asMap(
+                "resource_type", "auto" // Auto detects the resource type (image/video)
+        );
+
+        Map result = cloudinary.uploader().destroy(publicId, params);
+
+        // Check the result and return response message
+        if (result.containsKey("result") && result.get("result").equals("ok")) {
+            return "Deletion successful";
+        } else {
+            throw new IOException("Failed to delete the image. " + result.get("error"));
+        }
+    }
 }
