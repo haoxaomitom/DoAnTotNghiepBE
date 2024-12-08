@@ -1,8 +1,10 @@
 package com.example.doantotnghiepbe.service;
 
 
+import com.example.doantotnghiepbe.dto.AmenitiesDTO;
 import com.example.doantotnghiepbe.dto.PostDetailDTO;
 import com.example.doantotnghiepbe.dto.UpPostDTO;
+import com.example.doantotnghiepbe.entity.Amenities;
 import com.example.doantotnghiepbe.entity.Image;
 import com.example.doantotnghiepbe.entity.Post;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,4 +22,5 @@ public interface UpPostService {
     Post createPost(PostDetailDTO postRequest);
 
     List<Image> uploadImages(Integer postId, List<MultipartFile> imageFiles);
+
 }

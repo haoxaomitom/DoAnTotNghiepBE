@@ -26,6 +26,8 @@ public interface PostService {
 
     void softDeletePost(Integer postId);
 
-    Page<PostDTO> getPostsByUserId(Long userId, int page, int size);
+    List<PostDTO> getPostsByUserId(Long userId);
 
+
+    Page<Post> getPostsByUserIdAndStatus(Long userId, String status, int page, int size);
 }

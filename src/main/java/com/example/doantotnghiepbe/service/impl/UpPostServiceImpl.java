@@ -7,10 +7,7 @@ import com.example.doantotnghiepbe.entity.Amenities;
 import com.example.doantotnghiepbe.entity.Image;
 import com.example.doantotnghiepbe.entity.Post;
 import com.example.doantotnghiepbe.entity.VehicleType;
-import com.example.doantotnghiepbe.repository.AmenitiesRepository;
-import com.example.doantotnghiepbe.repository.ImageRepository;
-import com.example.doantotnghiepbe.repository.PostRepository;
-import com.example.doantotnghiepbe.repository.UsersRepository;
+import com.example.doantotnghiepbe.repository.*;
 import com.example.doantotnghiepbe.service.FileUploadService;
 import com.example.doantotnghiepbe.service.UpPostService;
 import jakarta.transaction.Transactional;
@@ -35,11 +32,12 @@ public class UpPostServiceImpl implements UpPostService {
     private final FileUploadService fileUploadService;
     private final ModelMapper modelMapper;
     private final Cloudinary cloudinary;
+    private final VehicleTypeRepository vehicleTypeRepository;
 
     @Autowired
     public UpPostServiceImpl(PostRepository postRepository, UsersRepository userRepository,
                              AmenitiesRepository amenitiesRepository, ImageRepository imageRepository,
-                             FileUploadService fileUploadService, ModelMapper modelMapper, Cloudinary cloudinary) {
+                             FileUploadService fileUploadService, ModelMapper modelMapper, Cloudinary cloudinary, VehicleTypeRepository vehicleTypeRepository) {
         this.postRepository = postRepository;
         this.userRepository = userRepository;
         this.amenitiesRepository = amenitiesRepository;
@@ -47,6 +45,7 @@ public class UpPostServiceImpl implements UpPostService {
         this.fileUploadService = fileUploadService;
         this.modelMapper = modelMapper;
         this.cloudinary = cloudinary;
+        this.vehicleTypeRepository = vehicleTypeRepository;
     }
 
 
@@ -88,7 +87,6 @@ public class UpPostServiceImpl implements UpPostService {
         }
         postRepository.deleteById(id);
     }
-
     @Transactional
     public Post createPost(PostDetailDTO postRequest) {
         // Step 1: Map PostDetailDTO to Post entity
@@ -99,46 +97,44 @@ public class UpPostServiceImpl implements UpPostService {
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + postRequest.getUserId())));
 
         if (post.getStatus() == null) {
-            post.setStatus("WAITING"); // Giá trị mặc định cho status
+            post.setStatus("WAITING"); // Default status value
         }
 
         if (post.getCommentCount() == null) {
-            post.setCommentCount(0); // Giá trị mặc định cho commentCount
+            post.setCommentCount(0); // Default commentCount value
         }
 
         if (post.getCreatedAt() == null) {
-            post.setCreatedAt(LocalDateTime.now()); // Giá trị mặc định cho createdAt
+            post.setCreatedAt(LocalDateTime.now()); // Default createdAt value
         }
 
-        // Save the post to get postId
-        post = postRepository.save(post);
+        // Step 2: Save post to get its ID
+        Post savedPost = postRepository.save(post);
 
-        // Step 2: Add VehicleTypes to post
+        // Step 3: Save VehicleTypes separately
         if (postRequest.getVehicleTypes() != null) {
-            Post finalPost1 = post;
-            postRequest.getVehicleTypes().forEach(vehicleTypeName -> {
+            postRequest.getVehicleTypes().forEach(vehicleTypeDTO -> {
                 VehicleType vehicleType = new VehicleType();
-                vehicleType.setVehicleTypeName(String.valueOf(vehicleTypeName)); // Assuming it's just the name
-                vehicleType.setPost(finalPost1);
-                finalPost1.getVehicleTypes().add(vehicleType);
+                vehicleType.setVehicleTypesName(vehicleTypeDTO.getVehicleTypesName());
+                vehicleType.setPost(savedPost); // Associate with saved post
+                vehicleTypeRepository.save(vehicleType); // Save to repository
             });
         }
 
-        // Step 3: Add Amenities to post
+        // Step 4: Save Amenities separately
         if (postRequest.getAmenities() != null) {
-            Post finalPost = post;
-            postRequest.getAmenities().forEach(amenitiesName -> {
+            postRequest.getAmenities().forEach(amenitiesDTO -> {
                 Amenities amenities = new Amenities();
-                amenities.setAmenitiesName(String.valueOf(amenitiesName)); // Assuming it's just the name
-                amenities.setPost(finalPost);
-                finalPost.getAmenities().add(amenities);
+                amenities.setAmenitiesName(amenitiesDTO.getAmenitiesName());
+                amenities.setPost(savedPost); // Associate with saved post
+                amenitiesRepository.save(amenities); // Save to repository
             });
         }
 
-        // Save the post with associated data
-        return postRepository.save(post);
+        // Return saved post
+        return savedPost;
     }
-
+        
     @Transactional
     public List<Image> uploadImages(Integer postId, List<MultipartFile> imageFiles) {
         // Find the post
@@ -172,7 +168,6 @@ public class UpPostServiceImpl implements UpPostService {
 
         return uploadedImages;
     }
-
 
 
     private UpPostDTO convertToDTO(Post post) {

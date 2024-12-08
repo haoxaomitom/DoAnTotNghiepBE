@@ -9,5 +9,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class VehicleTypeDTO {
     private Integer vehicleTypeId;
-    private String vehicleTypeName;
+    private String vehicleTypesName;
 }

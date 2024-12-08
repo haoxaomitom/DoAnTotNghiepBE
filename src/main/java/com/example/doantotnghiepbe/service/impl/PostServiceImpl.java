@@ -89,10 +89,14 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Page<PostDTO> getPostsByUserId(Long userId, int page, int size) {
-        PageRequest pageRequest = PageRequest.of(page, size);
-        Page<Post> posts = postRepository.findAllByUserUserId(userId, pageRequest);
-        return posts.map(post -> modelMapper.map(post, PostDTO.class));
+    public List<PostDTO> getPostsByUserId(Long userId) {
+        // Get all posts by userId from the repository
+        List<Post> posts = postRepository.findAllByUserUserId(userId);
+
+        // Convert the list of Post to PostDTO
+        return posts.stream()
+                .map(post -> modelMapper.map(post, PostDTO.class))
+                .collect(Collectors.toList());
     }
 
 
@@ -102,20 +106,13 @@ public class PostServiceImpl implements PostService {
         return topPosts.map(this::convertToDTO);
     }
 
-
-//    private PostDTO convertToPostDTO(Post post) {
-//        PostDTO postDTO = modelMapper.map(post, PostDTO.class);
-//
-//        // Map user details if present
-//        if (post.getUser() != null) {
-//            postDTO.setUser(modelMapper.map(post.getUser(), PostUserDTO.class));
-//        }
-//
-//        return postDTO;
-//    }
-
     public void softDeletePost(Integer postId) {
         postRepository.softDeletePostById(postId);
+    }
+
+    public Page<Post> getPostsByUserIdAndStatus(Long userId, String status, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return postRepository.findAllByUserUserIdAndStatus(userId, status, pageable);
     }
 
 }
