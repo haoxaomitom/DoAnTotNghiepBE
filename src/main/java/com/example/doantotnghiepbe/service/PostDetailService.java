@@ -16,5 +16,11 @@ public interface PostDetailService {
     Optional<PostDetailDTO> getPostById(Integer id);
     String uploadImage(byte[] imageBytes) throws IOException;
 
+    PostDetailDTO updatePost(PostDetailDTO postDetailDTO);
+
+    void deletePostById(Integer id);
+
     Page<PostDTO> getRelatedPostsByDistrict(String districtName, Pageable pageable);
+
+
 }

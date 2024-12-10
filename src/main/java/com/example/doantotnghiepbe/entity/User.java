@@ -62,14 +62,15 @@ public class User {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    @Column(name = "role_id")
-    private Integer roleId;
-
     @Column(name = "verified", nullable = false)
     private Boolean verified;
 
     @Column(name = "is_active", nullable = false)
     private Boolean isActive;
+
+    @ManyToOne
+    @JoinColumn(name = "role_id", nullable = false) // Thay trường roleId bằng quan hệ với Role
+    private Role role;
 
     @OneToMany(mappedBy = "user")
     private List<Post> posts;
@@ -77,5 +78,6 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Authority> authorities;
 
-
+    @OneToMany(mappedBy = "reviewedByUser", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<ApprovalPost> approvalPosts;
 }

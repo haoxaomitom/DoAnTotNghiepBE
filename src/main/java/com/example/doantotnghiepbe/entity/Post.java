@@ -81,5 +81,8 @@ public class Post {
     @JsonManagedReference
     private List<VehicleType> vehicleTypes = new ArrayList<>();
 
-
+    // Enum for Post Status
+    public enum PostStatus {
+        WAITING, APPROVED, REJECTED
+    }
 }
