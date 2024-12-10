@@ -18,7 +18,7 @@ public class Report {
 
     @ManyToOne
     @JoinColumn(name = "reporting_user_id")
-    private User user;
+    private Users user;
 
     @ManyToOne
     @JoinColumn(name = "post_reported_id")
@@ -32,4 +32,7 @@ public class Report {
 
     @Column(name ="report_type")
     private String reportType;
+
+    @Column(name = "status")
+    private String status;
 }

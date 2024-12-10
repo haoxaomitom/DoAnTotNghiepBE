@@ -1,6 +1,8 @@
 package com.example.doantotnghiepbe.service;
 
 import com.example.doantotnghiepbe.dto.PostDTO;
+import com.example.doantotnghiepbe.dto.PostDetailDTO;
+import com.example.doantotnghiepbe.entity.Post;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -17,6 +19,15 @@ public interface PostService {
     Page<PostDTO> searchPostsByVehicleType(String vehicleType, Pageable pageable);
 
     Page<PostDTO> sortPostsByPrice(String sort, Pageable pageable);
+    
 
-    List<PostDTO> getPostsByUserId(Integer userId);
+
+    Page<PostDTO> findAllTopPostsOrderByPaymentAndDate(Pageable pageable);
+
+    void softDeletePost(Integer postId);
+
+    List<PostDTO> getPostsByUserId(Long userId);
+
+
+    Page<Post> getPostsByUserIdAndStatus(Long userId, String status, int page, int size);
 }

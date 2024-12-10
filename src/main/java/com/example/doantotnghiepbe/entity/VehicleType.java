@@ -21,5 +21,5 @@ public class VehicleType {
     private Post post;
 
     @Column(name = "vehicle_type_name")
-    private String vehicleTypeName;
+    private String vehicleTypesName;
 }

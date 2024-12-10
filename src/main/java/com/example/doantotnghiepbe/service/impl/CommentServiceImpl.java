@@ -4,10 +4,10 @@ import com.example.doantotnghiepbe.dto.CommentDTO;
 import com.example.doantotnghiepbe.dto.CommentUserDTO;
 import com.example.doantotnghiepbe.entity.Comment;
 import com.example.doantotnghiepbe.entity.Post;
-import com.example.doantotnghiepbe.entity.User;
+import com.example.doantotnghiepbe.entity.Users;
 import com.example.doantotnghiepbe.repository.CommentRepository;
 import com.example.doantotnghiepbe.repository.PostRepository;
-import com.example.doantotnghiepbe.repository.UserRepository;
+import com.example.doantotnghiepbe.repository.UsersRepository;
 import com.example.doantotnghiepbe.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -23,7 +23,7 @@ import java.util.List;
 public class CommentServiceImpl implements CommentService {
 
     private final CommentRepository commentRepository;
-    private final UserRepository userRepository;
+    private final UsersRepository userRepository;
     private final PostRepository postRepository;
     private final ModelMapper modelMapper;
 
@@ -34,7 +34,7 @@ public class CommentServiceImpl implements CommentService {
         comment.setCreatedAt(LocalDateTime.now());
 
         // Fetch and set the user based on userId
-        User user = userRepository.findById(commentDTO.getUser())
+        Users user = userRepository.findById(commentDTO.getUser())
                 .orElseThrow(() -> new RuntimeException("User not found"));
         comment.setUser(user);
 
@@ -61,7 +61,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public void deleteComment(Integer commentId, Integer userId) {
+    public void deleteComment(Integer commentId, Long userId) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new RuntimeException("Comment not found"));
 
@@ -85,7 +85,7 @@ public class CommentServiceImpl implements CommentService {
         CommentDTO commentDTO = modelMapper.map(comment, CommentDTO.class);
 
         // Populate cud list with user data
-        User user = comment.getUser();
+        Users user = comment.getUser();
         CommentUserDTO commentUserDTO = new CommentUserDTO(
                 user.getAvatar(),
                 user.getFirstName(),
@@ -95,4 +95,5 @@ public class CommentServiceImpl implements CommentService {
         commentDTO.setCud(List.of(commentUserDTO));
         return commentDTO;
     }
+
 }

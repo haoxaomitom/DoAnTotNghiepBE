@@ -1,9 +1,8 @@
 package com.example.doantotnghiepbe.controller;
 
-import com.example.doantotnghiepbe.dto.PaymentUserDTO;
 import com.example.doantotnghiepbe.dto.PostDTO;
+import com.example.doantotnghiepbe.dto.PostDetailDTO;
 import com.example.doantotnghiepbe.entity.Post;
-import com.example.doantotnghiepbe.repository.PostRepository;
 import com.example.doantotnghiepbe.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -20,14 +19,11 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/posts")
-@CrossOrigin(origins = "http://127.0.0.1:5500")
+@CrossOrigin(origins = "http://127.0.0.1")
 public class PostController {
 
     @Autowired
     private PostService postService;
-
-    @Autowired
-    private PostRepository postRepository;
 
     @GetMapping
     public ResponseEntity<Page<PostDTO>> findAllByOrderByCreatedAtDesc(
@@ -92,8 +88,35 @@ public class PostController {
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<PostDTO>> getPostsByUserId(@PathVariable Integer userId) {
-        List<PostDTO> postDTOs = postService.getPostsByUserId(userId);
-        return ResponseEntity.ok(postDTOs);
+    public ResponseEntity<List<PostDTO>> getPostsByUserId(@PathVariable Long userId) {
+        List<PostDTO> posts = postService.getPostsByUserId(userId);
+        return ResponseEntity.ok(posts);
+    }
+
+
+
+    @GetMapping("/top")
+    public ResponseEntity<Page<PostDTO>> findAllTopPostsOrderByPaymentAndDate(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<PostDTO> topPosts = postService.findAllTopPostsOrderByPaymentAndDate(pageable);
+        return ResponseEntity.ok(topPosts);
+    }
+    @DeleteMapping("/{postId}")
+    public ResponseEntity<String> softDeletePost(@PathVariable Integer postId) {
+        postService.softDeletePost(postId);
+        return ResponseEntity.ok("Post successfully soft deleted.");
+    }
+
+    @GetMapping("/user")
+    public ResponseEntity<Page<Post>> getPostsByUserIdAndStatus(
+            @RequestParam Long userId,
+            @RequestParam(defaultValue = "ACTIVE") String status,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size
+    ) {
+        Page<Post> posts = postService.getPostsByUserIdAndStatus(userId, status, page, size);
+        return ResponseEntity.ok(posts);
     }
 }

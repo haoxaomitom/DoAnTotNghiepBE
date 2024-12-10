@@ -1,15 +1,18 @@
 package com.example.doantotnghiepbe.service.impl;
 
-import com.example.doantotnghiepbe.dto.FavoritePostDTO;
+import com.example.doantotnghiepbe.dto.PostDTO;
 import com.example.doantotnghiepbe.entity.Favorite;
 import com.example.doantotnghiepbe.entity.Post;
-import com.example.doantotnghiepbe.entity.User;
+import com.example.doantotnghiepbe.entity.Users;
 import com.example.doantotnghiepbe.repository.FavoriteRepository;
 import com.example.doantotnghiepbe.repository.PostRepository;
-import com.example.doantotnghiepbe.repository.UserRepository;
+import com.example.doantotnghiepbe.repository.UsersRepository;
 import com.example.doantotnghiepbe.service.FavoriteService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,21 +22,27 @@ import java.util.stream.Collectors;
 @Service
 public class FavoriteServiceImpl implements FavoriteService {
 
-    @Autowired
-    private FavoriteRepository favoriteRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+    private final FavoriteRepository favoriteRepository;
 
-    @Autowired
-    private PostRepository postRepository;
 
-    @Autowired
-    private ModelMapper modelMapper;
+    private final UsersRepository userRepository;
+
+
+    private final PostRepository postRepository;
+
+    private final ModelMapper modelMapper;
+
+    public FavoriteServiceImpl(FavoriteRepository favoriteRepository, UsersRepository userRepository, PostRepository postRepository, ModelMapper modelMapper) {
+        this.favoriteRepository = favoriteRepository;
+        this.userRepository = userRepository;
+        this.postRepository = postRepository;
+        this.modelMapper = modelMapper;
+    }
 
     @Override
-    public Favorite likePost(Integer userId, Integer postId) {
-        User user = userRepository.findById(userId)
+    public Favorite likePost(Long userId, Integer postId) {
+        Users user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("Post not found"));
@@ -49,29 +58,21 @@ public class FavoriteServiceImpl implements FavoriteService {
         return favoriteRepository.save(favorite);
     }
 
-    @Override
-    public List<FavoritePostDTO> getFavoritesByUserUserId(Integer userId) {
-        List<Favorite> favorites = favoriteRepository.getFavoritesByUserUserId(userId);
-        return favorites.stream()
-                .map(favorite -> {
-                    FavoritePostDTO favoritePostDTO = modelMapper.map(favorite.getPost(), FavoritePostDTO.class);
-                    favoritePostDTO.setFavoriteId(favorite.getFavoriteId());
-                    favoritePostDTO.setUser(favorite.getUser().getUserId());
-                    favoritePostDTO.setPost(favorite.getPost().getPostId());
-                    return favoritePostDTO;
-                })
-                .collect(Collectors.toList());
+    public Page<PostDTO> getFavoritePostsByUserId(Long userId, Pageable pageable) {
+        Page<Favorite> favorites = favoriteRepository.getFavoritesByUserUserId(userId, pageable);
+
+        // Map each `Favorite`'s `Post` to `PostDTO`
+        return favorites.map(favorite -> modelMapper.map(favorite.getPost(), PostDTO.class));
     }
 
-
     @Override
-    public void unlikePost(Integer userId, Integer postId) {
+    public void unlikePost(Long userId, Integer postId) {
         favoriteRepository.findByUserUserIdAndPostPostId(userId, postId)
                 .ifPresentOrElse(favoriteRepository::delete,
                         () -> { throw new IllegalStateException("Favorite not found."); });
     }
 
-    public boolean toggleFavorite(Integer userId, Integer postId) {
+    public boolean toggleFavorite(Long userId, Integer postId) {
         Optional<Favorite> existingFavorite = favoriteRepository.findByUserUserIdAndPostPostId(userId, postId);
 
         if (existingFavorite.isPresent()) {
@@ -80,7 +81,7 @@ public class FavoriteServiceImpl implements FavoriteService {
             return false;
         } else {
             // Fetch User and Post entities to ensure non-null references
-            User user = userRepository.findById(userId)
+            Users user = userRepository.findById(userId)
                     .orElseThrow(() -> new IllegalArgumentException("User not found"));
             Post post = postRepository.findById(postId)
                     .orElseThrow(() -> new IllegalArgumentException("Post not found"));
@@ -95,7 +96,7 @@ public class FavoriteServiceImpl implements FavoriteService {
         }
     }
 
-    public boolean isFavorite(Integer userId, Integer postId) {
+    public boolean isFavorite(Long userId, Integer postId) {
         return favoriteRepository.existsByUserUserIdAndPostPostId(userId, postId);
     }
 

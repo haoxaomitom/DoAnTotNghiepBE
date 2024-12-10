@@ -8,13 +8,14 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface PaymentRepository extends JpaRepository<Payment, Long> {
     Payment findByVnpTxnRef(String vnpTxnRef);
 
     @Query("SELECT p FROM Payment p WHERE p.postId.user.id = :userId")
-    List<Payment> findPaymentsByUserId(@Param("userId") Integer userId);
+    List<Payment> findPaymentsByUserId(@Param("userId") Long userId);
 
 
 }

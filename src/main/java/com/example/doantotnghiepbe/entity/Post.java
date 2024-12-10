@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,9 +19,9 @@ public class Post {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer postId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private Users user;
 
     @Column(name = "parking_name")
     private String parkingName;
@@ -63,26 +62,27 @@ public class Post {
     @Column(name = "comment_count")
     private Integer commentCount;
 
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
-
     @Column(name = "top_post_end")
     private LocalDateTime topPostEnd;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<Image> images = new ArrayList<>();
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE, orphanRemoval = true)
     @JsonManagedReference
     private List<Amenities> amenities = new ArrayList<>();
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE, orphanRemoval = true)
     @JsonManagedReference
     private List<VehicleType> vehicleTypes = new ArrayList<>();
 
-    // Enum for Post Status
-    public enum PostStatus {
-        WAITING, APPROVED, REJECTED
-    }
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<ContactInformations> contactInformations = new ArrayList<>();
+
+
 }
