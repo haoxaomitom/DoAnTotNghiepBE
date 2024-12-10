@@ -1,6 +1,5 @@
 package com.example.doantotnghiepbe.service.impl;
 
-import com.example.doantotnghiepbe.dto.PostDTO;
 import com.example.doantotnghiepbe.dto.PriceDTO;
 import com.example.doantotnghiepbe.entity.Price;
 import com.example.doantotnghiepbe.repository.PriceRepository;
@@ -19,7 +18,7 @@ public class PriceServiceImpl implements PriceService {
     private PriceRepository priceRepository;
 
     @Autowired
-    private ModelMapper modelMapper; // Giả sử bạn đang sử dụng ModelMapper để ánh xạ
+    private ModelMapper modelMapper;
 
     @Override
     public List<PriceDTO> getAllPrices() {
@@ -29,4 +28,27 @@ public class PriceServiceImpl implements PriceService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public PriceDTO createPrice(PriceDTO priceDTO) {
+        Price price = modelMapper.map(priceDTO, Price.class);
+        Price savedPrice = priceRepository.save(price);
+        return modelMapper.map(savedPrice, PriceDTO.class);
+    }
+
+    @Override
+    public PriceDTO updatePrice(Long id, PriceDTO priceDTO) {
+        Price existingPrice = priceRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Price not found with ID: " + id));
+        modelMapper.map(priceDTO, existingPrice); // Cập nhật dữ liệu từ DTO sang entity
+        Price updatedPrice = priceRepository.save(existingPrice);
+        return modelMapper.map(updatedPrice, PriceDTO.class);
+    }
+
+    @Override
+    public void deletePrice(Long id) {
+        if (!priceRepository.existsById(id)) {
+            throw new RuntimeException("Price not found with ID: " + id);
+        }
+        priceRepository.deleteById(id);
+    }
 }
