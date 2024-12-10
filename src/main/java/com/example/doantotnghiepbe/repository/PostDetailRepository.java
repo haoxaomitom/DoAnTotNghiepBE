@@ -12,4 +12,7 @@ import java.util.Optional;
 
 public interface PostDetailRepository extends JpaRepository<Post, Integer> {
     Page<Post> findByDistrictName(String districtName, Pageable pageable);
+    Optional<Post> findById(Integer id);
+    boolean existsById(Integer id);
+    void deleteById(Integer id);
 }

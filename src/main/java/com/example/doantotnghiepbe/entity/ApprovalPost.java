@@ -32,4 +32,9 @@ public class ApprovalPost {
     @ManyToOne
     @JoinColumn(name = "reviewed_by_user_id")
     private Users reviewedByUser;
+
+    // Enum for ApprovalPost Status
+    public enum ApprovalPostStatus {
+        APPROVED, REJECTED
+    }
 }

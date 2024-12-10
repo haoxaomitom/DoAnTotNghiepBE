@@ -65,6 +65,48 @@ public class PostDetailServiceImpl implements PostDetailService {
 //    }
 
     @Override
+    public PostDetailDTO updatePost(PostDetailDTO postDetailDTO) {
+        // Kiểm tra xem bài đăng có tồn tại hay không
+        Optional<Post> existingPostOptional = postDetailRepository.findById(postDetailDTO.getIdPost());
+        if (existingPostOptional.isPresent()) {
+            Post existingPost = existingPostOptional.get();
+
+            // Cập nhật thông tin bài đăng
+            existingPost.setParkingName(postDetailDTO.getParkingName());
+            existingPost.setPrice(postDetailDTO.getPrice());
+            existingPost.setPriceUnit(postDetailDTO.getPriceUnit());
+            existingPost.setCapacity(postDetailDTO.getCapacity());
+            existingPost.setWardName(postDetailDTO.getWardName());
+            existingPost.setDistrictName(postDetailDTO.getDistrictName());
+            existingPost.setProvinceName(postDetailDTO.getProvinceName());
+            existingPost.setLatitude(postDetailDTO.getLatitude());
+            existingPost.setLongitude(postDetailDTO.getLongitude());
+            existingPost.setStatus(postDetailDTO.getStatus());
+            existingPost.setDescription(postDetailDTO.getDescription());
+
+            // Lưu thay đổi vào cơ sở dữ liệu
+            Post updatedPost = postDetailRepository.save(existingPost);
+
+            // Sử dụng ModelMapper để chuyển đổi từ Entity sang DTO
+            return modelMapper.map(updatedPost, PostDetailDTO.class);
+        } else {
+            throw new IllegalArgumentException("Post not found with id: " + postDetailDTO.getIdPost());
+        }
+    }
+
+
+    @Override
+    public void deletePostById(Integer id) {
+        // Kiểm tra xem bài đăng có tồn tại không
+        if (postDetailRepository.existsById(id)) {
+            postDetailRepository.deleteById(id);
+        } else {
+            throw new IllegalArgumentException("Post not found with id: " + id);
+        }
+    }
+
+
+    @Override
     public Page<PostDTO> getRelatedPostsByDistrict(String districtName, Pageable pageable) {
         Page<Post> postPage = postDetailRepository.findByDistrictName(districtName, pageable);
         List<PostDTO> postDTOs = postPage.stream()
@@ -82,6 +124,8 @@ public class PostDetailServiceImpl implements PostDetailService {
                 .collect(Collectors.toList());
         return new PageImpl<>(postDTOs, pageable, postPage.getTotalElements());
     }
+
+
 
 
 //    @Override
