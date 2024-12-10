@@ -9,6 +9,7 @@ import java.util.List;
 @Repository
 public interface ContactInformationRepo extends JpaRepository<ContactInformations,Long> {
 
-List<ContactInformations> findContactInformationByPostPostId(Integer postId);
-List<ContactInformations> findContactInformationsByPostPostIdAndWatched(Integer postId, boolean watched);
+List<ContactInformations> findContactInformationsByUserUserIdOrderByCreateAtDesc(Integer postId);
+List<ContactInformations> findContactInformationsByUserUserIdAndWatchedOrderByCreateAtDesc(Integer postId, boolean watched);
+
 }

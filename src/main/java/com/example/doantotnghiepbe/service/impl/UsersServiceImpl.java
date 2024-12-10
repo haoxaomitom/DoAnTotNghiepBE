@@ -49,6 +49,11 @@ public class UsersServiceImpl implements UsersService {
     }
 
     @Override
+    public List<Users> getAllUsers() {
+        return usersRepository.findUsersByRolesRoleName("USER");
+    }
+
+    @Override
     public Users getUsersByUsername(String username) throws DataNotFoundException {
         Users user = usersRepository.findUsersByUsername(username).orElseThrow(()->new DataNotFoundException("Không tìm thấy tài khoản "+ username));
         return user;

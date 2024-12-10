@@ -15,6 +15,7 @@ import java.util.Map;
 @Service
 public interface UsersService {
     List<Users> getAll();
+    List<Users> getAllUsers();
     Users getUsersByUsername(String username) throws DataNotFoundException;
     Users register (UserRegisterDTO user) throws DataNotFoundException;
     Users updateUserInfo (UserInfoDTO user) throws DataNotFoundException;

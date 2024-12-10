@@ -20,6 +20,9 @@ public class Notification {
     @JoinColumn(name = "user_id", nullable = true)
     private Users user; // Can be null if it's a global notification
 
+    @Column(name = "title")
+    private String title;
+
     @Column(name = "notification_content", nullable = false)
     private String content;
 

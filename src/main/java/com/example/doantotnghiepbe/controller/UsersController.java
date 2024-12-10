@@ -40,6 +40,21 @@ public class UsersController {
         }
         return ResponseEntity.ok(result);
     }
+    @GetMapping("/getAllUsers")
+    public ResponseEntity<?> getAllUsers(){
+        Map<String,Object> result = new HashMap<>();
+        try {
+            result.put("status",true);
+            result.put("message", "Thành công");
+            result.put("data",usersService.getAllUsers());
+        }catch (Exception e){
+            result.put("status", false);
+            result.put("message", e.getLocalizedMessage());
+            result.put("data", null);
+        }
+        return ResponseEntity.ok(result);
+    }
+
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody UsersLoginDTO userLoginDTO) {
         Map<String,Object> result = new HashMap<>();

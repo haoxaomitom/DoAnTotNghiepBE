@@ -16,7 +16,22 @@ public class ContactInformationController {
     @Autowired
     private ContactInformationService contactInformationService;
 
-    @GetMapping("/getByPostId/{id}")
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getById(@PathVariable Long id){
+        Map<String,Object> result = new HashMap<>();
+        try {
+            result.put("status", true);
+            result.put("message","Thành công");
+            result.put("data",contactInformationService.getById(id));
+        }catch (Exception e){
+            result.put("status", false);
+            result.put("message","Thất bại");
+            result.put("data",null);
+        }
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/getByUserId/{id}")
     public ResponseEntity<?> getByPostId(@PathVariable Integer id){
         Map<String,Object> result = new HashMap<>();
         try {
@@ -30,7 +45,7 @@ public class ContactInformationController {
         }
         return ResponseEntity.ok(result);
     }
-    @GetMapping("/getByPostIdAndWatched/{id}")
+    @GetMapping("/getByWatched/{id}")
     public ResponseEntity<?> getByPostIdAndWatched(@PathVariable Integer id, @RequestParam("watched") boolean watched){
         Map<String,Object> result = new HashMap<>();
         try {
@@ -44,13 +59,13 @@ public class ContactInformationController {
         }
         return ResponseEntity.ok(result);
     }
-    @PostMapping("/create")
-    public ResponseEntity<?> create(@RequestBody ContactInformationDTO contactInformationDTO){
+    @PostMapping("/create/{postId}")
+    public ResponseEntity<?> create(@PathVariable("postId") Integer postId, @RequestBody ContactInformationDTO contactInformationDTO){
         Map<String,Object> result = new HashMap<>();
         try {
             result.put("status", true);
             result.put("message","Thành công");
-            result.put("data",contactInformationService.create(contactInformationDTO));
+            result.put("data",contactInformationService.create(contactInformationDTO,postId));
         }catch (DataNotFoundException   e){
             result.put("status", false);
             result.put("message",e);
@@ -58,13 +73,13 @@ public class ContactInformationController {
         }
         return ResponseEntity.ok(result);
     }
-    @PutMapping("/update/{id}")
-    public ResponseEntity<?> update(@RequestBody ContactInformationDTO contactInformationDTO, @PathVariable Long id){
+    @PutMapping("/contacted/{id}")
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestParam("contacted") boolean contacted){
         Map<String,Object> result = new HashMap<>();
         try {
             result.put("status", true);
             result.put("message","Thành công");
-            result.put("data",contactInformationService.update(id,contactInformationDTO));
+            result.put("data",contactInformationService.contacted(id,contacted));
         }catch (Exception e){
             result.put("status", false);
             result.put("message","Thất bại");

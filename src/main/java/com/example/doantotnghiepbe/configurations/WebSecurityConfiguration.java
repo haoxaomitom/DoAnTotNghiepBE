@@ -32,13 +32,13 @@ public class WebSecurityConfiguration {
                 .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests((requests -> {
                     requests.requestMatchers(
-                                    "/api/**",
                                     "/api/users/login",
                                     "/api/users/register",
                                     "/api/posts/{id}",
                                     "/api/comments/post/{postId}",
                                     "/api/comments/{commentId}",
-                                    "/api/users/verified"
+                                    "/api/users/verified",
+                                    "/api/contactInformation/**"
                             ).permitAll()
                             .requestMatchers("/api/users/getUserByUsername").hasAnyRole("USER", "ADMIN", "MODERATOR")
                             .requestMatchers("/api/contactInformation/**").hasAnyRole("USER", "ADMIN", "MODERATOR")

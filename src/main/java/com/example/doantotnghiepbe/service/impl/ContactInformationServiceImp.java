@@ -13,7 +13,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -29,29 +28,22 @@ public class ContactInformationServiceImp implements ContactInformationService {
 
     @Override
     public List<ContactInformations> findAllByPostId(Integer postId) {
-        List<ContactInformations> contactInformations = contactInformationRepo.findContactInformationByPostPostId(postId);
+        List<ContactInformations> contactInformations = contactInformationRepo.findContactInformationsByUserUserIdOrderByCreateAtDesc(postId);
         return contactInformations;
     }
 
     @Override
-    public ContactInformations create(ContactInformationDTO contactInformationDTO) throws DataNotFoundException {
-        Users user = usersRepository.findById(contactInformationDTO.getUser()).orElseThrow(()->new DataNotFoundException("Không tìm thấy người dùng với id "+contactInformationDTO.getUser()));
-        Post post = postRepository.findByPostId(contactInformationDTO.getPost());
-        ContactInformations contactInformation = modelMapper.map(contactInformationDTO,ContactInformations.class);
-        contactInformation.setUser(user);
-        contactInformation.setPost(post);
-        contactInformation.setWatched(false);
-        return contactInformationRepo.save(contactInformation);
+    public ContactInformations getById(Long id) throws DataNotFoundException {
+        ContactInformations contactInformations = contactInformationRepo.findById(id).orElseThrow(()-> new DataNotFoundException("Không tìm thấy thông tin"));
+        return contactInformations;
     }
 
     @Override
-    public ContactInformations update(Long id, ContactInformationDTO contactInformationDTO) throws DataNotFoundException {
-        Users user = usersRepository.findById(contactInformationDTO.getUser()).orElseThrow(()->new DataNotFoundException("Không tìm thấy người dùng với id "+contactInformationDTO.getUser()));
-        Post post = postRepository.findByPostId(contactInformationDTO.getPost());
-        ContactInformations contactInformation = contactInformationRepo.findById(id).orElseThrow(()->new DataNotFoundException("Không tìm thấy thông tin với id" + id));
-        modelMapper.map(contactInformationDTO,contactInformation);
+    public ContactInformations create(ContactInformationDTO contactInformationDTO, int postId) throws DataNotFoundException {
+        Post post = postRepository.findByPostId(postId);
+        Users user = usersRepository.findById(post.getUser().getUserId()).orElseThrow(()->new DataNotFoundException("Không tìm thấy người dùng với id "+post.getUser().getUserId()));
+        ContactInformations contactInformation = modelMapper.map(contactInformationDTO,ContactInformations.class);
         contactInformation.setUser(user);
-        contactInformation.setPost(post);
         return contactInformationRepo.save(contactInformation);
     }
 
@@ -63,7 +55,7 @@ public class ContactInformationServiceImp implements ContactInformationService {
 
     @Override
     public List<ContactInformations> findByWatched( Integer postId, boolean watched) {
-        List<ContactInformations> contactInformations = contactInformationRepo.findContactInformationsByPostPostIdAndWatched(postId,watched);
+        List<ContactInformations> contactInformations = contactInformationRepo.findContactInformationsByUserUserIdAndWatchedOrderByCreateAtDesc(postId,watched);
         return contactInformations;
     }
 
@@ -71,6 +63,14 @@ public class ContactInformationServiceImp implements ContactInformationService {
     public ContactInformations watched(Long id) throws DataNotFoundException {
         ContactInformations contactInformation = contactInformationRepo.findById(id).orElseThrow(()->new DataNotFoundException("Không tìm thấy thông tin với id" + id));
         contactInformation.setWatched(true);
+
+        return contactInformationRepo.save(contactInformation);
+    }
+
+    @Override
+    public ContactInformations contacted(Long id, boolean contacted) throws DataNotFoundException {
+        ContactInformations contactInformation = contactInformationRepo.findById(id).orElseThrow(()->new DataNotFoundException("Không tìm thấy thông tin với id" + id));
+        contactInformation.setContacted(contacted);
 
         return contactInformationRepo.save(contactInformation);
     }

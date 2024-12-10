@@ -10,9 +10,10 @@ import java.util.List;
 @Service
 public interface ContactInformationService {
     List<ContactInformations> findAllByPostId(Integer postId);
-    ContactInformations create(ContactInformationDTO contactInformationDTO) throws DataNotFoundException;
-    ContactInformations update(Long id, ContactInformationDTO contactInformationDTO) throws DataNotFoundException;
+    ContactInformations getById(Long id) throws DataNotFoundException;
+    ContactInformations create(ContactInformationDTO contactInformationDTO, int postId) throws DataNotFoundException;
     void delete(Long id) throws DataNotFoundException;
     List<ContactInformations> findByWatched(Integer postId, boolean watched);
     ContactInformations watched(Long id)throws DataNotFoundException;
+    ContactInformations contacted(Long id, boolean contacted) throws DataNotFoundException;
 }
