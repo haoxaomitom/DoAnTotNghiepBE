@@ -30,4 +30,7 @@ public interface PostService {
 
 
     Page<Post> getPostsByUserIdAndStatus(Long userId, String status, int page, int size);
+
+
+    Page<PostDTO> findByPostId(String postId, int page, int size);
 }

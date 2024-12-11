@@ -67,7 +67,7 @@ public class PostDetailServiceImpl implements PostDetailService {
     @Override
     public PostDetailDTO updatePost(PostDetailDTO postDetailDTO) {
         // Kiểm tra xem bài đăng có tồn tại hay không
-        Optional<Post> existingPostOptional = postDetailRepository.findById(postDetailDTO.getIdPost());
+        Optional<Post> existingPostOptional = postDetailRepository.findById(postDetailDTO.getPostId());
         if (existingPostOptional.isPresent()) {
             Post existingPost = existingPostOptional.get();
 
@@ -90,7 +90,7 @@ public class PostDetailServiceImpl implements PostDetailService {
             // Sử dụng ModelMapper để chuyển đổi từ Entity sang DTO
             return modelMapper.map(updatedPost, PostDetailDTO.class);
         } else {
-            throw new IllegalArgumentException("Post not found with id: " + postDetailDTO.getIdPost());
+            throw new IllegalArgumentException("Post not found with id: " + postDetailDTO.getPostId());
         }
     }
 

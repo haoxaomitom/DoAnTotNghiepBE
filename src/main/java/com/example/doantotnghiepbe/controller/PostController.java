@@ -119,4 +119,15 @@ public class PostController {
         Page<Post> posts = postService.getPostsByUserIdAndStatus(userId, status, page, size);
         return ResponseEntity.ok(posts);
     }
+
+    @GetMapping("/admin/search")
+    public ResponseEntity<Page<PostDTO>> adminSearchPosts(
+            @RequestParam String postId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "15") int size
+    ) {
+        Page<PostDTO> postDTOs = postService.findByPostId(postId, page, size);
+        return ResponseEntity.ok(postDTOs);
+    }
+
 }

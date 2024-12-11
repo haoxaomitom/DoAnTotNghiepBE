@@ -60,7 +60,8 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
 
     Page<Post> findAllByUserUserIdAndStatus(Long userId, String status, Pageable pageable);
 
-
+    @Query("SELECT p FROM Post p WHERE CAST(p.postId AS string) LIKE %:postId%")
+    Page<Post> findByPostIdContaining(@Param("postId") String postId, Pageable pageable);
 
     List<Post> findAllByUserUserId(Long userId);
 

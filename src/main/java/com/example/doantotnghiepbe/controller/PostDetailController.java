@@ -37,7 +37,7 @@ public class PostDetailController {
     @PutMapping("/{id}")
     public ResponseEntity<PostDetailDTO> updatePost(@PathVariable Integer id, @RequestBody PostDetailDTO postDetailDTO) {
         // Kiểm tra ID khớp nhau
-        if (!id.equals(postDetailDTO.getIdPost())) {
+        if (!id.equals(postDetailDTO.getPostId())) {
             return ResponseEntity.badRequest().build();
         }
 

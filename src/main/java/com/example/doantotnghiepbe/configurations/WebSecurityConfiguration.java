@@ -46,7 +46,11 @@ public class WebSecurityConfiguration {
                             "/api/updatePosts/",
                             "/api/updatePosts/images/delete/",
                             "/api/updatePosts//images/upload/",
-                            "/api/posts/"
+                            "/api/posts/",
+                            "/api/approval-posts",
+                            "/api/approval-posts/approve/",
+                            "/api/approval-posts/reject/",
+                            "/api/posts/admin/search/"
                             ).permitAll()
                             .requestMatchers("/api/users/getUserByUsername").hasAnyRole("USER", "ADMIN", "MODERATOR")
                             .requestMatchers("/api/contactInformation/**").hasAnyRole("USER", "ADMIN", "MODERATOR")

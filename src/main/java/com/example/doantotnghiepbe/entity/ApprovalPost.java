@@ -33,8 +33,5 @@ public class ApprovalPost {
     @JoinColumn(name = "reviewed_by_user_id")
     private Users reviewedByUser;
 
-    // Enum for ApprovalPost Status
-    public enum ApprovalPostStatus {
-        APPROVED, REJECTED
-    }
+
 }

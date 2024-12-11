@@ -15,7 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PostDTO {
-    private Integer idPost;
+    private Integer postId;
     private String parkingName;
     private Double price;
     private String priceUnit;
@@ -30,6 +30,7 @@ public class PostDTO {
     private List<Amenities> amenities;
     private List<VehicleType> vehicleTypes;
     private PostUserDTO user;
+    private Long userId;
 }
 
 
