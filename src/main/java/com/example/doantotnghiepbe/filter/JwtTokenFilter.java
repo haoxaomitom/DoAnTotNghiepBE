@@ -14,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -83,8 +84,8 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
     private boolean isByPassToken(@NotNull HttpServletRequest request) {
         final List<Pair<String, String>> bypassTokens = Arrays.asList(
-                Pair.of("/users/login", "POST"),
-                Pair.of("/users/register", "POST"),
+                Pair.of("/api/users/login", "POST"),
+                Pair.of("/api/users/register", "POST"),
                 Pair.of("/api/posts", "GET"),
                 Pair.of("/api/posts/countByDistrict", "GET"),
                 Pair.of("/api/posts/user/", "GET"),
@@ -107,14 +108,19 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 Pair.of("/api/approval-posts/approve/", "POST"),
                 Pair.of("/api/approval-posts/reject/", "POST"),
                 Pair.of("/api/posts/admin/search/", "GET")
+                Pair.of("/api/users/verified", "GET"),
+                Pair.of("/api/contactInformation/**", "GET"),
+                Pair.of("/api/contactInformation/**", "POST"),
+                Pair.of("/api/contactInformation/**", "PUT")
         );
 
         String requestPath = request.getServletPath();
         String requestMethod = request.getMethod();
+        AntPathMatcher pathMatcher = new AntPathMatcher();
 
         for (Pair<String, String> bypassToken : bypassTokens) {
-            if (requestPath.contains(bypassToken.getLeft()) &&
-                    requestMethod.equals(bypassToken.getRight())) {
+            if (pathMatcher.match(bypassToken.getLeft(), requestPath) &&
+                    requestMethod.equalsIgnoreCase(bypassToken.getRight())) {
                 return true;
             }
         }

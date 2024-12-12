@@ -38,6 +38,8 @@ public class WebSecurityConfiguration {
                                     "/api/posts/{id}",
                                     "/api/comments/post/{postId}",
                                     "/api/comments/{commentId}",
+                                    "/api/users/verified",
+                                    "/api/contactInformation/**"
                                     "/api/vnpay/return",
                                     "/api/vnpay/payment/details/{txnRef}",
                                     "/api/reports",
