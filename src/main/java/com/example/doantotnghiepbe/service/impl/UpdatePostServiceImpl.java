@@ -3,7 +3,7 @@ package com.example.doantotnghiepbe.service.impl;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import com.example.doantotnghiepbe.configurations.CloudinaryConfig;
-import com.example.doantotnghiepbe.dto.PostDetailDTO;
+import com.example.doantotnghiepbe.dto.UpdatePostDTO;
 import com.example.doantotnghiepbe.entity.Amenities;
 import com.example.doantotnghiepbe.entity.Image;
 import com.example.doantotnghiepbe.entity.Post;
@@ -43,24 +43,29 @@ public class UpdatePostServiceImpl implements UpdatePostService {
     }
 
     @Transactional
-    public Post updatePost(Integer postId, PostDetailDTO postRequest) {
+    public Post updatePost(Integer postId, UpdatePostDTO postRequest) {
         // Retrieve the existing post
         Post existingPost = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found with id: " + postId));
 
         // Use ModelMapper to map fields from postRequest to existingPost
-        ModelMapper modelMapper = new ModelMapper();
-
-        // Map the properties
-        modelMapper.map(postRequest, existingPost);
-
-        // Manually set status to WAITING
+        existingPost.setParkingName(postRequest.getParkingName());
+        existingPost.setDescription(postRequest.getDescription());
+        existingPost.setStreet(postRequest.getStreet());
+        existingPost.setWardName(postRequest.getWardName());
+        existingPost.setDistrictName(postRequest.getDistrictName());
+        existingPost.setProvinceName(postRequest.getProvinceName());
+        existingPost.setPrice(postRequest.getPrice());
+        existingPost.setPriceUnit(postRequest.getPriceUnit());
+        existingPost.setCapacity(postRequest.getCapacity());
+        existingPost.setLatitude(postRequest.getLatitude());
+        existingPost.setLongitude(postRequest.getLongitude());
         existingPost.setStatus("WAITING");
 
         // Update associated VehicleTypes if provided
         if (postRequest.getVehicleTypes() != null) {
             // Remove existing VehicleTypes for the post
-            vehicleTypeRepository.deleteById(postId);
+            vehicleTypeRepository.deleteVehicleTypeByPostPostId(postId);
 
             // Add new VehicleTypes
             postRequest.getVehicleTypes().forEach(vehicleTypeDTO -> {
@@ -74,7 +79,7 @@ public class UpdatePostServiceImpl implements UpdatePostService {
         // Update associated Amenities if provided
         if (postRequest.getAmenities() != null) {
             // Remove existing Amenities for the post
-            amenitiesRepository.deleteById(postId);
+            amenitiesRepository.deleteAmenitiesByPostPostId(postId);
 
             // Add new Amenities
             postRequest.getAmenities().forEach(amenitiesDTO -> {

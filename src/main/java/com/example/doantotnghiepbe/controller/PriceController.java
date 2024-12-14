@@ -1,8 +1,10 @@
 package com.example.doantotnghiepbe.controller;
 
 import com.example.doantotnghiepbe.dto.PriceDTO;
+import com.example.doantotnghiepbe.entity.Price;
 import com.example.doantotnghiepbe.service.PriceService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,7 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/prices")
-@CrossOrigin(origins = "http://127.0.0.1:5500")
+@CrossOrigin(origins = "http://127.0.0.1")
 public class PriceController {
 
     @Autowired
@@ -43,4 +45,16 @@ public class PriceController {
         priceService.deletePrice(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/active")
+    public ResponseEntity<List<Price>> getActivePrices() {
+        try {
+            List<Price> prices = priceService.getActivePrices();
+            return new ResponseEntity<>(prices, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }

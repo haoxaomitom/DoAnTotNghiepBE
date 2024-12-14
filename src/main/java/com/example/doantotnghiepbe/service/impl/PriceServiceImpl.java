@@ -28,6 +28,10 @@ public class PriceServiceImpl implements PriceService {
                 .collect(Collectors.toList());
     }
 
+    public List<Price> getActivePrices() {
+        return priceRepository.findByStatus("ACTIVATE");
+    }
+
     @Override
     public PriceDTO createPrice(PriceDTO priceDTO) {
         Price price = modelMapper.map(priceDTO, Price.class);

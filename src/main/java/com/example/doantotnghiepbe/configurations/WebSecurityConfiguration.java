@@ -39,7 +39,7 @@ public class WebSecurityConfiguration {
                                     "/api/comments/post/{postId}",
                                     "/api/comments/{commentId}",
                                     "/api/users/verified",
-                                    "/api/contactInformation/**"
+                                    "/api/contactInformation/**",
                                     "/api/vnpay/return",
                                     "/api/vnpay/payment/details/{txnRef}",
                                     "/api/reports",
@@ -47,12 +47,16 @@ public class WebSecurityConfiguration {
                                     "/api/contactInformation/create",
                             "/api/updatePosts/",
                             "/api/updatePosts/images/delete/",
-                            "/api/updatePosts//images/upload/",
+                            "/api/updatePosts/images/upload/",
                             "/api/posts/",
                             "/api/approval-posts",
                             "/api/approval-posts/approve/",
                             "/api/approval-posts/reject/",
-                            "/api/posts/admin/search/"
+                            "/api/posts/admin/search/",
+                            "/admin/payments/all",
+                            "/api/prices/",
+                            "/api/prices",
+                            "/api/posts/delete/"
                             ).permitAll()
                             .requestMatchers("/api/users/getUserByUsername").hasAnyRole("USER", "ADMIN", "MODERATOR")
                             .requestMatchers("/api/contactInformation/**").hasAnyRole("USER", "ADMIN", "MODERATOR")

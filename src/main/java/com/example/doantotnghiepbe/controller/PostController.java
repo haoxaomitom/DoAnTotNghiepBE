@@ -19,7 +19,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/posts")
-@CrossOrigin(origins = "http://127.0.0.1")
+@CrossOrigin(origins = "http://127.0.0.1:8080")
 public class PostController {
 
     @Autowired
@@ -110,13 +110,16 @@ public class PostController {
     }
 
     @GetMapping("/user")
-    public ResponseEntity<Page<Post>> getPostsByUserIdAndStatus(
+    public ResponseEntity<Page<PostDTO>> getPostsByUserIdAndStatus(
             @RequestParam Long userId,
             @RequestParam(defaultValue = "ACTIVE") String status,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size
     ) {
-        Page<Post> posts = postService.getPostsByUserIdAndStatus(userId, status, page, size);
+        // Gọi service để lấy danh sách PostDTO
+        Page<PostDTO> posts = postService.getPostsByUserIdAndStatus(userId, status, page, size);
+
+        // Trả về ResponseEntity chứa danh sách PostDTO
         return ResponseEntity.ok(posts);
     }
 

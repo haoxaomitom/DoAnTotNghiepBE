@@ -1,6 +1,7 @@
 package com.example.doantotnghiepbe.controller;
 
 import com.example.doantotnghiepbe.dto.PostDetailDTO;
+import com.example.doantotnghiepbe.dto.UpdatePostDTO;
 import com.example.doantotnghiepbe.entity.Post;
 import com.example.doantotnghiepbe.service.UpdatePostService;
 import com.example.doantotnghiepbe.service.impl.UpdatePostServiceImpl;
@@ -14,6 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/updatePosts")
+@CrossOrigin(origins = "http://127.0.0.1:5500")
 public class UpdatePostController {
 
     private final UpdatePostService updatePostService;
@@ -24,11 +26,13 @@ public class UpdatePostController {
 
     @PutMapping("/{postId}")
     public ResponseEntity<Post> updatePost(@PathVariable Integer postId,
-                                           @RequestBody PostDetailDTO postRequest) {
+                                           @RequestBody UpdatePostDTO postRequest) {
         try {
             Post updatedPost = updatePostService.updatePost(postId, postRequest);
             return ResponseEntity.ok(updatedPost);
         } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println(e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
     }

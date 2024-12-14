@@ -18,7 +18,7 @@ public interface PostDetailService {
 
     PostDetailDTO updatePost(PostDetailDTO postDetailDTO);
 
-    void deletePostById(Integer id);
+    void deletePostById(Integer postId);
 
     Page<PostDTO> getRelatedPostsByDistrict(String districtName, Pageable pageable);
 

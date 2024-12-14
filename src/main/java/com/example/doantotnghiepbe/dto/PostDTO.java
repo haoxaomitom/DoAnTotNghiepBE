@@ -31,6 +31,7 @@ public class PostDTO {
     private List<VehicleType> vehicleTypes;
     private PostUserDTO user;
     private Long userId;
+    private String rejectReason;
 }
 
 

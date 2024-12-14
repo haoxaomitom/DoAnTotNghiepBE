@@ -17,4 +17,5 @@ public class PriceDTO {
     private String description;
     private Integer discountPercentage;
     private Integer finalAmount;
+    private String status;
 }

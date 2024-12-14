@@ -1,7 +1,6 @@
 package com.example.doantotnghiepbe.service;
 
 import com.example.doantotnghiepbe.dto.PostDTO;
-import com.example.doantotnghiepbe.dto.PostDetailDTO;
 import com.example.doantotnghiepbe.entity.Post;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,7 +28,7 @@ public interface PostService {
     List<PostDTO> getPostsByUserId(Long userId);
 
 
-    Page<Post> getPostsByUserIdAndStatus(Long userId, String status, int page, int size);
+    Page<PostDTO> getPostsByUserIdAndStatus(Long userId, String status, int page, int size);
 
 
     Page<PostDTO> findByPostId(String postId, int page, int size);

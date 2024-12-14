@@ -1,6 +1,7 @@
 package com.example.doantotnghiepbe.service;
 
 import com.example.doantotnghiepbe.dto.PriceDTO;
+import com.example.doantotnghiepbe.entity.Price;
 
 import java.util.List;
 
@@ -12,4 +13,6 @@ public interface PriceService {
     PriceDTO updatePrice(Long id, PriceDTO priceDTO);
 
     void deletePrice(Long id);
+
+    List<Price> getActivePrices();
 }

@@ -27,7 +27,6 @@ public class UpPostDTO {
 
     private Double price;
 
-
     private String priceUnit;
 
     private Integer capacity;

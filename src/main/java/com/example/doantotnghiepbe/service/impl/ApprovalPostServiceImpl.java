@@ -1,10 +1,12 @@
 package com.example.doantotnghiepbe.service.impl;
 
 import com.example.doantotnghiepbe.entity.ApprovalPost;
+import com.example.doantotnghiepbe.entity.Post;
 import com.example.doantotnghiepbe.entity.Users;
 import com.example.doantotnghiepbe.repository.ApprovalPostRepository;
 import com.example.doantotnghiepbe.repository.UsersRepository;
 import com.example.doantotnghiepbe.service.ApprovalPostService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -29,7 +31,9 @@ public class ApprovalPostServiceImpl implements ApprovalPostService {
         return approvalPostRepository.findAll(pageable);
     }
 
+
     // Duyệt bài viết
+    @Transactional
     public ApprovalPost approvePost(Integer approvalPostId, Long userId) {
         Optional<Users> reviewer = usersRepository.findById(userId);
         if (reviewer.isEmpty()) {
@@ -45,10 +49,16 @@ public class ApprovalPostServiceImpl implements ApprovalPostService {
         approvalPost.setStatus("ACTIVE");
         approvalPost.setReviewedAt(LocalDateTime.now());
         approvalPost.setReviewedByUser(reviewer.get());
+
+        // Cập nhật trạng thái của Post liên kết
+        Post post = approvalPost.getPost();
+        post.setStatus("ACTIVE");
+
         return approvalPostRepository.save(approvalPost);
     }
 
     // Từ chối bài viết
+    @Transactional
     public ApprovalPost rejectPost(Integer approvalPostId, String rejectionReason, Long userId) {
         Optional<Users> reviewer = usersRepository.findById(userId);
         if (reviewer.isEmpty()) {
@@ -65,6 +75,16 @@ public class ApprovalPostServiceImpl implements ApprovalPostService {
         approvalPost.setRejectionReason(rejectionReason);
         approvalPost.setReviewedAt(LocalDateTime.now());
         approvalPost.setReviewedByUser(reviewer.get());
+
+        Post post = approvalPost.getPost();
+        post.setStatus("REJECT");
+
         return approvalPostRepository.save(approvalPost);
     }
+
+    @Override
+    public Page<ApprovalPost> searchByApprovalPostIdLike(String approvalPostId, Pageable pageable) {
+        return approvalPostRepository.searchByApprovalPostIdLike(approvalPostId, pageable);
+    }
+
 }

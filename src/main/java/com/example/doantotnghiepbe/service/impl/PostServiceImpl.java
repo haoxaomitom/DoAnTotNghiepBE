@@ -1,7 +1,9 @@
 package com.example.doantotnghiepbe.service.impl;
 
 import com.example.doantotnghiepbe.dto.PostDTO;
+import com.example.doantotnghiepbe.entity.ApprovalPost;
 import com.example.doantotnghiepbe.entity.Post;
+import com.example.doantotnghiepbe.repository.ApprovalPostRepository;
 import com.example.doantotnghiepbe.repository.PaymentRepository;
 import com.example.doantotnghiepbe.repository.PostRepository;
 import com.example.doantotnghiepbe.service.PostService;
@@ -22,12 +24,14 @@ public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
     private final ModelMapper modelMapper;
     private final PaymentRepository postPaymentRepository;
+    private final ApprovalPostRepository approvalPostRepository;
 
     @Autowired
-    public PostServiceImpl(PostRepository postRepository, ModelMapper modelMapper, PaymentRepository postPaymentRepository) {
+    public PostServiceImpl(PostRepository postRepository, ModelMapper modelMapper, PaymentRepository postPaymentRepository, ApprovalPostRepository approvalPostRepository) {
         this.postRepository = postRepository;
         this.modelMapper = modelMapper;
         this.postPaymentRepository = postPaymentRepository;
+        this.approvalPostRepository = approvalPostRepository;
     }
 
 //    @Override
@@ -110,10 +114,26 @@ public class PostServiceImpl implements PostService {
         postRepository.softDeletePostById(postId);
     }
 
-    public Page<Post> getPostsByUserIdAndStatus(Long userId, String status, int page, int size) {
+    public Page<PostDTO> getPostsByUserIdAndStatus(Long userId, String status, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return postRepository.findAllByUserUserIdAndStatus(userId, status, pageable);
+        Page<Post> posts = postRepository.findAllByUserUserIdAndStatus(userId, status, pageable);
+
+        return posts.map(post -> {
+            // Sử dụng ModelMapper để ánh xạ từ Post sang PostDTO
+            PostDTO postDTO = modelMapper.map(post, PostDTO.class);
+
+            // Lấy rejectionReason nếu trạng thái là REJECT
+            if ("REJECT".equals(post.getStatus())) {
+                ApprovalPost approvalPost = approvalPostRepository.findByPostPostId(post.getPostId());
+                if (approvalPost != null) {
+                    postDTO.setRejectReason(approvalPost.getRejectionReason());
+                }
+            }
+
+            return postDTO;
+        });
     }
+
 
     public Page<PostDTO> findByPostId(String postId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);

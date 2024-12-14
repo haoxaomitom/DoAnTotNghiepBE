@@ -7,6 +7,7 @@ import com.example.doantotnghiepbe.dto.PostDetailDTO;
 import com.example.doantotnghiepbe.dto.PostUserDTO;
 import com.example.doantotnghiepbe.entity.Post;
 import com.example.doantotnghiepbe.repository.PostDetailRepository;
+import com.example.doantotnghiepbe.repository.PostRepository;
 import com.example.doantotnghiepbe.service.PostDetailService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,13 +28,15 @@ public class PostDetailServiceImpl implements PostDetailService {
     private final Cloudinary cloudinary;
     private final PostDetailRepository postDetailRepository;
     private final ModelMapper modelMapper;
+    private final PostRepository postRepository;
 
 
     @Autowired
-    public PostDetailServiceImpl(Cloudinary cloudinary, PostDetailRepository postDetailRepository, ModelMapper modelMapper) {
+    public PostDetailServiceImpl(Cloudinary cloudinary, PostDetailRepository postDetailRepository, ModelMapper modelMapper, PostRepository postRepository) {
         this.cloudinary = cloudinary;
         this.postDetailRepository = postDetailRepository;
         this.modelMapper = modelMapper;
+        this.postRepository = postRepository;
     }
 
     @Override
@@ -96,12 +99,15 @@ public class PostDetailServiceImpl implements PostDetailService {
 
 
     @Override
-    public void deletePostById(Integer id) {
+    public void deletePostById(Integer postId) {
         // Kiểm tra xem bài đăng có tồn tại không
-        if (postDetailRepository.existsById(id)) {
-            postDetailRepository.deleteById(id);
+        if (postDetailRepository.existsById(postId)) {
+            Post post = postRepository.findById(postId)
+                    .orElseThrow(() -> new IllegalArgumentException("Post not found with id: " + postId));
+            post.setStatus("DELETE");
+            postRepository.save(post);
         } else {
-            throw new IllegalArgumentException("Post not found with id: " + id);
+            throw new IllegalArgumentException("Post not found with id: " + postId);
         }
     }
 

@@ -12,11 +12,15 @@ import com.example.doantotnghiepbe.repository.PostRepository;
 import com.example.doantotnghiepbe.repository.PriceRepository;
 import com.example.doantotnghiepbe.repository.UsersRepository;
 import com.example.doantotnghiepbe.service.EmailService;
+import com.example.doantotnghiepbe.service.PaymentService;
 import com.example.doantotnghiepbe.service.PriceService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -48,6 +52,10 @@ public class PaymentController {
 
     @Autowired
     private EmailService emailService;
+
+    @Autowired
+    private PaymentService paymentService;
+
     private UsersRepository usersRepository;
 
     @GetMapping("/payment/{priceId}/{postId}")
@@ -243,5 +251,25 @@ public class PaymentController {
         PaymentSuccessDTO paymentSuccessDTO = modelMapper.map(payment, PaymentSuccessDTO.class);
 
         return ResponseEntity.ok(paymentSuccessDTO);
+    }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<Page<Payment>> getPaymentsByUserId(
+            @PathVariable Long userId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Page<Payment> payments = paymentService.getPaymentsByUserId(userId, page, size);
+        return ResponseEntity.ok(payments);
+    }
+
+    @GetMapping("/search")
+    public Page<Payment> searchPayments(
+            @RequestParam Long userId,
+            @RequestParam(required = false) Long paymentId,
+            @RequestParam(required = false) Integer postId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        return paymentService.getPaymentsByCriteria(userId, paymentId, postId, page, size);
     }
 }

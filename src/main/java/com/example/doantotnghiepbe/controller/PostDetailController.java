@@ -49,10 +49,10 @@ public class PostDetailController {
         }
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePost(@PathVariable Integer id) {
+    @PutMapping("/delete/{postId}")
+    public ResponseEntity<Void> deletePost(@PathVariable Integer postId) {
         try {
-            postDetailService.deletePostById(id);
+            postDetailService.deletePostById(postId);
             return ResponseEntity.noContent().build();
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
