@@ -116,7 +116,7 @@ public class ContactInformationController {
         return ResponseEntity.ok(result);
     }
     @PostMapping("/create/{postId}")
-    public ResponseEntity<?> create(@PathVariable("postId") Integer postId, @RequestBody ContactInformationDTO contactInformationDTO){
+    public ResponseEntity<?> create(@PathVariable Integer postId, @RequestBody ContactInformationDTO contactInformationDTO){
         Map<String,Object> result = new HashMap<>();
         try {
             result.put("status", true);
