@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/vnpay")
@@ -39,5 +41,19 @@ public class PaymentController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Payment not found");
         }
         return ResponseEntity.ok(paymentSuccessDTO);
+    }
+    @GetMapping("/getRevenueByMonth")
+    public ResponseEntity<?> getRevenueByMonth(@RequestParam("year") int year){
+        Map<String,Object> result = new HashMap<>();
+        try {
+            result.put("status", true);
+            result.put("message","Thành công");
+            result.put("data",paymentService.getRevenueByMonth(year));
+        }catch (Exception e){
+            result.put("status", false);
+            result.put("message","Thất bại");
+            result.put("data",null);
+        }
+        return ResponseEntity.ok(result);
     }
 }

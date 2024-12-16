@@ -15,7 +15,7 @@ public interface NotificationService {
     List<Notification> getAllByGlobal(boolean isGlobal);
     Notification createNotificationGlobal(NotificationDTO notificationDTO);
     Notification createNotificationApproval(NotificationDTO notificationDTO) throws DataNotFoundException;
-    Notification isRead(Integer notificationId) throws DataNotFoundException;
+    void isRead(Integer notificationId) throws DataNotFoundException;
     void delete(Integer notificationId) throws DataNotFoundException;
 
 }

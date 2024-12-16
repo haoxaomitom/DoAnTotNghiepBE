@@ -22,4 +22,5 @@ public interface PostService {
 
 
     List<PostDTO> getTopPosts();
+
 }

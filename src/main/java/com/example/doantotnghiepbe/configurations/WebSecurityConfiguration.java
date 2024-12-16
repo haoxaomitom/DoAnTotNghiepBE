@@ -38,7 +38,8 @@ public class WebSecurityConfiguration {
                                     "/api/comments/post/{postId}",
                                     "/api/comments/{commentId}",
                                     "/api/users/verified",
-                                    "/api/contactInformation/**"
+                                    "/api/contactInformation/**",
+                                    "/api/administration/user/login"
                             ).permitAll()
                             .requestMatchers("/api/users/getUserByUsername").hasAnyRole("USER", "ADMIN", "MODERATOR")
                             .requestMatchers("/api/contactInformation/**").hasAnyRole("USER", "ADMIN", "MODERATOR")

@@ -192,4 +192,18 @@ public class UsersController {
         }
         return ResponseEntity.ok(result);
     }
+    @GetMapping("/getUsersByMonthAndRole")
+    public ResponseEntity<?> getUsersByMonthAndRole(@RequestParam("year") int year){
+        Map<String,Object> result = new HashMap<>();
+        try {
+            result.put("status",true);
+            result.put("message", "Thành công!");
+            result.put("data",usersService.getUsersByMonthAndRole(year));
+        }catch (Exception e){
+            result.put("status",false);
+            result.put("message", e.getLocalizedMessage());
+            result.put("data",null);
+        }
+        return ResponseEntity.ok(result);
+    }
 }

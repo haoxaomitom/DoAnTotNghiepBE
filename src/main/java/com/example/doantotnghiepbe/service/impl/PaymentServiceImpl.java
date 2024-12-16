@@ -100,6 +100,11 @@ public class PaymentServiceImpl implements PaymentService {
         return modelMapper.map(payment, PaymentSuccessDTO.class);
     }
 
+    @Override
+    public List<Object[]> getRevenueByMonth(int year) {
+        return paymentRepository.getRevenueByMonth(year);
+    }
+
     private Map<String, String> buildVnpParams(HttpServletRequest req, String vnp_TxnRef, int finalAmount, String vnp_IpAddr) throws UnsupportedEncodingException {
         Map<String, String> vnp_Params = new HashMap<>();
         vnp_Params.put("vnp_Version", VNPayConfig.vnp_Version);
