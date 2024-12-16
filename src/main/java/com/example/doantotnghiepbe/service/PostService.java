@@ -1,7 +1,6 @@
 package com.example.doantotnghiepbe.service;
 
 import com.example.doantotnghiepbe.dto.PostDTO;
-import com.example.doantotnghiepbe.entity.Post;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -18,7 +17,7 @@ public interface PostService {
     Page<PostDTO> searchPostsByVehicleType(String vehicleType, Pageable pageable);
 
     Page<PostDTO> sortPostsByPrice(String sort, Pageable pageable);
-    
+
 
 
     Page<PostDTO> findAllTopPostsOrderByPaymentAndDate(Pageable pageable);

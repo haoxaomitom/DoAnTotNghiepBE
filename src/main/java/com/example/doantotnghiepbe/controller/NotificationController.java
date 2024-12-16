@@ -106,13 +106,12 @@ public class NotificationController {
     public ResponseEntity<?> isRead(@PathVariable("notificationId") Integer notificationId){
         Map<String, Object> result = new HashMap<>();
         try {
+            notificationService.isRead(notificationId);
             result.put("status", true);
             result.put("message","Thành công");
-            result.put("data",notificationService.isRead(notificationId));
         }catch (DataNotFoundException e){
             result.put("status", false);
             result.put("message",e.getLocalizedMessage());
-            result.put("data",null);
         }
         return ResponseEntity.ok(result);
     }

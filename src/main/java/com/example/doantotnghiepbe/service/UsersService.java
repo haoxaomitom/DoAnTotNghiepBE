@@ -20,14 +20,12 @@ public interface UsersService {
     Users register (UserRegisterDTO user) throws DataNotFoundException;
     Users updateUserInfo (UserInfoDTO user) throws DataNotFoundException;
     Map login(String username, String password) throws DataNotFoundException;
+    Map loginAdmin(String username, String password) throws DataNotFoundException;
     Users uploadAvatar(String username, MultipartFile file) throws DataNotFoundException, IOException;
     Users active(Long userId, boolean active) throws DataNotFoundException;
     void verified( Long userId, boolean verified) throws DataNotFoundException;
     void changePassword(Long userId, ChangePasswordDTO changePasswordDTO) throws  DataNotFoundException;
     Users getUserByTokenVerified(String tokenVerified) throws DataNotFoundException;
     Long countUsers();
-//    Map<String, Object> loginWithFacebook(String facebookToken) throws DataNotFoundException;
-//    Map<String, Object> registerWithFacebook(String facebookToken) throws DataNotFoundException;
-//
-//    Map<String, Object> loginOrRegisterGoogleUser(String googleIdToken) throws DataNotFoundException;
+    List<Object[]> getUsersByMonthAndRole(int year);
 }

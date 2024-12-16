@@ -105,6 +105,25 @@ public class UsersServiceImpl implements UsersService {
     }
 
     @Override
+    public Map loginAdmin(String username, String password) throws DataNotFoundException {
+        Users user = usersRepository.findUsersByUsername(username)
+                .orElseThrow(() -> new DataNotFoundException("Tên đăng nhập hoặc mật khẩu không đúng."));
+        if(!passwordEncoder.matches(password,user.getPassword())) {
+            throw new BadCredentialsException("Tên đăng nhập hoặc mật khẩu không đúng.");
+        }
+        if (!user.getRoles().getRoleName().equals("ADMIN") && !user.getRoles().getRoleName().equals("STAFF")){
+            throw new BadCredentialsException("Bạn không có quyền truy cập.");
+        }
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username,password,user.getAuthorities());
+        authenticationManager.authenticate(authenticationToken);
+        Map result =new HashMap();
+        result.put("token",jwtTokenUtil.generateToken(user));
+        result.put("userId", user.getUserId());
+        result.put("roleName", user.getRoles().getRoleName());
+        return result;
+    }
+
+    @Override
     public Users uploadAvatar(String username, MultipartFile file) throws DataNotFoundException, IOException {
         Users user = usersRepository.findUsersByUsername(username).orElseThrow(()-> new DataNotFoundException("Không tìm thấy người dùng với tên đăng nhập: "+ username));
         user.setAvatar(cloudinaryConfig.saveToCloudinary(file));
@@ -153,5 +172,10 @@ public class UsersServiceImpl implements UsersService {
     @Override
     public Long countUsers() {
         return usersRepository.count();
+    }
+
+    @Override
+    public List<Object[]> getUsersByMonthAndRole(int year) {
+        return usersRepository.countUsersByMonthAndRole(year);
     }
 }

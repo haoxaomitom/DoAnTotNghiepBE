@@ -37,7 +37,7 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public List<Notification> getAllByGlobalAndUserAndIsRead(boolean isGlobal, Long userId, boolean isRead) {
-        return notificationRepository.findNotificationByIsGlobalOrUserUserIdAndIsReadOrderByCreatedAtDesc(true,userId,isRead);
+        return notificationRepository.findNotificationsByGlobalAndUseridAndIsRead(true,userId,isRead);
     }
 
     @Override
@@ -49,7 +49,7 @@ public class NotificationServiceImpl implements NotificationService {
     public Notification createNotificationGlobal(NotificationDTO notificationDTO) {
         Notification notification = modelMapper.map(notificationDTO,Notification.class);
         notification.setIsGlobal(true);
-        
+        notification.setUser(null);
         return notificationRepository.save(notification);
     }
 
@@ -63,10 +63,10 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public Notification isRead(Integer notificationId) throws DataNotFoundException {
+    public void isRead(Integer notificationId) throws DataNotFoundException {
         Notification notification = notificationRepository.findById(notificationId).orElseThrow(()-> new DataNotFoundException("Không tìm thấy thông báo"));
         notification.setIsRead(true);
-        return notificationRepository.save(notification);
+        notificationRepository.save(notification);
     }
 
     @Override

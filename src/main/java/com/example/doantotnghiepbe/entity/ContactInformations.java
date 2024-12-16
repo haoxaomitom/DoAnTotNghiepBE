@@ -27,6 +27,11 @@ public class ContactInformations {
     @JsonBackReference
     private Users user;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id")
+    @JsonBackReference
+    private Post post;
+
     @Column(name = "full_name")
     private String fullName;
 

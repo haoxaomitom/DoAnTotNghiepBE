@@ -109,6 +109,9 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 Pair.of("/api/posts/admin/search/*", "GET"),
                 Pair.of("/api/users/verified", "GET"),
                 Pair.of("/api/contactInformation/**", "GET"),
+                Pair.of("/api/contactInformation/create/*", "POST"),
+                Pair.of("/api/contactInformation/**", "PUT"),
+                Pair.of("/api/administration/user/login","POST")
                 Pair.of("/api/contactInformation/**", "POST"),
                 Pair.of("/api/contactInformation/**", "PUT"),
                 Pair.of("/admin/payments/all", "GET"),
@@ -134,4 +137,5 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         }
         return false;
     }
+
 }

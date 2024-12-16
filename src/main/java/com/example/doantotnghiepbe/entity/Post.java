@@ -80,5 +80,7 @@ public class Post {
     @JsonManagedReference
     private List<VehicleType> vehicleTypes = new ArrayList<>();
 
-
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<ContactInformations> contactInformations = new ArrayList<>();
 }

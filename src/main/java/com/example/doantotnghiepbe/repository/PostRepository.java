@@ -82,4 +82,14 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
     @Query("UPDATE Post p SET p.status = 'DELETE' WHERE p.postId = :postId")
     void softDeletePostById(Integer postId);
 
+    @Query("SELECT p.status, COUNT(p) FROM Post p GROUP BY p.status")
+    List<Object[]> countPostsGroupedByStatus();
+
+    @Query("SELECT FUNCTION('MONTH', p.createdAt) AS month, COUNT(p) AS postCount " +
+            "FROM Post p " +
+            "WHERE p.status = 'Active' AND FUNCTION('YEAR', p.createdAt) = :year " +
+            "GROUP BY FUNCTION('MONTH', p.createdAt) " +
+            "ORDER BY month")
+    List<Object[]> countActivePostsByMonthAndYear(@Param("year") int year);
+
 }
