@@ -15,8 +15,8 @@ public interface ApprovalPostRepository extends JpaRepository<ApprovalPost, Inte
 
     ApprovalPost findByPostPostId(Integer postId);
 
-    @Query("SELECT ap FROM ApprovalPost ap WHERE CAST(ap.approvalPostId AS string) LIKE %:approvalPostId%")
-    Page<ApprovalPost> searchByApprovalPostIdLike(@Param("approvalPostId") String approvalPostId, Pageable pageable);
+    @Query("SELECT ap FROM ApprovalPost ap WHERE CAST(ap.post.postId AS string) LIKE %:postId%")
+    Page<ApprovalPost> searchByPostIdContaining(String postId, Pageable pageable);
 
     @Query("""
         SELECT ap
@@ -27,5 +27,4 @@ public interface ApprovalPostRepository extends JpaRepository<ApprovalPost, Inte
     """)
     Page<ApprovalPost> findAllWithWaitingFirst(Pageable pageable);
 
-    Optional<ApprovalPost> findByPost(Post post);
 }

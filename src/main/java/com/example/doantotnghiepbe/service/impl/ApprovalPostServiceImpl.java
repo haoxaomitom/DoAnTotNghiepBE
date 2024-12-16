@@ -99,10 +99,9 @@ public class ApprovalPostServiceImpl implements ApprovalPostService {
         return approvalPost;
     }
 
-
-    @Override
-    public Page<ApprovalPost> searchByApprovalPostIdLike(String approvalPostId, Pageable pageable) {
-        return approvalPostRepository.searchByApprovalPostIdLike(approvalPostId, pageable);
+    public Page<ApprovalPost> searchApprovalPostsByPostId(String postId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return approvalPostRepository.searchByPostIdContaining(postId, pageable);
     }
-
 }
+

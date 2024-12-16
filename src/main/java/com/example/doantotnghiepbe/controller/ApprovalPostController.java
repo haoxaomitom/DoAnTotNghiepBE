@@ -57,19 +57,13 @@ public class ApprovalPostController {
 
 
     @GetMapping("/search")
-    public ResponseEntity<Page<ApprovalPost>> searchApprovalPosts(
-            @RequestParam(required = true) String approvalPostId, // approvalPostId là String
+    public Page<ApprovalPost> searchApprovalPosts(
+            @RequestParam String postId,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            @RequestParam(defaultValue = "15") int size) {
+        Page<ApprovalPost> searchPost = approvalPostService.searchApprovalPostsByPostId(postId, page,size);
+        return ResponseEntity.ok(searchPost).getBody();
 
-        Pageable pageable = PageRequest.of(page, size);
-        // Gọi phương thức tìm kiếm với approvalPostId là String
-        Page<ApprovalPost> results = approvalPostService.searchByApprovalPostIdLike(approvalPostId, pageable);
-
-        if (results.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.ok(results);
     }
 
 }

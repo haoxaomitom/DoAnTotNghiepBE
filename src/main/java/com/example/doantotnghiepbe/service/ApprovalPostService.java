@@ -16,7 +16,8 @@ public interface ApprovalPostService {
 
     ApprovalPost rejectPost(Integer id, String rejectionReason, Long userId);
 
-    Page<ApprovalPost> searchByApprovalPostIdLike(String approvalPostId, Pageable pageable);
-
     Page<ApprovalPost> getApprovalPostsSortedByWaitingAndDate(int page, int size);
+
+
+    Page<ApprovalPost> searchApprovalPostsByPostId(String postId, int page, int size);
 }
