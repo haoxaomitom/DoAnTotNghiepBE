@@ -11,11 +11,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Collections;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/updatePosts")
-@CrossOrigin(origins = "http://127.0.0.1:5500")
+@CrossOrigin(origins = "http://127.0.0.1")
 public class UpdatePostController {
 
     private final UpdatePostService updatePostService;
@@ -37,19 +38,20 @@ public class UpdatePostController {
         }
     }
 
-    @PostMapping("/images/upload/{postId}")
-    public ResponseEntity<List<String>> uploadImages(
+    @PostMapping("/updateImage/{postId}")
+    public ResponseEntity<?> updateImages(
             @PathVariable Integer postId,
-            @RequestParam("images") List<MultipartFile> imageFiles) {
+            @RequestParam(value = "deletedImages", required = false) List<String> deletedImages, // Nhận từ FormData
+            @RequestParam(value = "newImages", required = false) List<MultipartFile> newImages) { // Nhận từ FormData
         try {
-            // Call the service to handle the image upload and update process
-            List<String> imageUrls = updatePostService.uploadImages(postId, imageFiles);
-            return ResponseEntity.ok(imageUrls);
+            updatePostService.updateImages(postId, deletedImages, newImages);
+            return ResponseEntity.ok(Collections.singletonMap("message", "Images updated successfully"));
+
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error updating images");
         }
     }
-
 
 
 }

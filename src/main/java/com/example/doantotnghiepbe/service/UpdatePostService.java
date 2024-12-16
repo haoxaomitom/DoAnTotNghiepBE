@@ -10,8 +10,8 @@ import java.util.List;
 public interface UpdatePostService {
 
 
+    void updateImages(Integer postId, List<String> imageUrls, List<MultipartFile> newImages);
+
     Post updatePost(Integer postId, UpdatePostDTO postRequest);
 
-
-    List<String> uploadImages(Integer postId, List<MultipartFile> imageFiles);
 }

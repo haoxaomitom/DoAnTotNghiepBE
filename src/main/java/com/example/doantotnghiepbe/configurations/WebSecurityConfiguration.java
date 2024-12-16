@@ -56,7 +56,8 @@ public class WebSecurityConfiguration {
                             "/admin/payments/all",
                             "/api/prices/",
                             "/api/prices",
-                            "/api/posts/delete/"
+                            "/api/posts/delete/",
+                            "/api/updatePosts/updateImage/"
                             ).permitAll()
                             .requestMatchers("/api/users/getUserByUsername").hasAnyRole("USER", "ADMIN", "MODERATOR")
                             .requestMatchers("/api/contactInformation/**").hasAnyRole("USER", "ADMIN", "MODERATOR")

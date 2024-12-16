@@ -4,6 +4,7 @@ import com.example.doantotnghiepbe.entity.ApprovalPost;
 import com.example.doantotnghiepbe.entity.Post;
 import com.example.doantotnghiepbe.entity.Users;
 import com.example.doantotnghiepbe.repository.ApprovalPostRepository;
+import com.example.doantotnghiepbe.repository.PostRepository;
 import com.example.doantotnghiepbe.repository.UsersRepository;
 import com.example.doantotnghiepbe.service.ApprovalPostService;
 import jakarta.transaction.Transactional;
@@ -25,12 +26,19 @@ public class ApprovalPostServiceImpl implements ApprovalPostService {
     @Autowired
     private UsersRepository usersRepository;
 
-    // Lấy tất cả bài viết với phân trang
-    public Page<ApprovalPost> getAllApprovalPosts(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        return approvalPostRepository.findAll(pageable);
-    }
+    @Autowired
+    private PostRepository postRepository;
 
+    // Lấy tất cả bài viết với phân trang
+//    public Page<ApprovalPost> getAllApprovalPosts(int page, int size) {
+//        Pageable pageable = PageRequest.of(page, size);
+//        return approvalPostRepository.findAll(pageable);
+//    }
+
+    public Page<ApprovalPost> getApprovalPostsSortedByWaitingAndDate(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return approvalPostRepository.findAllWithWaitingFirst(pageable);
+    }
 
     // Duyệt bài viết
     @Transactional
@@ -54,8 +62,13 @@ public class ApprovalPostServiceImpl implements ApprovalPostService {
         Post post = approvalPost.getPost();
         post.setStatus("ACTIVE");
 
-        return approvalPostRepository.save(approvalPost);
+        // Cập nhật ApprovalPost và Post
+        approvalPostRepository.save(approvalPost);
+        postRepository.save(post);
+
+        return approvalPost;
     }
+
 
     // Từ chối bài viết
     @Transactional
@@ -71,7 +84,7 @@ public class ApprovalPostServiceImpl implements ApprovalPostService {
         }
 
         ApprovalPost approvalPost = optionalApprovalPost.get();
-        approvalPost.setStatus("REJECT"); // Chuyển trạng thái thành REJECT
+        approvalPost.setStatus("REJECT");
         approvalPost.setRejectionReason(rejectionReason);
         approvalPost.setReviewedAt(LocalDateTime.now());
         approvalPost.setReviewedByUser(reviewer.get());
@@ -79,8 +92,13 @@ public class ApprovalPostServiceImpl implements ApprovalPostService {
         Post post = approvalPost.getPost();
         post.setStatus("REJECT");
 
-        return approvalPostRepository.save(approvalPost);
+        // Cập nhật ApprovalPost và Post
+        approvalPostRepository.save(approvalPost);
+        postRepository.save(post);
+
+        return approvalPost;
     }
+
 
     @Override
     public Page<ApprovalPost> searchByApprovalPostIdLike(String approvalPostId, Pageable pageable) {

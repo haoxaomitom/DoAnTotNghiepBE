@@ -13,5 +13,9 @@ public interface ImageRepository extends JpaRepository<Image, Integer> {
     Optional<Image> findByImageUrlAndPost(String url, Post post);
 
     List<Image> findByPost(Post post);
+
+    Image findByImageUrl(String url);
+
+    void deleteByImageUrl(String imageUrl);
 }
 

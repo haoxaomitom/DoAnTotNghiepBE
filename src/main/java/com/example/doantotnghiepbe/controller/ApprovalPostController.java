@@ -18,33 +18,43 @@ public class ApprovalPostController {
     @Autowired
     private ApprovalPostService approvalPostService;
 
-    // Lấy tất cả bài viết với phân trang
     @GetMapping
-    public ResponseEntity<Page<ApprovalPost>> getAllApprovalPosts(
-            @RequestParam(value = "page", defaultValue = "0") int page,
-            @RequestParam(value = "size", defaultValue = "10") int size) {
-        Page<ApprovalPost> posts = approvalPostService.getAllApprovalPosts(page, size);
-        return ResponseEntity.ok(posts);
+    public ResponseEntity<Page<ApprovalPost>> getApprovalPosts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "15") int size) {
+        Page<ApprovalPost> approvalPosts = approvalPostService.getApprovalPostsSortedByWaitingAndDate(page, size);
+        return ResponseEntity.ok(approvalPosts);
     }
 
+    // Lấy tất cả bài viết với phân trang
+//    @GetMapping
+//    public ResponseEntity<Page<ApprovalPost>> getAllApprovalPosts(
+//            @RequestParam(value = "page", defaultValue = "0") int page,
+//            @RequestParam(value = "size", defaultValue = "10") int size) {
+//        Page<ApprovalPost> posts = approvalPostService.getAllApprovalPosts(page, size);
+//        return ResponseEntity.ok(posts);
+//    }
+
     // Duyệt bài viết
-    @PostMapping("/approve/{id}")
+    @PostMapping("/approve/{postId}")
     public ResponseEntity<ApprovalPost> approvePost(
-            @PathVariable("id") Integer id,
+            @PathVariable("postId") Integer postId,
             @RequestParam("userId") Long userId) {
-        ApprovalPost approvedPost = approvalPostService.approvePost(id, userId);
+        ApprovalPost approvedPost = approvalPostService.approvePost(postId, userId);
         return ResponseEntity.ok(approvedPost);
     }
 
+
     // Từ chối bài viết
-    @PostMapping("/reject/{id}")
+    @PostMapping("/reject/{postId}")
     public ResponseEntity<ApprovalPost> rejectPost(
-            @PathVariable("id") Integer id,
+            @PathVariable("postId") Integer postId,
             @RequestParam("rejectionReason") String rejectionReason,
             @RequestParam("userId") Long userId) {
-        ApprovalPost rejectedPost = approvalPostService.rejectPost(id, rejectionReason, userId);
+        ApprovalPost rejectedPost = approvalPostService.rejectPost(postId, rejectionReason, userId);
         return ResponseEntity.ok(rejectedPost);
     }
+
 
     @GetMapping("/search")
     public ResponseEntity<Page<ApprovalPost>> searchApprovalPosts(
