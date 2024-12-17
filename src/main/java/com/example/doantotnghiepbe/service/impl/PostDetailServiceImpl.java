@@ -7,6 +7,7 @@ import com.example.doantotnghiepbe.dto.PostDetailDTO;
 import com.example.doantotnghiepbe.dto.PostUserDTO;
 import com.example.doantotnghiepbe.entity.Post;
 import com.example.doantotnghiepbe.repository.PostDetailRepository;
+import com.example.doantotnghiepbe.repository.PostRepository;
 import com.example.doantotnghiepbe.service.PostDetailService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,13 +28,15 @@ public class PostDetailServiceImpl implements PostDetailService {
     private final Cloudinary cloudinary;
     private final PostDetailRepository postDetailRepository;
     private final ModelMapper modelMapper;
+    private final PostRepository postRepository;
 
 
     @Autowired
-    public PostDetailServiceImpl(Cloudinary cloudinary, PostDetailRepository postDetailRepository, ModelMapper modelMapper) {
+    public PostDetailServiceImpl(Cloudinary cloudinary, PostDetailRepository postDetailRepository, ModelMapper modelMapper, PostRepository postRepository) {
         this.cloudinary = cloudinary;
         this.postDetailRepository = postDetailRepository;
         this.modelMapper = modelMapper;
+        this.postRepository = postRepository;
     }
 
     @Override
@@ -65,6 +68,51 @@ public class PostDetailServiceImpl implements PostDetailService {
 //    }
 
     @Override
+    public PostDetailDTO updatePost(PostDetailDTO postDetailDTO) {
+        // Kiểm tra xem bài đăng có tồn tại hay không
+        Optional<Post> existingPostOptional = postDetailRepository.findById(postDetailDTO.getPostId());
+        if (existingPostOptional.isPresent()) {
+            Post existingPost = existingPostOptional.get();
+
+            // Cập nhật thông tin bài đăng
+            existingPost.setParkingName(postDetailDTO.getParkingName());
+            existingPost.setPrice(postDetailDTO.getPrice());
+            existingPost.setPriceUnit(postDetailDTO.getPriceUnit());
+            existingPost.setCapacity(postDetailDTO.getCapacity());
+            existingPost.setWardName(postDetailDTO.getWardName());
+            existingPost.setDistrictName(postDetailDTO.getDistrictName());
+            existingPost.setProvinceName(postDetailDTO.getProvinceName());
+            existingPost.setLatitude(postDetailDTO.getLatitude());
+            existingPost.setLongitude(postDetailDTO.getLongitude());
+            existingPost.setStatus(postDetailDTO.getStatus());
+            existingPost.setDescription(postDetailDTO.getDescription());
+
+            // Lưu thay đổi vào cơ sở dữ liệu
+            Post updatedPost = postDetailRepository.save(existingPost);
+
+            // Sử dụng ModelMapper để chuyển đổi từ Entity sang DTO
+            return modelMapper.map(updatedPost, PostDetailDTO.class);
+        } else {
+            throw new IllegalArgumentException("Post not found with id: " + postDetailDTO.getPostId());
+        }
+    }
+
+
+    @Override
+    public void deletePostById(Integer postId) {
+        // Kiểm tra xem bài đăng có tồn tại không
+        if (postDetailRepository.existsById(postId)) {
+            Post post = postRepository.findById(postId)
+                    .orElseThrow(() -> new IllegalArgumentException("Post not found with id: " + postId));
+            post.setStatus("DELETE");
+            postRepository.save(post);
+        } else {
+            throw new IllegalArgumentException("Post not found with id: " + postId);
+        }
+    }
+
+
+    @Override
     public Page<PostDTO> getRelatedPostsByDistrict(String districtName, Pageable pageable) {
         Page<Post> postPage = postDetailRepository.findByDistrictName(districtName, pageable);
         List<PostDTO> postDTOs = postPage.stream()
@@ -82,6 +130,8 @@ public class PostDetailServiceImpl implements PostDetailService {
                 .collect(Collectors.toList());
         return new PageImpl<>(postDTOs, pageable, postPage.getTotalElements());
     }
+
+
 
 
 //    @Override

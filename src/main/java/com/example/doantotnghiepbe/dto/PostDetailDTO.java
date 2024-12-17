@@ -8,7 +8,7 @@ import java.util.List;
 
 @Data
 public class PostDetailDTO {
-    private Integer idPost;
+    private Integer postId;
     private String parkingName;
     private Double price;
     private String priceUnit;

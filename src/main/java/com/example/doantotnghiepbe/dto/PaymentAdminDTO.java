@@ -24,4 +24,5 @@ public class PaymentAdminDTO {
     private String paymentStatus;
     private String vnpTxnRef;
     private String vnpTransactionId;
+    private Long userId;
 }

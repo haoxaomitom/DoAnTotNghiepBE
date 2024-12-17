@@ -11,17 +11,20 @@ import com.example.doantotnghiepbe.repository.PriceRepository;
 import com.example.doantotnghiepbe.repository.UsersRepository;
 import com.example.doantotnghiepbe.service.EmailService;
 import com.example.doantotnghiepbe.util.JwtTokenUtil;
+import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+
 import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+
+import java.util.UUID;
 
 @Service
 public class EmailServiceImpl implements EmailService {
@@ -54,13 +57,13 @@ public class EmailServiceImpl implements EmailService {
     @Override
     public String sendVerificationEmail(Long userId, String verificationUrl) throws Exception {
         // Tạo verification token
-        Users user = usersRepository.findById(userId).orElseThrow(()-> new DataNotFoundException("ko tìm thấy id:" + userId));
+        Users user = usersRepository.findById(userId).orElseThrow(() -> new DataNotFoundException("ko tìm thấy id:" + userId));
         String token = jwtTokenUtil.generateVerificationToken(user);
         user.setTokenVerified(token);
         usersRepository.save(user);
         String tokenVerified = user.getTokenVerified();
         System.out.println(tokenVerified);
-        String apiUrl = "http://127.0.0.1:5500/app/components/user/VerificatonResult.html?token="+tokenVerified;
+        String apiUrl = "http://127.0.0.1:5500/app/components/user/VerificatonResult.html?token=" + tokenVerified;
 
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
@@ -86,11 +89,12 @@ public class EmailServiceImpl implements EmailService {
                 + "</html>";
 
         helper.setText(htmlContent, true);
-        helper.setFrom(user.getEmail(),"PFR");
+        helper.setFrom(user.getEmail(), "PFR");
 
         javaMailSender.send(mimeMessage);
         return token;
     }
+
 
     @Override
     public void sendPaymentResultEmail(String txnRef) throws Exception {
@@ -168,5 +172,44 @@ public class EmailServiceImpl implements EmailService {
     }
 
 
+    @Override
+    public void sentResetPasswordEmail(String username) throws DataNotFoundException {
+        Users user = usersRepository.findUsersByUsername(username)
+                .orElseThrow(() -> new DataNotFoundException("Tên tài khoản không tồn tại"));
+
+        // Tạo token ngẫu nhiên
+        String token = UUID.randomUUID().toString();
+        user.setTokenForgotPassword(token);
+        usersRepository.save(user);
+
+        // Đường dẫn reset mật khẩu
+        String resetLink = "http://127.0.0.1:5501/app/components/user/ForgotPassword.html?token=" + token;
+
+        try {
+            // Tạo email
+            MimeMessage message = javaMailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true);
+
+            helper.setTo(user.getEmail());
+            helper.setSubject("Đổi Mật Khẩu");
+
+            // Nội dung HTML
+            String content = "<p>Nhấn vào nút bên dưới để đổi mật khẩu:</p>"
+                    + "<a href=\"" + resetLink + "\" style=\"display: inline-block; "
+                    + "padding: 10px 20px; font-size: 16px; color: white; "
+                    + "background-color: #007BFF; text-decoration: none; border-radius: 5px;\">Đổi Mật Khẩu</a>"
+                    + "<p>Nếu bạn không yêu cầu đổi mật khẩu, vui lòng bỏ qua email này.</p>";
+
+            helper.setText(content, true);
+
+            // Gửi email
+            javaMailSender.send(message);
+
+        } catch (MessagingException e) {
+            throw new IllegalStateException("Failed to send email", e);
+        }
+
+
+    }
 }
 

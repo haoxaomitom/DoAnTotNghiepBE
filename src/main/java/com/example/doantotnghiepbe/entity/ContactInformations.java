@@ -28,9 +28,15 @@ public class ContactInformations {
     private Users user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_id", nullable = false)
+    @JoinColumn(name = "post_id")
     @JsonBackReference
     private Post post;
+
+    @Column(name = "full_name")
+    private String fullName;
+
+    @Column(name = "phone_number")
+    private String phoneNumber;
 
     @Column(name = "type_car", length = 100)
     private String typeCar;
@@ -43,6 +49,9 @@ public class ContactInformations {
 
     @Column(name = "watched")
     private boolean watched;
+
+    @Column(name = "contacted")
+    private boolean contacted;
 
     @Column(name = "create_at")
     private LocalDateTime createAt = LocalDateTime.now();

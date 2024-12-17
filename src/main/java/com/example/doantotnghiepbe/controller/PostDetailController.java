@@ -34,4 +34,29 @@ public class PostDetailController {
         Page<PostDTO> relatedPosts = postDetailService.getRelatedPostsByDistrict(districtName, pageable);
         return ResponseEntity.ok(relatedPosts);
     }
+    @PutMapping("/{id}")
+    public ResponseEntity<PostDetailDTO> updatePost(@PathVariable Integer id, @RequestBody PostDetailDTO postDetailDTO) {
+        // Kiểm tra ID khớp nhau
+        if (!id.equals(postDetailDTO.getPostId())) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        try {
+            PostDetailDTO updatedPost = postDetailService.updatePost(postDetailDTO);
+            return ResponseEntity.ok(updatedPost);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PutMapping("/delete/{postId}")
+    public ResponseEntity<Void> deletePost(@PathVariable Integer postId) {
+        try {
+            postDetailService.deletePostById(postId);
+            return ResponseEntity.noContent().build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
 }

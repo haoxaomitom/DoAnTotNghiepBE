@@ -11,10 +11,11 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class ReportDTO {
     private Integer reportId;
-    private Long user;
+    private Integer user;
     private Integer post;
     private String reportType;
     private String reportContent;
     private LocalDateTime createdAt;
-    private String status;
+    private String status; // Thêm trường trạng thái vào
+    private String rejectedReason;
 }

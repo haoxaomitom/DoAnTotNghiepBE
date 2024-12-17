@@ -3,10 +3,7 @@ package com.example.doantotnghiepbe.service.impl;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import com.example.doantotnghiepbe.dto.*;
-import com.example.doantotnghiepbe.entity.Amenities;
-import com.example.doantotnghiepbe.entity.Image;
-import com.example.doantotnghiepbe.entity.Post;
-import com.example.doantotnghiepbe.entity.VehicleType;
+import com.example.doantotnghiepbe.entity.*;
 import com.example.doantotnghiepbe.repository.*;
 import com.example.doantotnghiepbe.service.FileUploadService;
 import com.example.doantotnghiepbe.service.UpPostService;
@@ -33,11 +30,12 @@ public class UpPostServiceImpl implements UpPostService {
     private final ModelMapper modelMapper;
     private final Cloudinary cloudinary;
     private final VehicleTypeRepository vehicleTypeRepository;
+    private final ApprovalPostRepository approvalPostRepository;
 
     @Autowired
     public UpPostServiceImpl(PostRepository postRepository, UsersRepository userRepository,
                              AmenitiesRepository amenitiesRepository, ImageRepository imageRepository,
-                             FileUploadService fileUploadService, ModelMapper modelMapper, Cloudinary cloudinary, VehicleTypeRepository vehicleTypeRepository) {
+                             FileUploadService fileUploadService, ModelMapper modelMapper, Cloudinary cloudinary, VehicleTypeRepository vehicleTypeRepository, ApprovalPostRepository approvalPostRepository) {
         this.postRepository = postRepository;
         this.userRepository = userRepository;
         this.amenitiesRepository = amenitiesRepository;
@@ -46,6 +44,7 @@ public class UpPostServiceImpl implements UpPostService {
         this.modelMapper = modelMapper;
         this.cloudinary = cloudinary;
         this.vehicleTypeRepository = vehicleTypeRepository;
+        this.approvalPostRepository = approvalPostRepository;
     }
 
 
@@ -130,6 +129,10 @@ public class UpPostServiceImpl implements UpPostService {
                 amenitiesRepository.save(amenities); // Save to repository
             });
         }
+        ApprovalPost approvalPost = new ApprovalPost();
+        approvalPost.setPost(savedPost); // Associate with saved post
+        approvalPost.setStatus("WAITING"); // Default status
+        approvalPostRepository.save(approvalPost); // Save to repository
 
         // Return saved post
         return savedPost;
@@ -147,9 +150,11 @@ public class UpPostServiceImpl implements UpPostService {
         if (imageFiles != null && !imageFiles.isEmpty()) {
             imageFiles.forEach(file -> {
                 try {
+                    System.out.println("run upload img: " + file.getOriginalFilename());
                     // Upload image to Cloudinary
                     var uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
                     String imageUrl = (String) uploadResult.get("url");
+                    System.out.println(imageUrl);
 
                     // Create Image entity and associate with post
                     Image image = new Image();

@@ -1,10 +1,9 @@
 package com.example.doantotnghiepbe.service.impl;
 
 import com.example.doantotnghiepbe.dto.PostDTO;
-import com.example.doantotnghiepbe.dto.PostDetailDTO;
-import com.example.doantotnghiepbe.dto.PostUserDTO;
-import com.example.doantotnghiepbe.entity.Payment;
+import com.example.doantotnghiepbe.entity.ApprovalPost;
 import com.example.doantotnghiepbe.entity.Post;
+import com.example.doantotnghiepbe.repository.ApprovalPostRepository;
 import com.example.doantotnghiepbe.repository.PaymentRepository;
 import com.example.doantotnghiepbe.repository.PostRepository;
 import com.example.doantotnghiepbe.service.PostService;
@@ -16,9 +15,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,12 +24,14 @@ public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
     private final ModelMapper modelMapper;
     private final PaymentRepository postPaymentRepository;
+    private final ApprovalPostRepository approvalPostRepository;
 
     @Autowired
-    public PostServiceImpl(PostRepository postRepository, ModelMapper modelMapper, PaymentRepository postPaymentRepository) {
+    public PostServiceImpl(PostRepository postRepository, ModelMapper modelMapper, PaymentRepository postPaymentRepository, ApprovalPostRepository approvalPostRepository) {
         this.postRepository = postRepository;
         this.modelMapper = modelMapper;
         this.postPaymentRepository = postPaymentRepository;
+        this.approvalPostRepository = approvalPostRepository;
     }
 
 //    @Override
@@ -43,14 +42,19 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Page<PostDTO> findAllByOrderByCreatedAtDesc(Pageable pageable) {
+        // Lấy danh sách Post từ repository
         Page<Post> postPage = postRepository.findAllByOrderByCreatedAtDesc(pageable);
-        List<PostDTO> postDTOs = postPage.stream()
+
+        // Dùng ModelMapper để chuyển đổi từng Post sang PostDTO
+        List<PostDTO> postDTOs = postPage.getContent().stream()
                 .map(post -> {
-                    PostDTO postDTO = modelMapper.map(post, PostDTO.class);
-                    postDTO.setCommentCount(post.getCommentCount());
+                    PostDTO postDTO = modelMapper.map(post, PostDTO.class); // Chuyển Post -> PostDTO
+                    postDTO.setCommentCount(post.getCommentCount()); // Thêm thuộc tính không tự động ánh xạ
                     return postDTO;
                 })
                 .collect(Collectors.toList());
+
+        // Trả về Page<PostDTO>
         return new PageImpl<>(postDTOs, pageable, postPage.getTotalElements());
     }
 
@@ -110,10 +114,43 @@ public class PostServiceImpl implements PostService {
         postRepository.softDeletePostById(postId);
     }
 
-    public Page<Post> getPostsByUserIdAndStatus(Long userId, String status, int page, int size) {
+    public Page<PostDTO> getPostsByUserIdAndStatus(Long userId, String status, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return postRepository.findAllByUserUserIdAndStatus(userId, status, pageable);
+        Page<Post> posts = postRepository.findAllByUserUserIdAndStatus(userId, status, pageable);
+
+        return posts.map(post -> {
+            // Sử dụng ModelMapper để ánh xạ từ Post sang PostDTO
+            PostDTO postDTO = modelMapper.map(post, PostDTO.class);
+
+            // Lấy rejectionReason nếu trạng thái là REJECT
+            if ("REJECT".equals(post.getStatus())) {
+                ApprovalPost approvalPost = approvalPostRepository.findByPostPostId(post.getPostId());
+                if (approvalPost != null) {
+                    postDTO.setRejectReason(approvalPost.getRejectionReason());
+                }
+            }
+
+            return postDTO;
+        });
     }
+
+
+    public Page<PostDTO> findByPostId(String postId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Post> postPage = postRepository.findByPostIdContaining(postId, pageable);
+
+        // Chuyển đổi Page<Post> sang Page<PostDTO>
+        List<PostDTO> postDTOs = postPage.getContent().stream()
+                .map(post -> {
+                    PostDTO postDTO = modelMapper.map(post, PostDTO.class); // Sử dụng ModelMapper
+                    postDTO.setCommentCount(post.getCommentCount()); // Thêm các thuộc tính tùy chỉnh
+                    return postDTO;
+                })
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(postDTOs, pageable, postPage.getTotalElements());
+    }
+
 
 }
 

@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/admin/reports")
-@CrossOrigin(origins = "http://127.0.0.1:5500")
+
 public class ReportAdminController {
     @Autowired
     private ReportService reportService;
@@ -42,9 +42,12 @@ public class ReportAdminController {
     }
 
     // Cập nhật trạng thái của báo cáo
+// Cập nhật trạng thái của báo cáo
     @PutMapping("/{id}/status")
-    public ResponseEntity<ReportDTO> updateReportStatus(@PathVariable int id, @RequestBody String status) {
-        ReportDTO updatedReport = reportService.updateReportStatus(id, status);
+    public ResponseEntity<ReportDTO> updateReportStatus(@PathVariable int id, @RequestParam("status") String status, @RequestParam(required = false) String reason) {
+        System.out.println(status+id);
+        ReportDTO updatedReport = reportService.updateReportStatus(id, status, reason);
         return new ResponseEntity<>(updatedReport, HttpStatus.OK);
     }
+
 }

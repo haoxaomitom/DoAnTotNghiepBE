@@ -1,6 +1,7 @@
 package com.example.doantotnghiepbe.controller;
 
 import com.example.doantotnghiepbe.dto.PostDetailDTO;
+import com.example.doantotnghiepbe.dto.UpdatePostDTO;
 import com.example.doantotnghiepbe.entity.Post;
 import com.example.doantotnghiepbe.service.UpdatePostService;
 import com.example.doantotnghiepbe.service.impl.UpdatePostServiceImpl;
@@ -10,10 +11,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/updatePosts")
+@CrossOrigin(origins = "http://127.0.0.1")
 public class UpdatePostController {
 
     private final UpdatePostService updatePostService;
@@ -24,28 +28,30 @@ public class UpdatePostController {
 
     @PutMapping("/{postId}")
     public ResponseEntity<Post> updatePost(@PathVariable Integer postId,
-                                           @RequestBody PostDetailDTO postRequest) {
+                                           @RequestBody UpdatePostDTO postRequest) {
         try {
             Post updatedPost = updatePostService.updatePost(postId, postRequest);
             return ResponseEntity.ok(updatedPost);
         } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println(e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
     }
 
-    @PostMapping("/images/upload/{postId}")
-    public ResponseEntity<List<String>> uploadImages(
+    @PostMapping("/updateImage/{postId}")
+    public ResponseEntity<?> updateImages(
             @PathVariable Integer postId,
-            @RequestParam("images") List<MultipartFile> imageFiles) {
+            @RequestParam(value = "deletedImages", required = false) List<String> deletedImages, // Nhận từ FormData
+            @RequestParam(value = "newImages", required = false) List<MultipartFile> newImages) { // Nhận từ FormData
         try {
-            // Call the service to handle the image upload and update process
-            List<String> imageUrls = updatePostService.uploadImages(postId, imageFiles);
-            return ResponseEntity.ok(imageUrls);
+            updatePostService.updateImages(postId, deletedImages, newImages);
+            return ResponseEntity.ok(Collections.singletonMap("message", "Images updated successfully"));
+
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error updating images");
         }
     }
-
-
 
 }

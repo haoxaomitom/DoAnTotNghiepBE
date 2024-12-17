@@ -18,7 +18,7 @@ public class UserRegisterDTO {
 
     String lastName;
 
-    String email;
+    String phoneNumber;
 
     Boolean verified;
 
