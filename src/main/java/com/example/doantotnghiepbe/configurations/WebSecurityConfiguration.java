@@ -45,7 +45,12 @@ public class WebSecurityConfiguration {
                             "/api/reports",
                             "/api/users/register",
                             "api/posts/{postId}",
-                            "/api/contactInformation/create"
+                            "/api/contactInformation/create",
+                            "/api/upPosts/savePost",
+                            "/api/images/upload",
+                            "/api/amenities/",
+                            "/api/admin/reports",
+                            "/api/admin/payments"
                             ).permitAll()
                             .requestMatchers("/api/users/getUserByUsername").hasAnyRole("USER", "ADMIN", "MODERATOR")
                             .requestMatchers("/api/contactInformation/**").hasAnyRole("USER", "ADMIN", "MODERATOR")

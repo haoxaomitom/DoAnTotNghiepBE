@@ -35,5 +35,7 @@ public class Report {
 
     @Column(name = "status")
     private String status;
+    @Column(name = "rejected_reason")
+    private String rejectedReason;
 
 }
