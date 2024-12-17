@@ -5,6 +5,7 @@ import com.example.doantotnghiepbe.dto.UserInfoDTO;
 import com.example.doantotnghiepbe.dto.UserRegisterDTO;
 import com.example.doantotnghiepbe.entity.Users;
 import com.example.doantotnghiepbe.exceptions.DataNotFoundException;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,7 +16,7 @@ import java.util.Map;
 @Service
 public interface UsersService {
     List<Users> getAll();
-    List<Users> getAllUsers();
+    Page<Users> getAllUsers(int page, int size);
     Users getUsersByUsername(String username) throws DataNotFoundException;
     Users register (UserRegisterDTO user) throws DataNotFoundException;
     Users updateUserInfo (UserInfoDTO user) throws DataNotFoundException;
@@ -28,4 +29,6 @@ public interface UsersService {
     Users getUserByTokenVerified(String tokenVerified) throws DataNotFoundException;
     Long countUsers();
     List<Object[]> getUsersByMonthAndRole(int year);
+    Page<Users> searchUsers(Long userId, String username, String firstName, String lastName, String phoneNumber, int page, int size);
+    void resetPassword(String token, String newPassword);
 }

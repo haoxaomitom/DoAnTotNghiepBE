@@ -13,6 +13,9 @@ import com.example.doantotnghiepbe.service.UsersService;
 import com.example.doantotnghiepbe.util.JwtTokenUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,7 +24,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.time.DateTimeException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,9 +50,10 @@ public class UsersServiceImpl implements UsersService {
         return usersRepository.findAll();
     }
 
-    @Override
-    public List<Users> getAllUsers() {
-        return usersRepository.findUsersByRolesRoleName("USER");
+
+    public Page<Users> getAllUsers(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return usersRepository.findUsersByRolesRoleName("USER", pageable);
     }
 
     @Override
@@ -64,8 +67,8 @@ public class UsersServiceImpl implements UsersService {
         if(usersRepository.existsByUsername(userRegisterDTO.getUsername())){
             throw new ExistingException("Tên đăng nhập đã tồn tại.");
         }
-        if(usersRepository.existsByEmail(userRegisterDTO.getEmail())){
-            throw new ExistingException("Email đã tồn tại.");
+        if(usersRepository.existsByPhoneNumber(userRegisterDTO.getPhoneNumber())){
+            throw new ExistingException("Số điện thoại đã tồn tại.");
         }
         Users users = modelMapper.map(userRegisterDTO,Users.class);
         users.setRoles(rolesRepository.findById(2).orElseThrow(()-> new DataNotFoundException("Could not find role with id: 2")));
@@ -135,7 +138,7 @@ public class UsersServiceImpl implements UsersService {
     public Users active(Long userId, boolean active) throws DataNotFoundException {
         Users user = usersRepository.findById(userId).orElseThrow(()-> new DataNotFoundException("Không tìm thấy người dùng với id: "+ userId));
         user.setIsActive(active);
-        return user;
+        return usersRepository.save(user);
     }
 
     @Override
@@ -178,4 +181,21 @@ public class UsersServiceImpl implements UsersService {
     public List<Object[]> getUsersByMonthAndRole(int year) {
         return usersRepository.countUsersByMonthAndRole(year);
     }
+
+    @Override
+    public Page<Users> searchUsers(Long userId, String username, String firstName, String lastName, String phoneNumber, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return usersRepository.searchUsers(userId, username, firstName, lastName, phoneNumber, pageable);
+
+    }
+
+    @Override
+    public void resetPassword(String token, String newPassword) {
+        Users user = usersRepository.findUsersByTokenForgotPassword(token)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid or expired token"));
+        user.setPassword(passwordEncoder.encode(newPassword));
+        user.setTokenForgotPassword(null); // Xóa token sau khi đặt lại
+        usersRepository.save(user);
+    }
+
 }

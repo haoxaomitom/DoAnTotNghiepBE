@@ -12,11 +12,12 @@ import com.example.doantotnghiepbe.repository.UsersRepository;
 import com.example.doantotnghiepbe.service.ContactInformationService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.Type;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class ContactInformationServiceImp implements ContactInformationService {
@@ -30,20 +31,18 @@ public class ContactInformationServiceImp implements ContactInformationService {
     private ModelMapper modelMapper;
 
     @Override
-    public List<ContactInformationResDTO> findAllByUserId(Integer userId) {
-        List<ContactInformations> contactInformations = contactInformationRepo.findContactInformationsByUserUserIdOrderByCreateAtDesc(userId);
-        List<ContactInformationResDTO> responses = contactInformations.stream()
-                .map(contact -> modelMapper.map(contact, ContactInformationResDTO.class))
-                .collect(Collectors.toList());
+    public Page<ContactInformationResDTO> findAllByUserId(Integer userId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<ContactInformations> contactInformations = contactInformationRepo.findContactInformationsByUserUserIdOrderByCreateAtDesc(userId,pageable);
+        Page<ContactInformationResDTO> responses = contactInformations.map(contact -> modelMapper.map(contact, ContactInformationResDTO.class));
         return responses;
     }
 
     @Override
-    public List<ContactInformationResDTO> findAllByPostId(Integer postId) {
-        List<ContactInformations> contactInformations = contactInformationRepo.findContactInformationsByPostPostIdOrderByCreateAtDesc(postId);
-        List<ContactInformationResDTO> responses = contactInformations.stream()
-                .map(contact -> modelMapper.map(contact, ContactInformationResDTO.class))
-                .collect(Collectors.toList());
+    public Page<ContactInformationResDTO> findAllByPostId(Integer postId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<ContactInformations> contactInformations = contactInformationRepo.findContactInformationsByPostPostIdOrderByCreateAtDesc(postId,pageable);
+        Page<ContactInformationResDTO> responses = contactInformations.map(contact -> modelMapper.map(contact, ContactInformationResDTO.class));
         return responses;
     }
 
@@ -72,40 +71,34 @@ public class ContactInformationServiceImp implements ContactInformationService {
     }
 
     @Override
-    public List<ContactInformationResDTO> findByPostIdAndWatched( Integer postId, boolean watched) {
-        List<ContactInformations> contactInformations = contactInformationRepo.findContactInformationsByPostPostIdAndWatchedOrderByCreateAtDesc(postId,watched);
-        List<ContactInformationResDTO> responses = contactInformations.stream()
-                .map(contact -> modelMapper.map(contact, ContactInformationResDTO.class))
-                .collect(Collectors.toList());
+    public Page<ContactInformationResDTO> findByPostIdAndWatched( Integer postId, boolean watched,int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<ContactInformations> contactInformations = contactInformationRepo.findContactInformationsByPostPostIdAndWatchedOrderByCreateAtDesc(postId,watched,pageable);
+        Page<ContactInformationResDTO> responses = contactInformations.map(contact -> modelMapper.map(contact, ContactInformationResDTO.class));
         return responses;
     }
 
     @Override
-    public List<ContactInformationResDTO> findByUserIdAndWatched(Integer userId, boolean watched) {
-        List<ContactInformations> contactInformations = contactInformationRepo.findContactInformationsByUserUserIdAndWatchedOrderByCreateAtDesc(userId,watched);
-        List<ContactInformationResDTO> responses = contactInformations.stream()
-                .map(contact -> modelMapper.map(contact, ContactInformationResDTO.class))
-                .collect(Collectors.toList());
+    public Page<ContactInformationResDTO> findByUserIdAndWatched(Integer userId, boolean watched, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<ContactInformations> contactInformations = contactInformationRepo.findContactInformationsByUserUserIdAndWatchedOrderByCreateAtDesc(userId,watched,pageable);
+        Page<ContactInformationResDTO> responses = contactInformations.map(contact -> modelMapper.map(contact, ContactInformationResDTO.class));
         return responses;
     }
 
     @Override
-    public List<ContactInformationResDTO> findByPostIdAndContacted(Integer postId, boolean contacted) {
-        List<ContactInformations> contactInformations = contactInformationRepo.findContactInformationsByPostPostIdAndContactedOrderByCreateAtDesc(postId,contacted);
-
-        List<ContactInformationResDTO> responses = contactInformations.stream()
-                .map(contact -> modelMapper.map(contact, ContactInformationResDTO.class))
-                .collect(Collectors.toList());
+    public Page<ContactInformationResDTO> findByPostIdAndContacted(Integer postId, boolean contacted, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<ContactInformations> contactInformations = contactInformationRepo.findContactInformationsByPostPostIdAndContactedOrderByCreateAtDesc(postId,contacted,pageable);
+        Page<ContactInformationResDTO> responses = contactInformations.map(contact -> modelMapper.map(contact, ContactInformationResDTO.class));
         return responses;
     }
 
     @Override
-    public List<ContactInformationResDTO> findByUserIdAndContacted(Integer userId, boolean contacted) {
-        List<ContactInformations> contactInformations = contactInformationRepo.findContactInformationsByUserUserIdAndContactedOrderByCreateAtDesc(userId,contacted);
-
-        List<ContactInformationResDTO> responses = contactInformations.stream()
-                .map(contact -> modelMapper.map(contact, ContactInformationResDTO.class))
-                .collect(Collectors.toList());
+    public Page<ContactInformationResDTO> findByUserIdAndContacted(Integer userId, boolean contacted, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<ContactInformations> contactInformations = contactInformationRepo.findContactInformationsByUserUserIdAndContactedOrderByCreateAtDesc(userId,contacted,pageable);
+        Page<ContactInformationResDTO> responses = contactInformations.map(contact -> modelMapper.map(contact, ContactInformationResDTO.class));
         return responses;
     }
 

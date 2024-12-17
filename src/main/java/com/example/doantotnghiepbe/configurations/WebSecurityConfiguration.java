@@ -38,6 +38,8 @@ public class WebSecurityConfiguration {
                                     "/api/comments/post/{postId}",
                                     "/api/comments/{commentId}",
                                     "/api/users/verified",
+                                    "/api/email/forgot-password",
+                                    "/api/users/reset-password",
                                     "/api/contactInformation/**",
                                     "/api/administration/user/login"
                             ).permitAll()

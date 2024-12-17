@@ -2,15 +2,19 @@ package com.example.doantotnghiepbe.service.impl;
 
 import com.example.doantotnghiepbe.entity.Users;
 import com.example.doantotnghiepbe.exceptions.DataNotFoundException;
+import com.example.doantotnghiepbe.exceptions.ExistingException;
 import com.example.doantotnghiepbe.repository.UsersRepository;
 import com.example.doantotnghiepbe.service.EmailService;
 import com.example.doantotnghiepbe.util.JwtTokenUtil;
+import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+
+import java.util.UUID;
 
 @Service
 public class EmailServiceImpl implements EmailService {
@@ -75,5 +79,42 @@ public class EmailServiceImpl implements EmailService {
         return token;
     }
 
-}
+    @Override
+    public void sentResetPasswordEmail(String username) throws DataNotFoundException {
+        Users user = usersRepository.findUsersByUsername(username)
+                .orElseThrow(() -> new DataNotFoundException("Tên tài khoản không tồn tại"));
+
+        // Tạo token ngẫu nhiên
+        String token = UUID.randomUUID().toString();
+        user.setTokenForgotPassword(token);
+        usersRepository.save(user);
+
+        // Đường dẫn reset mật khẩu
+        String resetLink = "http://127.0.0.1:5501/app/components/user/ForgotPassword.html?token=" + token;
+
+        try {
+            // Tạo email
+            MimeMessage message = javaMailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true);
+
+            helper.setTo(user.getEmail());
+            helper.setSubject("Đổi Mật Khẩu");
+
+            // Nội dung HTML
+            String content = "<p>Nhấn vào nút bên dưới để đổi mật khẩu:</p>"
+                    + "<a href=\"" + resetLink + "\" style=\"display: inline-block; "
+                    + "padding: 10px 20px; font-size: 16px; color: white; "
+                    + "background-color: #007BFF; text-decoration: none; border-radius: 5px;\">Đổi Mật Khẩu</a>"
+                    + "<p>Nếu bạn không yêu cầu đổi mật khẩu, vui lòng bỏ qua email này.</p>";
+
+            helper.setText(content, true);
+
+            // Gửi email
+            javaMailSender.send(message);
+
+        } catch (MessagingException e) {
+            throw new IllegalStateException("Failed to send email", e);
+        }
+
+}}
 

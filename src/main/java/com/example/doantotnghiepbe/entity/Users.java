@@ -53,7 +53,7 @@ public class Users implements UserDetails {
     @Column(unique = true, length = 100)
     private String email;
 
-    @Column(length = 15)
+    @Column(unique = true,length = 15)
     private String phoneNumber;
 
     @Temporal(TemporalType.DATE)
@@ -82,6 +82,9 @@ public class Users implements UserDetails {
 
     @Column(name = "token_verified")
     private String tokenVerified;
+
+    @Column(name = "token_forgot_password")
+    private String tokenForgotPassword;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

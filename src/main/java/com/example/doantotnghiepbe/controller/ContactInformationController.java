@@ -1,9 +1,11 @@
 package com.example.doantotnghiepbe.controller;
 
 import com.example.doantotnghiepbe.dto.ContactInformationDTO;
+import com.example.doantotnghiepbe.dto.ContactInformationResDTO;
 import com.example.doantotnghiepbe.exceptions.DataNotFoundException;
 import com.example.doantotnghiepbe.service.ContactInformationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,89 +34,141 @@ public class ContactInformationController {
     }
 
     @GetMapping("/getByUserId/{id}")
-    public ResponseEntity<?> getByUserId(@PathVariable Integer id){
-        Map<String,Object> result = new HashMap<>();
+    public ResponseEntity<?> getByUserId(
+            @PathVariable Integer id,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Map<String, Object> result = new HashMap<>();
         try {
+            Page<ContactInformationResDTO> contactPage = contactInformationService.findAllByUserId(id, page, size);
             result.put("status", true);
-            result.put("message","Thành công");
-            result.put("data",contactInformationService.findAllByUserId(id));
-        }catch (Exception e){
+            result.put("message", "Thành công");
+            result.put("data", contactPage.getContent());
+            result.put("currentPage", contactPage.getNumber());
+            result.put("totalItems", contactPage.getTotalElements());
+            result.put("totalPages", contactPage.getTotalPages());
+        } catch (Exception e) {
             result.put("status", false);
-            result.put("message",e.getLocalizedMessage());
-            result.put("data",null);
+            result.put("message", e.getLocalizedMessage());
+            result.put("data", null);
         }
         return ResponseEntity.ok(result);
     }
+
     @GetMapping("/getByUserIdAndWatched/{id}")
-    public ResponseEntity<?> getByUserIdAndWatched(@PathVariable Integer id, @RequestParam("watched") boolean watched){
-        Map<String,Object> result = new HashMap<>();
+    public ResponseEntity<?> getByUserIdAndWatched(
+            @PathVariable Integer id,
+            @RequestParam("watched") boolean watched,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Map<String, Object> result = new HashMap<>();
         try {
+            Page<ContactInformationResDTO> contactPage = contactInformationService.findByUserIdAndWatched(id, watched, page, size);
             result.put("status", true);
-            result.put("message","Thành công");
-            result.put("data",contactInformationService.findByUserIdAndWatched(id,watched));
-        }catch (Exception e){
+            result.put("message", "Thành công");
+            result.put("data", contactPage.getContent());
+            result.put("currentPage", contactPage.getNumber());
+            result.put("totalItems", contactPage.getTotalElements());
+            result.put("totalPages", contactPage.getTotalPages());
+        } catch (Exception e) {
             result.put("status", false);
-            result.put("message","Thất bại");
-            result.put("data",null);
+            result.put("message", e.getLocalizedMessage());
+            result.put("data", null);
         }
         return ResponseEntity.ok(result);
     }
+
     @GetMapping("/getByPostId/{id}")
-    public ResponseEntity<?> getByPostId(@PathVariable Integer id){
-        Map<String,Object> result = new HashMap<>();
+    public ResponseEntity<?> getByPostId(
+            @PathVariable Integer id,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Map<String, Object> result = new HashMap<>();
         try {
+            Page<ContactInformationResDTO> contactPage = contactInformationService.findAllByPostId(id, page, size);
             result.put("status", true);
-            result.put("message","Thành công");
-            result.put("data",contactInformationService.findAllByPostId(id));
-        }catch (Exception e){
+            result.put("message", "Thành công");
+            result.put("data", contactPage.getContent());
+            result.put("currentPage", contactPage.getNumber());
+            result.put("totalItems", contactPage.getTotalElements());
+            result.put("totalPages", contactPage.getTotalPages());
+        } catch (Exception e) {
             result.put("status", false);
-            result.put("message","Thất bại");
-            result.put("data",null);
+            result.put("message", e.getLocalizedMessage());
+            result.put("data", null);
         }
         return ResponseEntity.ok(result);
     }
+
     @GetMapping("/getByPostIdAndWatched/{id}")
-    public ResponseEntity<?> getByPostIdAndWatched(@PathVariable Integer id, @RequestParam("watched") boolean watched){
-        Map<String,Object> result = new HashMap<>();
+    public ResponseEntity<?> getByPostIdAndWatched(
+            @PathVariable Integer id,
+            @RequestParam("watched") boolean watched,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Map<String, Object> result = new HashMap<>();
         try {
+            Page<ContactInformationResDTO> contactPage = contactInformationService.findByPostIdAndWatched(id, watched, page, size);
             result.put("status", true);
-            result.put("message","Thành công");
-            result.put("data",contactInformationService.findByPostIdAndWatched(id,watched));
-        }catch (Exception e){
+            result.put("message", "Thành công");
+            result.put("data", contactPage.getContent());
+            result.put("currentPage", contactPage.getNumber());
+            result.put("totalItems", contactPage.getTotalElements());
+            result.put("totalPages", contactPage.getTotalPages());
+        } catch (Exception e) {
             result.put("status", false);
-            result.put("message","Thất bại");
-            result.put("data",null);
+            result.put("message", e.getLocalizedMessage());
+            result.put("data", null);
         }
         return ResponseEntity.ok(result);
     }
+
     @GetMapping("/getByPostIdAndContacted/{id}")
-    public ResponseEntity<?> getByPostIdAndContacted(@PathVariable Integer id, @RequestParam("contacted") boolean contacted){
-        Map<String,Object> result = new HashMap<>();
+    public ResponseEntity<?> getByPostIdAndContacted(
+            @PathVariable Integer id,
+            @RequestParam("contacted") boolean contacted,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Map<String, Object> result = new HashMap<>();
         try {
+            Page<ContactInformationResDTO> contactPage = contactInformationService.findByPostIdAndContacted(id, contacted, page, size);
             result.put("status", true);
-            result.put("message","Thành công");
-            result.put("data",contactInformationService.findByPostIdAndContacted(id,contacted));
-        }catch (Exception e){
+            result.put("message", "Thành công");
+            result.put("data", contactPage.getContent());
+            result.put("currentPage", contactPage.getNumber());
+            result.put("totalItems", contactPage.getTotalElements());
+            result.put("totalPages", contactPage.getTotalPages());
+        } catch (Exception e) {
             result.put("status", false);
-            result.put("message","Thất bại");
-            result.put("data",null);
+            result.put("message", e.getLocalizedMessage());
+            result.put("data", null);
         }
         return ResponseEntity.ok(result);
     }
+
     @GetMapping("/getByUserIdAndContacted/{id}")
-    public ResponseEntity<?> getByUserIdAndContacted(@PathVariable Integer id, @RequestParam("contacted") boolean contacted){
-        Map<String,Object> result = new HashMap<>();
+    public ResponseEntity<?> getByUserIdAndContacted(
+            @PathVariable Integer id,
+            @RequestParam("contacted") boolean contacted,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Map<String, Object> result = new HashMap<>();
         try {
+            Page<ContactInformationResDTO> contactPage = contactInformationService.findByUserIdAndContacted(id, contacted, page, size);
             result.put("status", true);
-            result.put("message","Thành công");
-            result.put("data",contactInformationService.findByUserIdAndContacted(id,contacted));
-        }catch (Exception e){
+            result.put("message", "Thành công");
+            result.put("data", contactPage.getContent());
+            result.put("currentPage", contactPage.getNumber());
+            result.put("totalItems", contactPage.getTotalElements());
+            result.put("totalPages", contactPage.getTotalPages());
+        } catch (Exception e) {
             result.put("status", false);
-            result.put("message","Thất bại");
-            result.put("data",null);
+            result.put("message", e.getLocalizedMessage());
+            result.put("data", null);
         }
         return ResponseEntity.ok(result);
     }
+
     @PostMapping("/create/{postId}")
     public ResponseEntity<?> create(@PathVariable("postId") Integer postId, @RequestBody ContactInformationDTO contactInformationDTO){
         Map<String,Object> result = new HashMap<>();

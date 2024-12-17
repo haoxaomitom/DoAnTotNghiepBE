@@ -1,9 +1,11 @@
 package com.example.doantotnghiepbe.controller;
 
 import com.example.doantotnghiepbe.dto.NotificationDTO;
+import com.example.doantotnghiepbe.entity.Notification;
 import com.example.doantotnghiepbe.exceptions.DataNotFoundException;
 import com.example.doantotnghiepbe.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,47 +35,72 @@ public class NotificationController {
     }
 
     @GetMapping("/getAllByGlobalAndUser")
-    public ResponseEntity<?> getAllByGlobalAndUser(@RequestParam("userId") Long userId){
+    public ResponseEntity<?> getAllByGlobalAndUser(
+            @RequestParam("userId") Long userId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
         Map<String, Object> result = new HashMap<>();
         try {
+            Page<Notification> notificationPage = notificationService.getAllByGlobalAndUser(true, userId, page, size);
             result.put("status", true);
-            result.put("message","Thành công");
-            result.put("data",notificationService.getAllByGlobalAndUser(true,userId));
-        }catch (Exception e){
+            result.put("message", "Thành công");
+            result.put("data", notificationPage.getContent());
+            result.put("currentPage", notificationPage.getNumber());
+            result.put("totalItems", notificationPage.getTotalElements());
+            result.put("totalPages", notificationPage.getTotalPages());
+        } catch (Exception e) {
             result.put("status", false);
-            result.put("message",e.getLocalizedMessage());
-            result.put("data",null);
+            result.put("message", e.getLocalizedMessage());
+            result.put("data", null);
         }
         return ResponseEntity.ok(result);
     }
+
     @GetMapping("/getAllByGlobalAndUserAndIsRead")
-    public ResponseEntity<?> getAllByGlobalAndUserAndIsRead(@RequestParam("userId") Long userId, @RequestParam("isRead") boolean isRead){
+    public ResponseEntity<?> getAllByGlobalAndUserAndIsRead(
+            @RequestParam("userId") Long userId,
+            @RequestParam("isRead") boolean isRead,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
         Map<String, Object> result = new HashMap<>();
         try {
+            Page<Notification> notificationPage = notificationService.getAllByGlobalAndUserAndIsRead(true, userId, isRead, page, size);
             result.put("status", true);
-            result.put("message","Thành công");
-            result.put("data",notificationService.getAllByGlobalAndUserAndIsRead(true,userId,isRead));
-        }catch (Exception e){
+            result.put("message", "Thành công");
+            result.put("data", notificationPage.getContent());
+            result.put("currentPage", notificationPage.getNumber());
+            result.put("totalItems", notificationPage.getTotalElements());
+            result.put("totalPages", notificationPage.getTotalPages());
+        } catch (Exception e) {
             result.put("status", false);
-            result.put("message",e.getLocalizedMessage());
-            result.put("data",null);
+            result.put("message", e.getLocalizedMessage());
+            result.put("data", null);
         }
         return ResponseEntity.ok(result);
     }
+
     @GetMapping("/getAllByGlobal")
-    public ResponseEntity<?> getAllByGlobal(){
+    public ResponseEntity<?> getAllByGlobal(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
         Map<String, Object> result = new HashMap<>();
         try {
+            Page<Notification> notificationPage = notificationService.getAllByGlobal(true, page, size);
             result.put("status", true);
-            result.put("message","Thành công");
-            result.put("data",notificationService.getAllByGlobal(true));
-        }catch (Exception e){
+            result.put("message", "Thành công");
+            result.put("data", notificationPage.getContent());
+            result.put("currentPage", notificationPage.getNumber());
+            result.put("totalItems", notificationPage.getTotalElements());
+            result.put("totalPages", notificationPage.getTotalPages());
+        } catch (Exception e) {
             result.put("status", false);
-            result.put("message",e.getLocalizedMessage());
-            result.put("data",null);
+            result.put("message", e.getLocalizedMessage());
+            result.put("data", null);
         }
         return ResponseEntity.ok(result);
     }
+
+
     @PostMapping("/createNotificationGlobal")
     public ResponseEntity<?> createNotificationGlobal(@RequestBody NotificationDTO notificationDTO){
         Map<String, Object> result = new HashMap<>();
