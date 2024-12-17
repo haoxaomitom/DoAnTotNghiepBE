@@ -29,11 +29,13 @@ public class UserAdministration {
             Map results = usersService.loginAdmin(userLoginDTO.getUsername(), userLoginDTO.getPassword());
             String token = (String) results.get("token");
             Long userId = (Long) results.get("userId");
+            String roleName = (String) results.get("roleName");
             result.put("status",true);
             result.put("message", "Đăng nhập thành công");
             result.put("data", LoginRespone.builder()
                     .token(token)
                     .userId(userId)
+                    .roleName(roleName)
                     .build());
         }catch (DataNotFoundException | BadCredentialsException e){
             result.put("status", false);
