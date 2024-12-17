@@ -19,6 +19,7 @@ public interface UsersService {
     Page<Users> getAllUsers(int page, int size);
     Users getUsersByUsername(String username) throws DataNotFoundException;
     Users register (UserRegisterDTO user) throws DataNotFoundException;
+    Users registerStaff (UserRegisterDTO user) throws DataNotFoundException;
     Users updateUserInfo (UserInfoDTO user) throws DataNotFoundException;
     Map login(String username, String password) throws DataNotFoundException;
     Map loginAdmin(String username, String password) throws DataNotFoundException;

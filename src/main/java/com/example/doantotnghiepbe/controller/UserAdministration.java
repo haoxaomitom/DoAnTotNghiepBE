@@ -1,5 +1,6 @@
 package com.example.doantotnghiepbe.controller;
 
+import com.example.doantotnghiepbe.dto.UserRegisterDTO;
 import com.example.doantotnghiepbe.dto.UsersLoginDTO;
 import com.example.doantotnghiepbe.dto.response.LoginRespone;
 import com.example.doantotnghiepbe.exceptions.DataNotFoundException;
@@ -37,6 +38,21 @@ public class UserAdministration {
                     .userId(userId)
                     .roleName(roleName)
                     .build());
+        }catch (DataNotFoundException | BadCredentialsException e){
+            result.put("status", false);
+            result.put("message",e.getLocalizedMessage());
+            result.put("data", null);
+        }
+        return ResponseEntity.ok(result);
+    }
+    @PostMapping("/register-staff")
+    public ResponseEntity<?> registerStaff(@Valid @RequestBody UserRegisterDTO userRegisterDTO) {
+        Map<String,Object> result = new HashMap<>();
+        try {
+
+            result.put("status",true);
+            result.put("message", "Đăng nhập thành công");
+            result.put("data",usersService.registerStaff(userRegisterDTO));
         }catch (DataNotFoundException | BadCredentialsException e){
             result.put("status", false);
             result.put("message",e.getLocalizedMessage());

@@ -75,6 +75,24 @@ public class UsersServiceImpl implements UsersService {
         users.setPassword(passwordEncoder.encode(users.getPassword()));
         users.setIsActive(true);
         users.setVerified(false);
+        users.setAvatar("https://via.placeholder.com/100");
+        return usersRepository.save(users);
+    }
+
+    @Override
+    public Users registerStaff(UserRegisterDTO userRegisterDTO) throws DataNotFoundException {
+        if(usersRepository.existsByUsername(userRegisterDTO.getUsername())){
+            throw new ExistingException("Tên đăng nhập đã tồn tại.");
+        }
+        if(usersRepository.existsByPhoneNumber(userRegisterDTO.getPhoneNumber())){
+            throw new ExistingException("Số điện thoại đã tồn tại.");
+        }
+        Users users = modelMapper.map(userRegisterDTO,Users.class);
+        users.setRoles(rolesRepository.findById(3).orElseThrow(()-> new DataNotFoundException("Could not find role with id: 2")));
+        users.setPassword(passwordEncoder.encode(users.getPassword()));
+        users.setIsActive(true);
+        users.setVerified(false);
+        users.setAvatar("https://via.placeholder.com/100");
         return usersRepository.save(users);
     }
 
