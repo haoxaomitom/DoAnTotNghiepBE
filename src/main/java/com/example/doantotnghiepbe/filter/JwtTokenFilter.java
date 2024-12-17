@@ -112,6 +112,9 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 Pair.of("/api/contactInformation/create/*", "POST"),
                 Pair.of("/api/contactInformation/**", "PUT"),
                 Pair.of("/api/administration/user/login","POST"),
+                Pair.of("/api/email/forgot-password","POST"),
+                Pair.of("/api/users/reset-password","POST"),
+                Pair.of("/api/administration/user/login","POST"),
                 Pair.of("/api/contactInformation/**", "POST"),
                 Pair.of("/api/contactInformation/**", "PUT"),
                 Pair.of("/admin/payments/all", "GET"),
@@ -149,4 +152,5 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         }
         return false;
     }
+
 }
