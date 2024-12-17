@@ -24,20 +24,22 @@ public class UserAdministration {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody UsersLoginDTO userLoginDTO) {
-        Map<String,Object> result = new HashMap<>();
+        Map<String, Object> result = new HashMap<>();
         try {
             Map results = usersService.loginAdmin(userLoginDTO.getUsername(), userLoginDTO.getPassword());
+            String roleName = (String) results.get("roleName");
             String token = (String) results.get("token");
             Long userId = (Long) results.get("userId");
-            result.put("status",true);
+            result.put("status", true);
             result.put("message", "Đăng nhập thành công");
             result.put("data", LoginRespone.builder()
                     .token(token)
+                    .roleName(roleName)
                     .userId(userId)
                     .build());
-        }catch (DataNotFoundException | BadCredentialsException e){
+        } catch (DataNotFoundException | BadCredentialsException e) {
             result.put("status", false);
-            result.put("message",e.getLocalizedMessage());
+            result.put("message", e.getLocalizedMessage());
             result.put("data", null);
         }
         return ResponseEntity.ok(result);

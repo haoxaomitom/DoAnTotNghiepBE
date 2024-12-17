@@ -123,6 +123,7 @@ public class UsersServiceImpl implements UsersService {
         result.put("token",jwtTokenUtil.generateToken(user));
         result.put("userId", user.getUserId());
         result.put("roleName", user.getRoles().getRoleName());
+        System.out.println(user.getRoles().getRoleName());
         return result;
     }
 
