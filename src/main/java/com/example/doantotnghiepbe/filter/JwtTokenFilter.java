@@ -103,6 +103,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 Pair.of("/api/updatePosts/images/upload/*", "POST"),
                 Pair.of("/api/updatePosts/images/delete/*", "DELETE"),
                 Pair.of("/api/posts/","PUT"),
+                Pair.of("/api/posts","GET"),
                 Pair.of("/api/approval-posts", "GET"),
                 Pair.of("/api/approval-posts/approve/*", "POST"),
                 Pair.of("/api/approval-posts/reject/*", "POST"),
@@ -133,6 +134,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 Pair.of("/api/amenities/", "POST"),
                 Pair.of("/api/images/upload", "POST"),
                 Pair.of("/api/admin/reports/", "GET"),
+                Pair.of("/api/admin/reports/all", "GET"),
                 Pair.of("/api/admin/reports/", "PUT"),
                 Pair.of("/api/admin/payments/*", "GET"),
                 Pair.of("/api/admin/payments/*", "PUT")

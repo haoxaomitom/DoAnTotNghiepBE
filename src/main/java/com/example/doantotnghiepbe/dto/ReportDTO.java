@@ -18,4 +18,4 @@ public class ReportDTO {
     private LocalDateTime createdAt;
     private String status; // Thêm trường trạng thái vào
     private String rejectedReason;
-} 
+}

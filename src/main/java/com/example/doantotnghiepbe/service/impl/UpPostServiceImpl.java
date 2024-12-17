@@ -150,9 +150,11 @@ public class UpPostServiceImpl implements UpPostService {
         if (imageFiles != null && !imageFiles.isEmpty()) {
             imageFiles.forEach(file -> {
                 try {
+                    System.out.println("run upload img: " + file.getOriginalFilename());
                     // Upload image to Cloudinary
                     var uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
                     String imageUrl = (String) uploadResult.get("url");
+                    System.out.println(imageUrl);
 
                     // Create Image entity and associate with post
                     Image image = new Image();

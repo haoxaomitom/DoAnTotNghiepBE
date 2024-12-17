@@ -53,6 +53,7 @@ public class WebSecurityConfiguration {
                                     "/api/updatePosts/images/delete/",
                                     "/api/updatePosts/images/upload/",
                                     "/api/posts/",
+                                    "/api/posts",
                                     "/api/approval-posts",
                                     "/api/approval-posts/approve/",
                                     "/api/approval-posts/reject/",
