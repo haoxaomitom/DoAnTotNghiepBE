@@ -50,7 +50,7 @@ public class Users implements UserDetails {
     @Column(length = 100)
     private String provinceName;
 
-    @Column(unique = true, length = 100)
+    @Column(length = 100)
     private String email;
 
     @Column(unique = true,length = 15)

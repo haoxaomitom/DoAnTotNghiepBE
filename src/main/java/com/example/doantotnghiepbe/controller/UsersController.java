@@ -89,6 +89,7 @@ public class UsersController {
     public ResponseEntity<?> register(@Valid @RequestBody UserRegisterDTO userRegisterDTO) {
         Map<String, Object> result = new HashMap<>();
         try {
+            System.out.println(userRegisterDTO);
             result.put("status", true);
             result.put("message", "Đăng ký thành công");
             result.put("data", usersService.register(userRegisterDTO));
