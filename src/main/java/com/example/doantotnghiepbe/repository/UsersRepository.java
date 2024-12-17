@@ -42,5 +42,6 @@ public interface UsersRepository extends JpaRepository<Users,Long> {
             Pageable pageable
     );
 
+    Users findByUserId(Long userId);
 }
 

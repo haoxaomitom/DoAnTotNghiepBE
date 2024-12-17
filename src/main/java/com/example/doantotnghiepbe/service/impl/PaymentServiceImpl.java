@@ -26,4 +26,9 @@ public class PaymentServiceImpl implements PaymentService {
         Pageable pageable = PageRequest.of(page, size);
         return paymentRepository.findPaymentsByCriteria(userId, paymentId, postId, pageable);
     }
+
+    public List<Object[]> getRevenueByMonth(int year) {
+        return paymentRepository.getRevenueByMonth(year);
+    }
+
 }

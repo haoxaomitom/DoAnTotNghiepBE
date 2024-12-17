@@ -87,7 +87,7 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
 
     @Query("SELECT FUNCTION('MONTH', p.createdAt) AS month, COUNT(p) AS postCount " +
             "FROM Post p " +
-            "WHERE p.status = 'Active' AND FUNCTION('YEAR', p.createdAt) = :year " +
+            "WHERE p.status = 'ACTIVE' AND FUNCTION('YEAR', p.createdAt) = :year " +
             "GROUP BY FUNCTION('MONTH', p.createdAt) " +
             "ORDER BY month")
     List<Object[]> countActivePostsByMonthAndYear(@Param("year") int year);

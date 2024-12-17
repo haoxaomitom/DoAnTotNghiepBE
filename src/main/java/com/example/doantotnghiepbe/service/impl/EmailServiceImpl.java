@@ -5,7 +5,6 @@ import com.example.doantotnghiepbe.entity.Post;
 import com.example.doantotnghiepbe.entity.Price;
 import com.example.doantotnghiepbe.entity.Users;
 import com.example.doantotnghiepbe.exceptions.DataNotFoundException;
-import com.example.doantotnghiepbe.exceptions.ExistingException;
 import com.example.doantotnghiepbe.repository.PaymentRepository;
 import com.example.doantotnghiepbe.repository.PostRepository;
 import com.example.doantotnghiepbe.repository.PriceRepository;
@@ -19,8 +18,8 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+
 import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -58,13 +57,13 @@ public class EmailServiceImpl implements EmailService {
     @Override
     public String sendVerificationEmail(Long userId, String verificationUrl) throws Exception {
         // Tạo verification token
-        Users user = usersRepository.findById(userId).orElseThrow(()-> new DataNotFoundException("ko tìm thấy id:" + userId));
+        Users user = usersRepository.findById(userId).orElseThrow(() -> new DataNotFoundException("ko tìm thấy id:" + userId));
         String token = jwtTokenUtil.generateVerificationToken(user);
         user.setTokenVerified(token);
         usersRepository.save(user);
         String tokenVerified = user.getTokenVerified();
         System.out.println(tokenVerified);
-        String apiUrl = "http://127.0.0.1:5500/app/components/user/VerificatonResult.html?token="+tokenVerified;
+        String apiUrl = "http://127.0.0.1:5500/app/components/user/VerificatonResult.html?token=" + tokenVerified;
 
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
@@ -90,11 +89,12 @@ public class EmailServiceImpl implements EmailService {
                 + "</html>";
 
         helper.setText(htmlContent, true);
-        helper.setFrom(user.getEmail(),"PFR");
+        helper.setFrom(user.getEmail(), "PFR");
 
         javaMailSender.send(mimeMessage);
         return token;
     }
+
 
     @Override
     public void sendPaymentResultEmail(String txnRef) throws Exception {
@@ -172,7 +172,6 @@ public class EmailServiceImpl implements EmailService {
     }
 
 
-}
     @Override
     public void sentResetPasswordEmail(String username) throws DataNotFoundException {
         Users user = usersRepository.findUsersByUsername(username)
@@ -210,5 +209,7 @@ public class EmailServiceImpl implements EmailService {
             throw new IllegalStateException("Failed to send email", e);
         }
 
-}}
+
+    }
+}
 

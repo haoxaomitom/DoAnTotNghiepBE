@@ -42,6 +42,6 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
 
     List<Object[]> getRevenueByMonth(@Param("year") int year);
     long countPaymentByPaymentStatus(String status);
-    @Query("SELECT SUM(p.paymentAmount) FROM Payment p WHERE p.paymentStatus = 'Successful'")
+    @Query("SELECT SUM(p.paymentAmount) FROM Payment p WHERE p.paymentStatus = 'Success'")
     long getTotalRevenue();
 }

@@ -1,5 +1,7 @@
 package com.example.doantotnghiepbe.controller;
 
+import com.example.doantotnghiepbe.repository.PaymentRepository;
+import com.example.doantotnghiepbe.service.PaymentService;
 import com.example.doantotnghiepbe.service.StatisticsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +18,9 @@ import java.util.Map;
 public class StatisticsController {
     @Autowired
     private StatisticsService statisticsService;
+
+    @Autowired
+    private PaymentService paymentService;
 
     @GetMapping("/countPostsGroupedByStatus")
     public ResponseEntity<?> countPostsGroupedByStatus(){
@@ -95,6 +100,20 @@ public class StatisticsController {
             result.put("status", true);
             result.put("message","Thành công");
             result.put("data",statisticsService.getTotalRevenue());
+        }catch (Exception e){
+            result.put("status", false);
+            result.put("message","Thất bại");
+            result.put("data",null);
+        }
+        return ResponseEntity.ok(result);
+    }
+    @GetMapping("/getRevenueByMonth")
+    public ResponseEntity<?> getRevenueByMonth(@RequestParam("year") int year){
+        Map<String,Object> result = new HashMap<>();
+        try {
+            result.put("status", true);
+            result.put("message","Thành công");
+            result.put("data",paymentService.getRevenueByMonth(year));
         }catch (Exception e){
             result.put("status", false);
             result.put("message","Thất bại");

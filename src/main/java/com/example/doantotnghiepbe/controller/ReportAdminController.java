@@ -42,10 +42,12 @@ public class ReportAdminController {
     }
 
     // Cập nhật trạng thái của báo cáo
+// Cập nhật trạng thái của báo cáo
     @PutMapping("/{id}/status")
     public ResponseEntity<ReportDTO> updateReportStatus(@PathVariable int id, @RequestParam("status") String status, @RequestParam(required = false) String reason) {
         System.out.println(status+id);
         ReportDTO updatedReport = reportService.updateReportStatus(id, status, reason);
         return new ResponseEntity<>(updatedReport, HttpStatus.OK);
     }
+
 }
