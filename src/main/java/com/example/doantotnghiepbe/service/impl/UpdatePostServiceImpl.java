@@ -1,7 +1,6 @@
 package com.example.doantotnghiepbe.service.impl;
 
 import com.cloudinary.Cloudinary;
-import com.cloudinary.utils.ObjectUtils;
 import com.example.doantotnghiepbe.configurations.CloudinaryConfig;
 import com.example.doantotnghiepbe.dto.UpdatePostDTO;
 import com.example.doantotnghiepbe.entity.*;
@@ -9,16 +8,11 @@ import com.example.doantotnghiepbe.exceptions.ResourceNotFoundException;
 import com.example.doantotnghiepbe.repository.*;
 import com.example.doantotnghiepbe.service.UpdatePostService;
 import jakarta.transaction.Transactional;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Service
 public class UpdatePostServiceImpl implements UpdatePostService {
@@ -95,8 +89,9 @@ public class UpdatePostServiceImpl implements UpdatePostService {
         return updatedPost;
     }
 
+
     // UpdatePostServiceImpl.java
-    @Override
+    @Transactional
     public void updateImages(Integer postId, List<String> deletedImages, List<MultipartFile> newImages) {
         System.out.println("Run upload img");
         Post post = postRepository.findById(postId)
@@ -115,9 +110,13 @@ public class UpdatePostServiceImpl implements UpdatePostService {
 
                     // Xóa ảnh khỏi database
                     System.out.println("URL img: " + url);
+                    if (url.startsWith("\"") && url.endsWith("\"")) {
+                        url = url.substring(1, url.length() - 1);
+                    }
+
+                    System.out.println("Processed URL: " + url);
 
                     imageRepository.deleteByImageUrl(url); // Sử dụng phương thức xóa ảnh theo URL
-                    imageRepository.flush();
                 } catch (Exception e) {
                     System.err.println("Error deleting image: " + url + ". " + e.getMessage());
                 }
@@ -139,5 +138,6 @@ public class UpdatePostServiceImpl implements UpdatePostService {
             });
         }
     }
+
 
 }

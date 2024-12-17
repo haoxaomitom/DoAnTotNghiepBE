@@ -21,11 +21,17 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
 
     @Query("SELECT p FROM Payment p " +
             "JOIN p.postId post " +
-            "WHERE post.user.userId = :userId " +
+            "WHERE (:userId IS NULL OR post.user.userId = :userId) " +
             "AND (:paymentId IS NULL OR p.paymentId = :paymentId) " +
             "AND (:postId IS NULL OR post.postId = :postId)")
-    Page<Payment> findPaymentsByCriteria(Long userId, Long paymentId, Integer postId, Pageable pageable);
+    Page<Payment> findPaymentsByCriteria(@Param("userId") Long userId,
+                                         @Param("paymentId") Long paymentId,
+                                         @Param("postId") Integer postId,
+                                         Pageable pageable);
+
+
     @Query("SELECT p FROM Payment p WHERE p.postId.user.id = :userId")
+
     List<Payment> findPaymentsByUserId(@Param("userId") Long userId);
 
     @Query("SELECT FUNCTION('MONTH', p.paymentDate) AS month, SUM(p.paymentAmount) AS totalRevenue " +

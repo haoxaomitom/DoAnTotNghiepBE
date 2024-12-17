@@ -11,6 +11,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -57,8 +58,11 @@ public class NotificationServiceImpl implements NotificationService {
     public Notification createNotificationApproval(NotificationDTO notificationDTO) throws DataNotFoundException {
         Users user = usersRepository.findById(notificationDTO.getUserId()).orElseThrow(()->new DataNotFoundException("không tìm thấy người dùng"));
         Notification notification = modelMapper.map(notificationDTO,Notification.class);
+        notification.setNotificationId(null);
+
         notification.setIsGlobal(false);
         notification.setUser(user);
+        notification.setCreatedAt(LocalDateTime.now());
         return notificationRepository.save(notification);
     }
 

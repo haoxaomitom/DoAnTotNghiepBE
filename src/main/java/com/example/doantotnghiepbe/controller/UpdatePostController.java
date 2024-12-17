@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/updatePosts")
@@ -52,6 +53,5 @@ public class UpdatePostController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error updating images");
         }
     }
-
 
 }
