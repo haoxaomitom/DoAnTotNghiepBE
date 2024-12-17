@@ -63,7 +63,19 @@ public class WebSecurityConfiguration {
                                     "/api/updatePosts/updateImage/",
                             "/api/vnpay/user/",
                             "/api/vnpay/*",
-                            "/api/posts/admin/search"
+                            "/api/posts/admin/search",
+                            "/api/posts/user/{userId}",
+                            "/api/vnpay/return",
+                            "/api/vnpay/payment/details/{txnRef}",
+                            "/api/reports",
+                            "/api/users/register",
+                            "api/posts/{postId}",
+                            "/api/contactInformation/create",
+                            "/api/upPosts/savePost",
+                            "/api/images/upload",
+                            "/api/amenities/",
+                            "/api/admin/reports",
+                            "/api/admin/payments"
                             ).permitAll()
                             .requestMatchers("/api/users/getUserByUsername").hasAnyRole("USER", "ADMIN", "MODERATOR")
                             .requestMatchers("/api/contactInformation/**").hasAnyRole("USER", "ADMIN", "MODERATOR")

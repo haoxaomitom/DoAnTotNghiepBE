@@ -4,10 +4,8 @@ import com.example.doantotnghiepbe.dto.ReportDTO;
 import com.example.doantotnghiepbe.entity.Post;
 import com.example.doantotnghiepbe.entity.Report;
 import com.example.doantotnghiepbe.entity.Users;
-import com.example.doantotnghiepbe.entity.Users;
 import com.example.doantotnghiepbe.repository.PostRepository;
 import com.example.doantotnghiepbe.repository.ReportRepository;
-import com.example.doantotnghiepbe.repository.UsersRepository;
 import com.example.doantotnghiepbe.repository.UsersRepository;
 import com.example.doantotnghiepbe.service.ReportService;
 import lombok.RequiredArgsConstructor;
@@ -71,10 +69,18 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
-    public ReportDTO updateReportStatus(int reportId, String status) {
+    public ReportDTO updateReportStatus(int reportId, String status, String reason) {
         Report report = reportRepository.findById(reportId)
                 .orElseThrow(() -> new RuntimeException("Report not found"));
         report.setStatus(status); // Cập nhật trạng thái
+        if ("Bị từ chối".equals(status)) {
+            report.setRejectedReason(reason);
+        } else if ("Đã duyệt".equals(status)) {
+            report.setRejectedReason(null);  // Xóa lý do khi báo cáo được duyệt
+        }
+
+        reportRepository.save(report);
+//        report.setRejectedReason(reason);
         report = reportRepository.save(report); // Lưu lại thay đổi
         return convertReportToDTO(report);
     }
